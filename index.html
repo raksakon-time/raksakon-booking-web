@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b57d0">
+<title>ระบบจองห้องพัก รพ.ศุภมิตร-รักษ์สกล</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style id="pg"></style>
+<style>
+:root{--p:#0061a4;--pc:#d1e4ff;--sc:#d7e3f7;--on-sc:#101c2b;--s:#fdfcff;--sv:#dfe2eb;--bg:#f3f6fb;--bar:#e9eff8;--err:#ba1a1a;--ol:#73777f;--e1:0 1px 3px 1px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.15);--r:16px;--rl:24px}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:#1a1c1e;font-size:15px;-webkit-font-smoothing:antialiased}
+.screen{display:none}
+.btn{font-weight:600;border-radius:100px;padding:.5rem 1.2rem;transition:background-color .2s,box-shadow .2s}
+.btn-primary{background:var(--p);border-color:var(--p)}.btn-primary:hover{background:#004d82}
+.btn-outline-primary{color:var(--p);border:2px solid var(--p)}.btn-outline-primary:hover{background:var(--pc);color:#001d36;border-color:transparent}
+.btn:focus-visible,.form-control:focus-visible,.form-select:focus-visible{outline:3px solid var(--p);outline-offset:2px}
+.form-control,.form-select{background:var(--sv);border:2px solid transparent;border-radius:var(--r);font-weight:500}
+.form-control:focus,.form-select:focus{background:var(--s);border-color:var(--p);box-shadow:none}
+.form-label{font-weight:700;font-size:.9rem;margin-bottom:.3rem;color:#43474e}
+.card-md{background:var(--s);border-radius:var(--rl);padding:24px;box-shadow:var(--e1)}
+.sec{background:#f8fafd;border:1px solid var(--sv);border-radius:var(--r);padding:18px;margin-bottom:18px}
+.sec h6{color:var(--p);font-weight:700;border-bottom:2px solid var(--pc);padding-bottom:6px;margin-bottom:14px}
+.edit{border:2px solid #f59e0b;background:#fffbeb}
+.appbar{position:sticky;top:0;z-index:20;background:var(--bar);padding:.7rem 1.5rem;border-radius:0 0 var(--rl) var(--rl);box-shadow:var(--e1);margin-bottom:1.2rem}
+#login{min-height:100vh;align-items:center;justify-content:center;background:linear-gradient(135deg,#d1e4ff,#f3f6fb)}
+#login .card-md{width:100%;max-width:400px;padding:36px}
+.floor{border-bottom:2px solid var(--sv);color:var(--p);font-weight:700;font-size:1.2rem;padding-bottom:6px;margin:8px 0 16px}
+.room{position:relative;min-height:120px;padding:14px;border:1px solid var(--sv);border-radius:var(--r);background:var(--s);border-left:6px solid #28a745;margin-bottom:4px}
+.room.bk{border-left-color:#f59e0b;background:#fffdf5}.room.lk{border-left-color:#6c757d;background:#f8f9fa;color:#6c757d}.room.vip{border-right:6px solid #fbbf24}
+.room h6{font-weight:700;font-size:1.15rem;border-bottom:2px solid #f1f4f9;padding-bottom:5px;margin-bottom:8px}
+.lockb{position:absolute;top:10px;right:10px;background:none;border:0;opacity:.35;font-size:1.1rem;padding:0}.lockb:hover,.lockb.on{opacity:1}
+.pt{display:flex;justify-content:space-between;align-items:center;gap:6px;background:var(--sc);color:var(--on-sc);border-radius:8px;padding:8px 10px;margin-bottom:6px;font-weight:500}
+.bed{font-size:.78rem;background:var(--p);color:#fff;border-radius:100px;padding:2px 10px;font-weight:600}
+.sm{border:0;border-radius:100px;font-size:.8rem;font-weight:700;padding:5px 11px;background:var(--s);color:var(--p)}.sm.dc{background:#fee2e2;color:var(--err)}
+.q{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.qi{display:flex;justify-content:space-between;align-items:center;background:var(--s);border-left:6px solid #f59e0b;border-radius:var(--r);box-shadow:var(--e1);padding:16px}
+.tbl th{background:var(--sc);color:var(--on-sc);padding:12px 14px}.tbl td{padding:12px 14px;border-bottom:1px solid var(--sv)}
+.pill{border-radius:100px;padding:.35em .9em;font-weight:600;font-size:.8rem}
+#pa{display:none}.ph{display:none}
+@media(max-width:991px){.appbar{padding:.6rem 1rem}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{
+ html,body{background:#fff!important;font-size:10pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .no-print{display:none!important}.ph{display:flex!important;justify-content:space-between;align-items:center;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:12px}
+ .screen{padding:0!important}.card-md{box-shadow:none;padding:0;background:none}
+ .table-responsive{overflow:visible!important}.tbl{width:100%;font-size:9.5pt}.tbl th,.tbl td{padding:4pt 6pt}.tbl th{border-radius:0}
+ thead{display:table-header-group}tr{break-inside:avoid}
+ body.pa{margin:0!important;background:#fff!important}body.pa .screen{display:none!important}body.pa #pa{display:block!important}
+}
+</style>
+<style>
+/* ===== MD3 น้ำเงิน-ขาว แบบไล่เฉด ===== */
+#dashCol{position:sticky;top:76px;align-self:flex-start}
+#dashCol>.card-md{display:flex;flex-direction:column;height:calc(100vh - 100px);min-height:420px;padding-bottom:10px}
+#dash{flex:1;min-height:0;overflow-y:auto;padding:0 8px 8px 0;scrollbar-width:thin;scrollbar-color:#9db8ea #eef3fd}
+#dash::-webkit-scrollbar{width:8px}#dash::-webkit-scrollbar-thumb{background:#9db8ea;border-radius:8px}#dash::-webkit-scrollbar-track{background:#eef3fd;border-radius:8px}
+.dhead{position:sticky;top:0;z-index:5;background:#fff;padding:4px 0 8px}
+.floor{margin:4px 0 10px}
+.room{padding:10px;min-height:88px}
+.rh{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;border-bottom:2px solid #f1f4f9;padding:0 24px 5px 0;margin-bottom:6px}.rh b{font-size:1.1rem}
+.acts .sm{padding:3px 8px;font-size:.74rem}
+.qt{table-layout:auto;border-collapse:separate;border-spacing:0}
+.qt th,.qt td{white-space:nowrap}
+.qt .c-min{width:1%}
+.qt .c-name{white-space:normal;width:40%;min-width:210px}.qt .c-rt{white-space:normal;width:12%;min-width:90px}.qt .c-doc{white-space:normal;width:22%;min-width:140px}
+.qt th,.qt td{vertical-align:middle}
+.qt th{background:linear-gradient(180deg,#dce6f9,#c9daf8);color:#0a1f44;padding:9px 10px;font-size:.85rem;font-weight:700;white-space:nowrap;border:0}
+.qt thead th:first-child{border-radius:12px 0 0 12px}.qt thead th:last-child{border-radius:0 12px 12px 0}
+.qt td{padding:7px 10px;font-size:.92rem;border-bottom:1px solid #e3ecfd;overflow-wrap:break-word}
+.qt tbody tr:hover td{background:#f1f6ff}.qt tbody td:first-child{border-left:4px solid #f59e0b}
+.qt .sm{border:1px solid #c9daf8}
+/* กรอบกรอกยอดโอน/เงินสด ให้เห็นชัด */
+.split-box{background:#fff;border:2px dashed #7aa7ec}
+.split-in .input-group-text{background:#dce6f9;border:2px solid #7aa7ec;border-right:0;border-radius:var(--r) 0 0 var(--r);font-weight:700;color:#0842a0}
+.split-in .form-control{background:#fff;border:2px solid #7aa7ec;border-left:0;border-radius:0 var(--r) var(--r) 0;text-align:right;font-weight:700;font-size:1.05rem}
+.split-in.c .input-group-text,.split-in.c .form-control{border-color:#4caf7a}.split-in.c .input-group-text{background:#dff3e6;color:#146c43}
+.split-in .form-control:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(11,87,208,.18)}
+.split-in.c .form-control:focus{border-color:#198754;box-shadow:0 0 0 3px rgba(25,135,84,.18)}
+.split-in input::-webkit-outer-spin-button,.split-in input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.split-in input[type=number]{-moz-appearance:textfield}
+/* ตรึงหัวคอลัมน์ + แถบเลื่อนในเฟรม */
+.tscroll{overflow:auto;scrollbar-width:thin;scrollbar-color:#9db8ea #eef3fd}
+.tscroll::-webkit-scrollbar{width:8px;height:8px}.tscroll::-webkit-scrollbar-thumb{background:#9db8ea;border-radius:8px}.tscroll::-webkit-scrollbar-track{background:#eef3fd;border-radius:8px}
+.tscroll thead th{position:sticky;top:0;z-index:3}
+#dash{display:flex;flex-direction:column}
+#dash>.dhead,#dash>#tabR{flex:none}
+#tabQ{flex-direction:column;flex:1 1 0;min-height:0}
+#tabQ>.tscroll{flex:1 1 0;min-height:0}
+#rep .card-md{display:flex;flex-direction:column;height:calc(100vh - 56px);min-height:420px}
+#rep .tscroll{flex:1 1 0;min-height:0}
+@media print{#rep .card-md{display:block;height:auto!important}#rep .tscroll{overflow:visible!important}.tscroll thead th{position:static}}
+.pt{padding:6px 8px}
+@media(max-width:991px){#dashCol{position:static}#dashCol>.card-md{height:75vh}}
+@media print{#dashCol{position:static}#dashCol>.card-md{height:auto}#dash{overflow:visible}}
+.pt{flex-direction:column;align-items:stretch;gap:5px}.acts{display:flex;flex-wrap:wrap;gap:4px}.sm.cx{background:#fff3e0;color:#b45309}
+:root{--p:#0b57d0;--pc:#d3e3fd;--sc:#dce6f9;--on-sc:#0a1f44;--bar:#fff;--g:linear-gradient(135deg,#0b57d0 0%,#3f83f8 100%)}
+body{background:linear-gradient(180deg,#dbe7fd 0,#f6f9ff 280px,#fff 100%) fixed}
+.appbar{background:linear-gradient(90deg,#fff 0,#e3ecfd 55%,#c7dafb 100%)}
+.btn-primary{background:var(--g);border:0;color:#fff}
+.btn-primary:hover,.btn-primary:focus{background:linear-gradient(135deg,#0842a0,#2f6fe0);box-shadow:var(--e1);color:#fff}
+.btn-outline-primary{color:var(--p);border-color:var(--p)}
+#login{background:linear-gradient(160deg,#0b57d0 0%,#5b9bf8 45%,#fff 100%)}
+#login .card-md{box-shadow:0 8px 32px rgba(11,87,208,.25)}
+.card-md{border:1px solid #e3ecfd}
+.sec{background:linear-gradient(180deg,#f4f8ff,#fff);border-color:#d9e5fb}
+.floor{color:#0842a0;border-color:#c9daf8}
+.tbl th{background:linear-gradient(180deg,#dce6f9,#c9daf8)}
+.bed{background:var(--g)}
+.room{background:linear-gradient(180deg,#fff,#f6f9ff)}
+.room.bk{background:linear-gradient(180deg,#fffdf5,#fff8e1)}.room.lk{background:#f1f3f4}
+.pt{background:linear-gradient(135deg,#dce6f9,#eaf1fe)}
+.form-control,.form-select{background:#e8effc}
+.form-control:focus,.form-select:focus{background:#fff}
+@media print{body{background:#fff!important}.tbl th{background:#dce6f9!important}}
+</style>
+<style id="theme-v2">
+/* ===== Theme v2 · MD3 Royal Blue → White gradient ===== */
+:root{--p:#0b57d0;--pc:#d6e4ff;--sc:#dbe7ff;--on-sc:#0a1f44;--g:linear-gradient(135deg,#0a4cc0 0%,#2f7bf5 62%,#62a8ff 100%);--g-soft:linear-gradient(180deg,#f3f8ff 0%,#fff 100%);--sh:0 6px 24px rgba(11,87,208,.12);--sh2:0 2px 8px rgba(11,87,208,.16)}
+body{color:#0f1b33;background:radial-gradient(900px 420px at 85% -8%,rgba(98,168,255,.35),transparent 70%),linear-gradient(180deg,#dfeaff 0,#f2f7ff 340px,#fff 100%) fixed}
+/* แถบบน */
+.appbar{background:linear-gradient(100deg,#08358a 0%,#0b57d0 55%,#3b8cff 100%);box-shadow:0 6px 20px rgba(8,53,138,.28)}
+.appbar h5{color:#fff}.appbar small{color:#cfe1ff!important}
+.appbar .btn-outline-danger{color:#fff;border:2px solid rgba(255,255,255,.75);background:rgba(255,255,255,.08)}
+.appbar .btn-outline-danger:hover{background:#fff;color:#b3261e;border-color:#fff}
+/* การ์ด / กลุ่มฟอร์ม */
+.card-md{background:#fff;border:1px solid #dbe7ff;box-shadow:var(--sh)}
+.sec{background:var(--g-soft);border:1px solid #d6e4ff}
+.sec h6{color:#0a3f9e;border-bottom:2px solid transparent;border-image:linear-gradient(90deg,#0b57d0,rgba(11,87,208,.06)) 1}
+.edit{border:2px solid #2f7bf5;background:linear-gradient(180deg,#e8f1ff,#fff)}
+.form-control,.form-select{background:#edf3ff;border:2px solid transparent}
+.form-control:hover,.form-select:hover{background:#e3edff}
+.form-control:focus,.form-select:focus{background:#fff;border-color:#2f7bf5;box-shadow:0 0 0 4px rgba(47,123,245,.16)}
+/* ปุ่ม */
+.btn-primary{background:var(--g);box-shadow:var(--sh2)}
+.btn-primary:hover,.btn-primary:focus{background:var(--g);filter:brightness(1.08);box-shadow:0 4px 14px rgba(11,87,208,.35)}
+.btn-outline-primary{background:#fff;border:2px solid #b8d0fb;color:#0a3f9e}
+.btn-outline-primary:hover{background:var(--g);color:#fff;border-color:transparent}
+.btn-outline-dark{border:2px solid #9fb6e0;color:#0a1f44;background:#fff}.btn-outline-dark:hover{background:#0a1f44;color:#fff}
+/* ห้องพัก: ว่าง=เขียว · มีผู้ป่วย=น้ำเงิน · รอห้อง=อำพัน · ล็อก=เทา */
+.room{background:linear-gradient(180deg,#fff,#f6f9ff);border:1px solid #dbe7ff;border-left:6px solid #22a06b;box-shadow:0 1px 3px rgba(11,87,208,.08)}
+.room:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
+.room.bk{background:linear-gradient(180deg,#f2f7ff,#e4efff);border-left-color:#0b57d0}
+.room.rsv{background:linear-gradient(180deg,#fffaf0,#fff2d9);border-left-color:#f59e0b}
+.room.lk{background:#eef0f4;border-left-color:#8b95a5}
+.room.vip{border-right:6px solid #e0a82e}
+.rh b,.room h6{color:#0a1f44}
+.pt{background:linear-gradient(135deg,#fff,#e9f1ff);border:1px solid #d3e2ff}
+.bed{background:var(--g)}
+.floor{display:flex;align-items:center;gap:10px;color:#0a3f9e;border-bottom:2px solid #dbe7ff}
+.floor::before{content:'';width:6px;height:22px;border-radius:6px;background:var(--g)}
+/* ตาราง */
+.tbl th,.qt th{background:linear-gradient(180deg,#e6efff,#d3e3fe);color:#0a1f44}
+.qt tbody td:first-child{border-left:4px solid #2f7bf5}
+.tscroll::-webkit-scrollbar-thumb,#dash::-webkit-scrollbar-thumb{background:#7fa8ee}
+/* หน้า Login */
+#login{background:radial-gradient(700px 400px at 20% 10%,rgba(255,255,255,.25),transparent 70%),linear-gradient(155deg,#08358a 0%,#0b57d0 38%,#6aa9ff 72%,#fff 100%)}
+#login .card-md{box-shadow:0 18px 50px rgba(8,53,138,.35);border:0}
+#login h4{color:#0a3f9e}
+@media print{body{background:#fff!important}.card-md{box-shadow:none!important;background:none!important;border:0!important}.appbar{display:none!important}}
+.sm.pr{background:#e8f0fe;color:#0b57d0}
+@media print{body.pa .swal2-container{display:none!important}}
+.ftabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:2px 0 12px}
+.ftab{border:2px solid #b8d0fb;background:#fff;color:#0a3f9e;border-radius:14px;padding:8px 10px;font-weight:700;transition:background .2s,box-shadow .2s}
+.ftab:hover{background:#eef4ff}.ftab.on{background:var(--g);color:#fff;border-color:transparent;box-shadow:var(--sh2)}
+.fcnt{font-size:.78rem;background:rgba(11,87,208,.12);border-radius:100px;padding:1px 8px;margin-left:4px}.ftab.on .fcnt{background:rgba(255,255,255,.25)}
+@media(max-width:575px){.ftabs{grid-template-columns:repeat(2,1fr)}}
+.ic{width:1.15em;height:1.15em;vertical-align:-.2em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.room.lk .ic{width:1.8em;height:1.8em}
+.hn-group .input-group-text{background:var(--g);color:#fff;border:0;font-weight:700;border-radius:var(--r) 0 0 var(--r)}
+.hn-group .form-control{border-radius:0}
+.hn-group{flex:1 1 165px;max-width:270px;width:auto}.hn-group .form-control{min-width:56px!important}#formTitle{font-size:1rem;white-space:nowrap}
+.acts.btn4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;width:100%}
+.sm.ib{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:42px;padding:4px 2px;border-radius:10px;border:1px solid #d3e2ff;font-size:.64rem;line-height:1.1;font-weight:700;min-width:0}
+.sm.ib span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sm.ib .ic{width:17px;height:17px}
+.sm.ib:hover{filter:brightness(.96);box-shadow:var(--sh2)}
+.room{container-type:inline-size}
+.rmenu{position:relative}
+.rmenu-list{position:absolute;top:calc(100% + 6px);left:0;z-index:30;min-width:230px;background:#fff;border:1px solid #d6e4ff;border-radius:14px;box-shadow:0 10px 30px rgba(11,87,208,.18);padding:6px;display:flex;flex-direction:column;gap:2px}
+.rmenu-list[hidden]{display:none}
+.rmenu-list button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;border-radius:10px;padding:9px 12px;font-weight:600;color:#0a1f44}
+.rmenu-list button:hover,.rmenu-list button:focus-visible{background:#eef4ff;color:#0b57d0;outline:none}
+.appbar-logo{width:36px;height:36px;border-radius:10px;object-fit:cover;margin-right:10px;box-shadow:0 0 0 2px rgba(255,255,255,.85);background:#fff}
+.lbl-btns .btn{padding:.2rem .7rem;font-size:.8rem;white-space:nowrap;line-height:1.3}
+.pbk{break-after:page;page-break-after:always}.pbk:last-child{break-after:auto;page-break-after:auto}
+.rv-sec{border:1px solid #d6e4ff;border-radius:12px;padding:8px 10px;margin-bottom:10px;background:#f7faff}.rv-h{font-weight:700;color:#0a3f9e;margin-bottom:4px}
+.rv-qr{display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:700;color:#0a3f9e}
+.rh .acts.btn4{margin-right:-24px;width:calc(100% + 24px)}
+@container (max-width:190px){.acts.btn4{grid-template-columns:repeat(2,minmax(0,1fr))}.sm.ib{min-height:38px;font-size:.66rem}.sm.ib .ic{width:16px;height:16px}}
+.ftab{border-color:var(--fc,#b8d0fb);color:var(--fc,#0a3f9e)}
+.ftab:hover{background:color-mix(in srgb,var(--fc) 10%,#fff)}
+.ftab.on{background:var(--fc);color:#fff;border-color:var(--fc)}
+.fcnt{background:color-mix(in srgb,var(--fc) 15%,#fff)}.ftab.on .fcnt{background:rgba(255,255,255,.25)}
+.fpane{border-top:4px solid var(--fc);border-radius:14px;padding:12px 8px 2px;background:linear-gradient(180deg,color-mix(in srgb,var(--fc) 8%,#fff),#fff 140px)}
+</style>
+<style id="theme-v3">
+/* ===== Theme v3 · Navy #2A3C76 / Coral #FE696E / Periwinkle #89A0CF / Soft #F1F2F6 (การ์ดแบน มินิมอล) ===== */
+:root{--navy:#2A3C76;--navy-d:#1f2c5a;--coral:#FE696E;--peri:#89A0CF;--soft:#F1F2F6;--ink:#1e2747;--muted:#8a93ad;
+ --p:#2A3C76;--pc:#e3e8f5;--sc:#e9edf7;--on-sc:#2A3C76;--g:linear-gradient(#2A3C76,#2A3C76);--sh:0 10px 30px rgba(42,60,118,.08);--sh2:0 4px 14px rgba(42,60,118,.12)}
+body{background:var(--soft)!important;color:var(--ink)}
+.appbar{background:var(--navy)!important;box-shadow:0 8px 24px rgba(42,60,118,.25)!important;border-radius:0 0 26px 26px}
+.card-md{background:#fff!important;border:0!important;box-shadow:var(--sh)!important;border-radius:22px}
+.sec{background:#fff!important;border:1px solid #e8ebf3!important;border-radius:18px}
+#paySec{border:1.5px solid var(--peri)!important}
+.sec h6{color:var(--navy);border:0!important;border-image:none!important;padding-bottom:0;margin-bottom:12px}
+.form-label{color:var(--muted);font-weight:600}
+.form-control,.form-select{background-color:var(--soft)!important;border:1.5px solid transparent!important;border-radius:12px;color:var(--ink)}
+.form-control:hover,.form-select:hover{background-color:#e9ebf2!important}
+.form-control:focus,.form-select:focus{background-color:#fff!important;border-color:var(--peri)!important;box-shadow:0 0 0 4px rgba(137,160,207,.25)!important}
+.btn-primary{background:var(--navy)!important;border:0!important;box-shadow:0 4px 12px rgba(42,60,118,.22)!important;filter:none!important;color:#fff!important}
+.btn-primary:hover,.btn-primary:focus{background:var(--navy-d)!important}
+#save{background:var(--coral)!important;box-shadow:0 6px 16px rgba(254,105,110,.35)!important}#save:hover{background:#f2575d!important}
+.btn-outline-primary{background:#fff!important;border:1.5px solid #d9deeb!important;color:var(--navy)!important}
+.btn-outline-primary:hover{background:var(--navy)!important;color:#fff!important;border-color:var(--navy)!important}
+.btn-outline-danger{border-color:var(--coral)!important;color:var(--coral)!important}.btn-outline-danger:hover{background:var(--coral)!important;color:#fff!important}
+.appbar .btn-outline-danger{color:#fff!important;border-color:rgba(255,255,255,.6)!important;background:transparent!important}
+.appbar .btn-outline-danger:hover{background:var(--coral)!important;border-color:var(--coral)!important}
+.hn-group .input-group-text{background:var(--navy)!important}
+.text-danger{color:var(--coral)!important}.text-primary{color:var(--navy)!important}
+/* ห้องพัก: ว่าง=ม่วงฟ้า · มีผู้ป่วย=กรมท่า · รอห้อง=ส้ม · ล็อก=เทา */
+.room{background:#fff!important;border:0!important;border-left:5px solid var(--peri)!important;box-shadow:0 4px 14px rgba(42,60,118,.07)!important;border-radius:16px}
+.room.bk{border-left-color:var(--navy)!important}
+.room.rsv{border-left-color:#f4a340!important}
+.room.lk{background:#f4f5f8!important;border-left-color:#b9bfcc!important}
+.room.vip{border-right:5px solid #f4a340!important}
+.room .text-success{color:var(--peri)!important}
+.pt{background:var(--soft)!important;border:0!important;border-radius:12px}
+.bed{background:var(--navy)!important}
+.sm.ib{border:1px solid #e6e9f2!important;background:#fff!important;color:var(--navy)}
+.sm.dc{color:var(--coral)!important;background:#fff1f1!important;border-color:#ffd9da!important}
+.sm.cx{color:#d98a1c!important;background:#fff6e8!important;border-color:#fde3bd!important}
+.sm.pr{color:var(--navy)!important;background:#eef1f8!important;border-color:#dfe4f1!important}
+.lockb{color:var(--muted)}
+/* แท็บชั้น: แบบเส้นใต้ (สีประจำชั้น) */
+.ftabs{border-bottom:1px solid #e6e9f2;gap:4px}
+.ftab{border:0!important;border-bottom:3px solid transparent!important;border-radius:0!important;background:transparent!important;color:var(--muted)!important;box-shadow:none!important}
+.ftab:hover{color:var(--fc)!important}
+.ftab.on{color:var(--fc)!important;border-bottom-color:var(--fc)!important}
+.fcnt{background:var(--soft)!important;color:var(--fc)}.ftab.on .fcnt{background:var(--fc)!important;color:#fff}
+.fpane{border-top:0!important;background:transparent!important;padding:8px 2px 2px}
+.floor{color:var(--navy)}
+/* ตาราง */
+.tbl th,.qt th{background:var(--soft)!important;color:var(--muted)!important;font-weight:700}
+.qt tbody td:first-child{border-left:3px solid var(--peri)!important}
+.tbl td,.qt td{border-bottom:1px solid #eef0f5!important}
+/* เมนู / ป๊อปอัป / อื่นๆ */
+.rmenu-list{border:0!important;box-shadow:0 14px 36px rgba(42,60,118,.18)!important;border-radius:18px}
+.rmenu-list button:hover,.rmenu-list button:focus-visible{background:var(--soft)!important;color:var(--navy)!important}
+.rv-sec{background:#fff!important;border:1px solid #e8ebf3!important;border-radius:16px}.rv-h{color:var(--navy)!important}
+.split-box{border:1.5px dashed var(--peri)!important}
+.swal2-popup{border-radius:22px!important}
+#login{background:radial-gradient(600px 360px at 85% 10%,rgba(254,105,110,.22),transparent 70%),radial-gradient(700px 420px at 10% 90%,rgba(137,160,207,.35),transparent 70%),var(--navy)!important}
+#login h4{color:var(--navy)!important}
+.ic{stroke-width:1.8}
+.tscroll::-webkit-scrollbar-thumb,#dash::-webkit-scrollbar-thumb{background:var(--peri)!important}
+/* ===== v3.1: ใกล้แบบตัวอย่างขึ้น ===== */
+#main,#rep{position:relative}
+#main::before,#rep::before{content:'';position:absolute;left:0;right:0;top:0;height:240px;background:var(--navy);border-radius:0 0 40px 40px;z-index:0}
+#main>*,#rep>*{position:relative;z-index:1}
+.appbar{background:var(--navy)!important;box-shadow:none!important;border-radius:0!important}
+.dhead{border-bottom:1px solid #e6e9f2;padding-bottom:0!important;align-items:flex-end!important}
+.dtab{background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);font-family:'Prompt','Sarabun',sans-serif;font-weight:600;font-size:1rem;padding:8px 16px 9px;display:inline-flex;align-items:center;gap:6px;margin-bottom:-1px;cursor:pointer}
+.dtab:hover{color:var(--navy)}.dtab.on{color:var(--navy);border-bottom-color:var(--coral)}
+.dhead .btn-outline-danger{margin-bottom:6px}
+#cancel{background:var(--navy)!important;color:#fff!important;border:0!important;box-shadow:0 4px 12px rgba(42,60,118,.22)}
+.card-md{box-shadow:0 12px 34px rgba(42,60,118,.10)!important}
+/* ฟอนต์: หัวข้อ = Prompt (ทรงเรขาคณิต) · เนื้อหา = Sarabun · ใบพิมพ์ทุกแบบ = Sarabun */
+body,button,input,select,textarea,.swal2-popup{font-family:'Sarabun',sans-serif!important}
+h1,h2,h3,h4,h5,h6,.swal2-title,.rv-h,.ftab,.rh b,th,#formTitle{font-family:'Prompt','Sarabun',sans-serif!important;font-weight:600!important;letter-spacing:.1px}
+body{font-size:15px}
+.ftab{font-size:1.2rem!important;padding:10px 8px 9px!important}.ftab .ic{width:1.1em;height:1.1em}.fcnt{font-size:.8rem!important;padding:2px 9px!important;vertical-align:.12em}
+.form-label{font-weight:500!important}
+#pa,#pa *{font-family:'Sarabun',sans-serif}
+@media print{body{background:#fff!important}.card-md{box-shadow:none!important}}
+</style>
+</head>
+<body>
+
+<div id="login" class="screen" style="display:flex">
+  <div class="card-md">
+    <div class="text-center mb-3"><img class="logo" alt="Logo" style="width:72px;height:72px;border-radius:18px;object-fit:cover"></div>
+    <h4 class="text-center fw-bold">เข้าสู่ระบบ</h4>
+    <p class="text-center text-secondary">ระบบจองห้องพัก รพ.ศุภมิตร-รักษ์สกล</p>
+    <label class="form-label" for="role">แผนก</label>
+    <select id="role" class="form-select mb-3">
+      <option value="ward">แผนกผู้ป่วยใน (Ward)</option><option value="finance">แผนกการเงิน (Finance)</option><option value="records">แผนกเวชระเบียน</option><option value="admission">แผนกจอง</option>
+    </select>
+    <label class="form-label" for="pin">รหัสผ่าน (PIN)</label>
+    <div class="input-group mb-3"><input type="password" id="pin" class="form-control" maxlength="4" inputmode="numeric" autocomplete="off" placeholder="****" style="border-radius:var(--r) 0 0 var(--r)"><button type="button" class="btn btn-outline-primary d-flex align-items-center" id="pinEye" onclick="togglePin()" aria-label="แสดงรหัสผ่าน" aria-pressed="false" title="แสดง/ซ่อนรหัสผ่าน" style="border-radius:0 var(--r) var(--r) 0;border-width:2px;padding:0 .9rem"></button></div>
+    <button class="btn btn-primary w-100" onclick="login()"><i data-ic="login"></i> เข้าสู่ระบบ</button>
+  </div>
+</div>
+
+<div id="main" class="screen container-fluid px-4 pb-4">
+  <div class="appbar no-print d-flex justify-content-between align-items-center" style="margin:0 -1.5rem 1.2rem">
+    <h5 class="fw-bold mb-0 d-flex align-items-center flex-wrap"><img class="logo appbar-logo" alt="โลโก้ รพ."> ระบบจองห้องพัก <small class="text-secondary fw-normal">รพ.ศุภมิตร-รักษ์สกล</small></h5>
+    <button class="btn btn-sm btn-outline-danger" onclick="logout()"><i data-ic="logout"></i> ออกจากระบบ</button>
+  </div>
+  <div class="row g-4">
+    <div class="col-lg-4 no-print" id="formCol">
+      <div class="card-md" id="formBox">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3"><h5 class="fw-bold mb-0" id="formTitle"><i data-ic="note"></i> ลงข้อมูลการจองห้องพัก</h5><div class="input-group hn-group"><span class="input-group-text">HN</span><input class="form-control" id="hn" form="f" required placeholder="ระบุ HN" autocomplete="off" style="min-width:0"><button class="btn btn-primary px-2 text-nowrap" type="button" onclick="findHN()" style="border-radius:0 var(--r) var(--r) 0;font-size:.85rem"><i data-ic="search"></i> ค้นหา/เพิ่ม</button></div></div>
+        <form id="f" onsubmit="submitForm(event)">
+          <div class="sec"><h6><i data-ic="user"></i> ข้อมูลผู้ป่วย</h6>
+            <div class="row g-2 mb-2">
+              <div class="col-8"><label class="form-label" for="name">ชื่อ - นามสกุล</label><input class="form-control" id="name" required></div>
+              <div class="col-4"><label class="form-label" for="age">อายุ (ปี)</label><input type="number" class="form-control" id="age" required></div>
+            </div>
+            <div><label class="form-label" for="rights">สิทธิ์ผู้ป่วย</label><input class="form-control" id="rights" list="rightsList" placeholder="เช่น บัตรทอง / ประกันสังคม" autocomplete="off"><datalist id="rightsList"><option value="ชำระเงินเอง"><option value="บัตรทอง (UC)"><option value="ประกันสังคม"><option value="ข้าราชการ"><option value="ประกันสุขภาพ"><option value="ต่างด้าว"></datalist></div></div>
+          <div class="sec"><h6><i data-ic="building"></i> ข้อมูลการเข้าพัก</h6>
+            <label class="form-label" for="date">วันที่เข้าพัก</label><input type="date" class="form-control mb-3" id="date" required onchange="roomOpts()">
+            <div class="row g-2 mb-3" id="roomRow"><div class="col-6"><label class="form-label" for="room">ห้อง</label><select class="form-select" id="room" required onchange="bedOpts()"></select></div>
+            <div class="col-6"><label class="form-label" for="bed">เตียง</label><select class="form-select" id="bed"></select></div></div>
+            <div class="row g-2"><div class="col-6"><label class="form-label" for="doc">แพทย์เจ้าของไข้</label><select class="form-select" id="doc" required></select></div>
+            <div class="col-6"><label class="form-label" for="agent">ผู้รับจอง</label><select class="form-select" id="agent" required></select></div></div></div>
+          <div class="sec" id="paySec" style="border:2px solid var(--p)"><h6><i data-ic="card"></i> ข้อมูลการชำระเงิน</h6>
+            <label class="form-label" for="pay">รูปแบบการชำระเงิน</label><select class="form-select mb-3" id="pay" onchange="payChange()"></select>
+            <div id="bill"></div><hr>
+            <div class="d-flex justify-content-between align-items-center"><div class="fw-bold">ยอดรวมสุทธิ:<br><small class="fw-normal text-secondary" id="totTxt">ศูนย์บาทถ้วน</small></div><div class="fs-3 fw-bold text-danger" id="tot">0.00</div></div>
+            <div id="splitBox" class="d-none mt-3 p-3 rounded-4 split-box">
+              <div class="fw-bold mb-2" style="color:#0842a0"><i data-ic="card"></i> ระบุยอดชำระ (โอน + เงินสด)</div>
+              <div class="row g-2">
+                <div class="col-6"><label class="form-label" for="pT"><i data-ic="bank"></i> ยอดโอน</label><div class="input-group split-in t"><span class="input-group-text">฿</span><input type="number" inputmode="decimal" min="0" step="0.01" class="form-control" id="pT" placeholder="0.00" oninput="splitEdit('T')"></div></div>
+                <div class="col-6"><label class="form-label" for="pC"><i data-ic="cash"></i> ยอดเงินสด</label><div class="input-group split-in c"><span class="input-group-text">฿</span><input type="number" inputmode="decimal" min="0" step="0.01" class="form-control" id="pC" placeholder="0.00" oninput="splitEdit('C')"></div></div>
+              </div>
+              <div class="small mt-2 fw-bold" id="splitInfo"></div></div></div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary flex-grow-1" id="save"><i data-ic="save"></i> บันทึกการจอง</button>
+            <button type="button" class="btn btn-outline-secondary d-none" id="cancel" onclick="resetForm()"><i data-ic="x"></i> ยกเลิก</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-8" id="dashCol">
+      <div class="card-md">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2 no-print">
+          <h5 class="fw-bold mb-0"><i data-ic="board"></i> ระบบจัดการหน้าเคาน์เตอร์</h5>
+          <div class="rmenu" id="rmenu">
+            <button type="button" class="btn btn-sm btn-primary" id="rmenuBtn" aria-haspopup="true" aria-expanded="false" onclick="toggleRMenu()"><i data-ic="table"></i> รายงาน <i data-ic="chev"></i></button>
+            <div class="rmenu-list" id="rmenuList" role="menu" hidden>
+              <button type="button" role="menuitem" onclick="rmGo('report')"><i data-ic="table"></i> รายงานตาราง</button>
+              <button type="button" role="menuitem" onclick="rmGo('queue')"><i data-ic="list"></i> รายงานคิว</button>
+              <button type="button" role="menuitem" id="btnFin" onclick="rmGo('finance')"><i data-ic="money"></i> ยอดเงิน</button>
+              <button type="button" role="menuitem" onclick="rmGo('dc')"><i data-ic="dc"></i> รายงาน D/C</button>
+              <button type="button" role="menuitem" onclick="rmGo('cancel')"><i data-ic="cancel"></i> ยกเลิกผ่าตัด</button>
+              <button type="button" role="menuitem" onclick="rmGo('label')"><i data-ic="sign"></i> ป้ายหน้าห้อง</button>
+            </div>
+          </div>
+        </div>
+        <div class="text-center my-4" id="spin" style="display:none"><div class="spinner-border text-primary"></div></div>
+        <div id="dash"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="rep" class="screen container-fluid p-4">
+  <div class="card-md">
+    <div class="ph"><div><h3 class="fw-bold mb-1" id="rTitle"></h3><p class="mb-0">รพ.ศุภมิตร-รักษ์สกล | วันที่: <b id="rDateTxt"></b></p></div><img class="logo" alt="Logo" style="width:18mm;height:18mm;border-radius:8px;object-fit:cover"></div>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3 no-print">
+      <button class="btn btn-sm btn-outline-dark" onclick="show('main')"><i data-ic="back"></i> หน้าหลัก</button>
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <div id="rBatch" class="d-flex flex-wrap gap-2"></div>
+        <input type="date" class="form-control w-auto" id="rDate" onchange="renderReport()" aria-label="วันที่รายงาน">
+        <button class="btn btn-sm btn-outline-primary" id="rAll" onclick="$('rDate').value='';renderReport()"><i data-ic="list"></i> ดูทั้งหมด</button>
+        <select class="form-select form-select-sm w-auto" id="paper" onchange="paper=this.value;setPage(paper)" aria-label="ขนาดกระดาษ"></select>
+        <button class="btn btn-sm btn-primary" onclick="window.print()"><i data-ic="print"></i> พิมพ์</button>
+      </div>
+    </div>
+    <div class="table-responsive tscroll"><table class="table table-hover align-middle tbl"><thead id="rHead"></thead><tbody id="rBody"></tbody><tfoot id="rFoot"></tfoot></table></div>
+  </div>
+</div>
+<div id="pa"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today = () => { const d = new Date(); return new Date(d - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); };
+const fd = s => { const d = new Date(s); return isNaN(d) ? s : `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getFullYear()+543).slice(-2)}`; };
+const money = n => (+n || 0).toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2});
+const IC = {chev: '<path d="M6 9l6 6 6-6"/>', hosp: '<path d="M3 21h18M5 21V5h14v16M10 9h4M12 7v4M10 21v-4h4v4"/>', note: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>', building: '<path d="M3 21h18M5 21V5h14v16M9 9h2M13 9h2M9 13h2M13 13h2M10 21v-4h4v4"/>', card: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>', bank: '<path d="M3 10h18L12 4 3 10zM5 10v8M9 10v8M15 10v8M19 10v8M3 21h18"/>', cash: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/>', print: '<path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="7" rx="1"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>', board: '<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>', table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/>', list: '<path d="M8 6h13M8 12h13M8 18h13M4 6h.01M4 12h.01M4 18h.01"/>', money: '<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .9-3 2s1.3 1.7 3 2 3 .9 3 2-1.3 2-3 2c-1.4 0-2.5-.5-3-1.5M12 6v2M12 16v2"/>', dc: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>', cancel: '<circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/>', sign: '<rect x="3" y="4" width="18" height="11" rx="2"/><path d="M12 15v6M8 21h8M7 9h10"/>', badge: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M10 3v3h4V3M9 11h6M9 15h6"/>', doc: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>', back: '<path d="M15 18l-6-6 6-6"/>', logout: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l-5-5 5-5M5 12h12"/>', login: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/>', save: '<path d="M5 12l5 5L20 7"/>', check: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>', search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>', bed: '<path d="M3 18V7M21 18v-5a3 3 0 0 0-3-3h-8v6M3 15h18"/><circle cx="6.5" cy="11.5" r="1.5"/>', clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', layers: '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>', unlock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/>', eye: '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>', upload: '<path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 21h14"/>', trash: '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/>', phone: '<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/>', x: '<path d="M18 6L6 18M6 6l12 12"/>'};
+const ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${IC[n] || ''}</svg>`;
+const FC = ['#2A3C76', '#5d78c0', '#FE696E', '#f4a340'];   // สีประจำแท็บ: ชั้น 2B · ชั้น 2 · ชั้น 3 · รอห้องสำรอง
+const LOGO = 'https://i.postimg.cc/pXHW7T4D/Squre-profile-pink-bg.jpg';
+const QR = "https://i.postimg.cc/Vkz5S5dX/QR-r-ks'-skl.jpg";
+const ROLES = ['ward', 'finance', 'records', 'admission'];
+const SOLO = 'เหมาห้อง/เตียงเดี่ยว', WAIT = 'รอจัดห้อง', RSV = 'รอห้องสำรอง';
+const FLOORS = [['ชั้น 2B', ['201','202','203','204','205','206','207','208','209','210','211','212','213','214']],
+  ['ชั้น 2', ['VIP 1201','1202','1203','1204','1205','1206','1207','1208','VIP 1209']], ['ชั้น 3', ['VIP 301','302','303','304','305','306','307','308','VIP 309']]];
+const DOCS = ['นายแพทย์ปวีณ ภูจันทึก ว.27944','นายแพทย์สุวัฒน์ คูสกุล ว.13493','แพทย์หญิงอโนชา อินทรพาณิชย์ ว.42480','ญาติ','-'];
+const AGENTS = ['นางสาวสง่า พัฒนโพธิ์','นางสาวชินรัตน์ พองพรหม','นางสาวชวาลณัฎฐ์ เรืองหัสดี','นายณวัตร ชาชุมวงศ์','แผนกเวชระเบียน'];
+const REC_AGENT = 'แผนกเวชระเบียน';
+const PAYS = ['โอน','รูดบัตร','เงินสด','โอน+เงินสด','ค้างชำระ','ตามสิทธิ์','เบิกประกัน','-'];
+const ITEMS = [['ค่าผ่าตัดต้อกระจก(Monofocal)',20000,''],['ค่า LENS Monofocal Clareon',35000,17000],['ค่าผ่าตัด Excision Pterigium',8000,''],
+  ['ค่าผ่าตัด Excision Pterigium c Graft',12000,''],['ค่าห้องพิเศษ',1500,1500],['ญาติ (คนละ 200)',200,200]];
+const PAPERS = [['auto','ตามเครื่องพิมพ์'],['A4 portrait','A4 แนวตั้ง'],['A4 landscape','A4 แนวนอน'],['A5 portrait','A5 แนวตั้ง'],['A5 landscape','A5 แนวนอน'],
+  ['A3 portrait','A3 แนวตั้ง'],['A3 landscape','A3 แนวนอน'],['letter portrait','Letter'],['legal portrait','Legal']];
+
+let DATA = [], LOCKED = [], editing = null, baseAmt = 0, role = '', busy = 0, paper = 'auto', cur = 'main', floorTab = 0;
+const isWait = b => b.room === WAIT, isRsv = b => b.room === RSV, isDC = b => (b.room || '').startsWith('D/C|'), isCX = b => (b.room || '').startsWith('CX|'), isOut = b => isDC(b) || isCX(b);
+const cxDate = b => isCX(b) ? b.room.split('|')[1] : '';
+const cxList = d => DATA.filter(b => isCX(b) && (!d || cxDate(b) === d)).sort((a, b) => cxDate(b).localeCompare(cxDate(a)));
+// โอน+เงินสด เก็บในช่อง Payment เดิมเป็นข้อความ "โอน+เงินสด (โอน X + สด Y)" ไม่ต้องเพิ่มคอลัมน์
+const SPLIT = 'โอน+เงินสด';
+const mkPay = (m, t, c) => m === SPLIT ? `${SPLIT} (โอน ${t} + สด ${c})` : m;
+const parsePay = b => { const x = /^โอน\+เงินสด \(โอน ([\d.]+) \+ สด ([\d.]+)\)$/.exec(b.payment || ''), a = +b.amount || 0;
+  return x ? {m: SPLIT, t: +x[1], c: +x[2]} : {m: b.payment || '-', t: b.payment === 'โอน' ? a : 0, c: b.payment === 'เงินสด' ? a : 0}; };
+const splitSub = b => { const p = parsePay(b); return p.m === SPLIT ? `<br><small>โอน ${money(p.t)}<br>สด ${money(p.c)}</small>` : ''; };
+const payTxt = b => { const p = parsePay(b); return p.m === SPLIT ? `${SPLIT} (โอน ${money(p.t)} / สด ${money(p.c)})` : esc(p.m); };
+const inFin = b => (+b.amount > 0) || (!isWait(b) && realRoom(b) !== WAIT);   // รอห้องที่ชำระเงินแล้วก็นับในรายงานยอดเงิน
+const realRoom = b => isOut(b) ? b.room.split('|')[2] : b.room;
+const active = () => DATA.filter(b => !isWait(b) && !isRsv(b) && !isOut(b));
+const maxBeds = r => r === '210' || r === '214' ? 9 : r === '213' ? 4 : 8;
+
+// ---------- Apps Script (Promise + timeout; อ่านซ้ำได้ ส่วนเขียนไม่ซ้ำ) ----------
+// ---------- API ของ Apps Script (หน้าเว็บนี้โฮสต์บน GitHub Pages) ----------
+const API_URL = 'https://script.google.com/macros/s/วาง_DEPLOYMENT_ID_ตรงนี้/exec';   // ← ใส่ URL ของ Web app ที่ deploy แล้ว
+let TOKEN = sessionStorage.getItem('rk_token') || '';
+async function api(action, body = {}) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 30000);
+  let res;
+  try {
+    const r = await fetch(API_URL, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify({action, token: TOKEN, ...body}), signal: ctl.signal, redirect: 'follow'});
+    res = await r.json();
+  } catch (e) { const err = new Error(e.name === 'AbortError' ? 'หมดเวลาเชื่อมต่อ กรุณาลองใหม่' : 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ตรวจสอบอินเทอร์เน็ต'); err.code = 'NET'; throw err; }
+  finally { clearTimeout(t); }
+  if (!res || !res.ok) { const err = new Error((res && res.error) || 'เกิดข้อผิดพลาด'); err.code = res && res.code; if (err.code === 'AUTH' && action !== 'login') sessionExpired(); throw err; }
+  return res.data;
+}
+const gas = (name, ...args) => api(name, {args});
+function sessionExpired() {
+  const was = !!role; TOKEN = ''; sessionStorage.removeItem('rk_token'); sessionStorage.removeItem('rk_role');
+  if (was) { logout(true); msg('warning', 'หมดเวลาการใช้งาน', 'กรุณาเข้าสู่ระบบใหม่'); }
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const gasRead = async (n, ...a) => { try { return await gas(n, ...a); } catch (e) { if (e.code === 'AUTH') throw e; await sleep(800); return gas(n, ...a); } };
+const msg = (icon, title, text) => Swal.fire({icon, title, text, confirmButtonText:'ตกลง', confirmButtonColor:'#2A3C76', customClass:{popup:'rounded-4'}});
+const toast = t => Swal.fire({icon:'success', title:'สำเร็จ', text:t, timer:1500, showConfirmButton:false, customClass:{popup:'rounded-4'}});
+const ask = (title, text, ok) => Swal.fire({title, text, icon:'warning', showCancelButton:true, confirmButtonColor:'#FE696E', cancelButtonColor:'#8a93ad', confirmButtonText:ok, cancelButtonText:'ยกเลิก', customClass:{popup:'rounded-4'}}).then(r => r.isConfirmed);
+async function seq(items, fn) { let ok = 0; for (const i of items) { try { await fn(i); ok++; } catch (e) { console.error(e); } } return ok; }
+
+// ---------- เริ่มต้น ----------
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('i[data-ic]').forEach(e => { e.outerHTML = ic(e.dataset.ic); });
+  document.querySelectorAll('.logo').forEach(i => i.src = LOGO);
+  const opts = (id, arr, first) => $(id).innerHTML = (first || '') + arr.map(v => `<option>${esc(v)}</option>`).join('');
+  opts('doc', DOCS, '<option value="" disabled selected>เลือกแพทย์...</option>');
+  opts('agent', AGENTS, '<option value="" disabled selected>เลือกเจ้าหน้าที่...</option>');
+  opts('pay', PAYS);
+  $('paper').innerHTML = PAPERS.map(p => `<option value="${p[0]}">${p[1]}</option>`).join('');
+  $('bill').innerHTML = '<label class="form-label text-secondary">เลือกรายการเรียกเก็บ (พิมพ์ใบแจ้ง)</label>' + ITEMS.map((it, i) =>
+    `<div class="row g-2 mb-2 align-items-center"><div class="col-8"><div class="form-check"><input class="form-check-input" type="checkbox" id="c${i}" onchange="billToggle(${i})"><label class="form-check-label" for="c${i}" style="font-size:.9rem">${i+1}. ${it[0]}</label></div></div><div class="col-4"><input type="number" class="form-control form-control-sm" id="a${i}" placeholder="ส่วนเกิน" disabled oninput="calc()"></div></div>`).join('');
+  $('date').value = $('rDate').value = today();
+  $('pin').addEventListener('keypress', e => { if (e.key === 'Enter') login(); });
+  $('pinEye').innerHTML = EYE;
+  $('hn').addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); findHN(); } });
+  setPage('auto'); roomOpts();
+  const sr = sessionStorage.getItem('rk_role'); if (TOKEN && ROLES.includes(sr)) enterAs(sr);
+});
+function setPage(v) { $('pg').textContent = `@page{size:${v};margin:${v === 'auto' ? '10mm' : v.includes('mm') ? '0' : '8mm'}}`; }
+window.onafterprint = () => { document.body.classList.remove('pa'); setPage(paper); };
+
+const SVG = d => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const EYE = SVG('<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>');
+const EYE_OFF = SVG('<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>');
+function togglePin() {
+  const i = $('pin'), show = i.type === 'password';
+  i.type = show ? 'text' : 'password'; $('pinEye').innerHTML = show ? EYE_OFF : EYE;
+  $('pinEye').setAttribute('aria-pressed', show); $('pinEye').setAttribute('aria-label', show ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'); i.focus();
+}
+function hidePin() { $('pin').type = 'password'; $('pinEye').innerHTML = EYE; $('pinEye').setAttribute('aria-pressed', 'false'); $('pinEye').setAttribute('aria-label', 'แสดงรหัสผ่าน'); }
+async function login() {
+  const r = $('role').value, pin = $('pin').value.trim(), btn = document.querySelector('#login .btn-primary');
+  if (!pin) { $('pin').focus(); return; }
+  if (/วาง_DEPLOYMENT_ID/.test(API_URL)) return msg('error', 'ยังไม่ได้ตั้งค่า API_URL', 'ใส่ URL ของ Apps Script Web app ในไฟล์ index.html ก่อน');
+  btn.disabled = true;
+  try { const d = await api('login', {role: r, pin}); TOKEN = d.token; sessionStorage.setItem('rk_token', TOKEN); sessionStorage.setItem('rk_role', r); enterAs(r); }
+  catch (e) { $('pin').value = ''; $('pin').focus(); msg('error', e.code === 'BAD_PIN' ? 'รหัสผ่านไม่ถูกต้อง' : 'เข้าสู่ระบบไม่สำเร็จ', e.code === 'BAD_PIN' ? 'กรุณาลองใหม่อีกครั้ง' : e.message); }
+  finally { btn.disabled = false; }
+}
+function enterAs(r) {
+  role = r; $('pin').value = ''; hidePin();
+  const canBook = r === 'admission' || r === 'records';
+  $('agent').disabled = r === 'records';
+  $('formCol').style.display = canBook ? '' : 'none'; $('paySec').style.display = r === 'records' ? 'none' : '';
+  $('dashCol').className = canBook ? 'col-lg-8' : 'col-lg-12';
+  $('btnFin').style.display = r === 'ward' || r === 'records' ? 'none' : '';
+  resetForm();
+  show('main'); refresh();
+}
+function logout(expired) {
+  if (!expired && TOKEN) api('logout').catch(() => {});
+  TOKEN = ''; sessionStorage.removeItem('rk_token'); sessionStorage.removeItem('rk_role');
+  role = ''; floorTab = 0; hidePin(); $('pin').value = ''; document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); $('login').style.display = 'flex'; }
+
+// ---------- โหลด/ซิงค์ ----------
+function apply(d, force) {
+  const b = d.bookings || [], l = d.lockedRooms || [];
+  if (!force && JSON.stringify([b, l]) === JSON.stringify([DATA, LOCKED])) return;
+  DATA = b; LOCKED = l; draw(); roomOpts();
+}
+async function refresh() {
+  $('spin').style.display = 'block';
+  try { apply(await gasRead('getInitialData'), true); } catch (e) { if (e.code !== 'AUTH') msg('error', 'โหลดข้อมูลไม่สำเร็จ', e.message || String(e)); }
+  finally { $('spin').style.display = 'none'; }
+}
+let timer;
+async function tick() {
+  if (!document.hidden && role && !busy && editing === null && !$('save').disabled) { try { apply(await gas('getInitialData')); } catch (e) { console.warn(e); } }
+  timer = setTimeout(tick, 30000);
+}
+timer = setTimeout(tick, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && role) { clearTimeout(timer); tick(); } });
+
+function show(v) {
+  cur = v; document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+  if (v === 'main') { $('main').style.display = 'block'; draw(); } else { $('rep').style.display = 'block'; renderReport(); }
+}
+const draw = () => cur === 'main' ? dashboard() : renderReport();
+
+// ---------- ห้อง / เตียง ----------
+function used(room, date) { return active().filter(b => b.room === room && b.date === date && b.id !== editing); }
+function roomOpts() {
+  if (role === 'records') { $('room').innerHTML = `<option value="${WAIT}" selected>${WAIT}</option>`; bedOpts(); return; }   // เวชระเบียน = คิวรอจัดห้องอัตโนมัติ
+  const date = $('date').value, keep = $('room').value;
+  let h = `<option value="" disabled ${keep ? '' : 'selected'}>เลือกห้อง...</option><option value="${WAIT}" ${keep === WAIT ? 'selected' : ''}>${WAIT}</option><option value="${RSV}" ${keep === RSV ? 'selected' : ''}>${RSV}</option>`;
+  for (const [fl, rooms] of FLOORS) {
+    const o = rooms.filter(r => {
+      if (LOCKED.includes(r)) return false;
+      if (editing && keep === r) return true;
+      const u = used(r, date).map(b => b.bed);
+      return !(u.includes(SOLO) || u.filter(x => (x || '').startsWith('เตียง')).length >= maxBeds(r));
+    }).map(r => `<option ${keep === r ? 'selected' : ''}>${r}</option>`).join('');
+    if (o) h += `<optgroup label="${fl}">${o}</optgroup>`;
+  }
+  $('room').innerHTML = h; bedOpts();
+}
+function bedOpts() {
+  const room = $('room').value, keep = $('bed').value;
+  if (!room || room === WAIT || room === RSV) { $('bed').innerHTML = `<option>${SOLO}</option><option>-</option>`; if (room === WAIT || room === RSV) $('bed').value = '-'; return; }
+  const u = used(room, $('date').value).map(b => b.bed);
+  let beds = [SOLO, ...Array.from({length:maxBeds(room)}, (_, i) => `เตียง ${i+1}`), '-'].filter(b => !u.includes(b));
+  if (u.length) beds = beds.filter(b => b !== SOLO);
+  $('bed').innerHTML = beds.map(b => `<option>${b}</option>`).join('');
+  if (beds.includes(keep)) $('bed').value = keep;
+}
+
+// ---------- ยอดเงิน ----------
+function THB(n) {
+  const d = ['ศูนย์','หนึ่ง','สอง','สาม','สี่','ห้า','หก','เจ็ด','แปด','เก้า'], u = ['','สิบ','ร้อย','พัน','หมื่น','แสน','ล้าน'];
+  const rd = s => [...s].map((c, i) => { const v = +c, p = s.length - i - 1; return !v ? '' : p === 1 && v === 1 ? 'สิบ' : p === 1 && v === 2 ? 'ยี่สิบ' : p === 0 && v === 1 && s.length > 1 && s[i-1] !== '0' ? 'เอ็ด' : d[v] + u[p]; }).join('');
+  if (!n) return 'ศูนย์บาทถ้วน';
+  const [b, s] = n.toFixed(2).split('.'); return rd(b) + 'บาท' + (s === '00' ? 'ถ้วน' : rd(s) + 'สตางค์');
+}
+function typeChange() { $('roomRow').style.display = role === 'records' ? 'none' : ''; roomOpts(); }
+function assignRoom(id) { editBooking(id); $('room').value = ''; bedOpts(); $('room').focus(); }
+function payChange() {
+  const on = $('pay').value === SPLIT; $('splitBox').classList.toggle('d-none', !on);
+  if (on && anyItem() && !$('pT').value && !$('pC').value) { $('pT').value = total(); $('pC').value = 0; } calc();
+}
+function splitEdit(src) {
+  if (anyItem()) { const t = total(), v = x => +x.value || 0; if (src === 'T') $('pC').value = Math.max(0, +(t - v($('pT'))).toFixed(2)); else $('pT').value = Math.max(0, +(t - v($('pC'))).toFixed(2)); }
+  calc();
+}
+function splitInfo() {
+  const sum = (+$('pT').value || 0) + (+$('pC').value || 0), t = total();
+  $('splitInfo').innerHTML = !anyItem() ? `<span class="text-primary">ยอดรวม = โอน + สด = ${money(sum)}</span>`
+    : Math.abs(sum - t) < 0.01 ? `<span class="text-success">${ic('check')} โอน + สด = ${money(sum)}</span>` : `<span class="text-danger">โอน + สด = ${money(sum)} (ต้องเท่ากับยอดรวม ${money(t)})</span>`;
+}
+function billToggle(i) {
+  const c = $('c' + i), a = $('a' + i); a.disabled = !c.checked;
+  if (c.checked) { if (ITEMS[i][2] && !a.value) a.value = ITEMS[i][2]; a.focus(); } else a.value = '';
+  calc();
+}
+const anyItem = () => ITEMS.some((_, i) => $('c' + i).checked);
+function total() {
+  if (anyItem()) return ITEMS.reduce((s, _, i) => s + ($('c' + i).checked ? +$('a' + i).value || 0 : 0), 0);
+  if ($('pay').value === SPLIT) return (+$('pT').value || 0) + (+$('pC').value || 0);   // ไม่ติ๊กรายการ: ยอดรวม = โอน + สด
+  return editing ? baseAmt : 0;
+}
+function calc() {
+  if ($('pay').value === SPLIT && anyItem()) $('pC').value = Math.max(0, +(total() - (+$('pT').value || 0)).toFixed(2));   // ติ๊กรายการ: เงินสด = ยอดคงเหลือหลังโอน
+  const t = total(); $('tot').textContent = money(t); $('totTxt').textContent = THB(t); splitInfo();
+}
+
+// ---------- ฟอร์ม ----------
+async function findHN() {
+  const hn = $('hn').value.trim(); if (!hn) return msg('warning', 'แจ้งเตือน', 'กรุณาระบุ HN ก่อนกดค้นหา');
+  let p = DATA.find(b => b.hn === hn); if (p) p = {name: p.patient, age: p.age, rights: p.rights};
+  else {
+    Swal.fire({title:'ค้นหาฐานข้อมูล...', allowOutsideClick:false, didOpen:() => Swal.showLoading()});
+    try { const f = (await gasRead('getPatientDatabase')).find(x => x.hn === hn); p = f && {name: f.name, age: f.age, rights: f.rights}; Swal.close(); }
+    catch (e) { return msg('error', 'ข้อผิดพลาด', e.message); }
+  }
+  if (!p) { msg('info', 'ไม่พบประวัติ HN นี้', 'กรอกชื่อ อายุ และสิทธิ์ เพื่อเพิ่มเป็นผู้ป่วยใหม่ได้เลย'); setTimeout(() => $('name').focus(), 50); }
+  $('name').value = p ? p.name : ''; $('age').value = p ? p.age : ''; $('rights').value = p ? (p.rights || '') : '';
+}
+// ---------- ตรวจสอบข้อมูลก่อนบันทึก (ป๊อปอัป) ----------
+function reviewBooking(f) {
+  const rec = role === 'records', pp = parsePay(f), bed = f.bed && f.bed !== SOLO && f.bed !== '-' ? ` (${esc(f.bed)})` : '';
+  const row = (k, v, strong) => `<tr><th style="width:40%;font-weight:600;color:#43474e;padding:3px 8px;text-align:left;vertical-align:top">${k}</th><td style="padding:3px 8px;text-align:left${strong ? ';font-weight:700;font-size:1.15rem;color:#b3261e' : ''}">${v}</td></tr>`;
+  const sec = (i, title, rows) => `<div class="rv-sec"><div class="rv-h">${ic(i)} ${title}</div><table style="width:100%;font-size:.95rem">${rows}</table></div>`;
+  const items = ITEMS.map((it, i) => $('c' + i).checked ? [it[0], +$('a' + i).value || 0] : null).filter(Boolean);
+  const qrAmt = pp.m === 'โอน' ? +f.amount || 0 : pp.m === SPLIT ? pp.t : 0;
+  let html = sec('user', 'ข้อมูลผู้ป่วย', row('HN', esc(f.hn) || '-') + row('ชื่อ-นามสกุล', esc(f.patient)) + row('อายุ', `${esc(f.age)} ปี`) + row('สิทธิ์', esc(f.rights) || '-'))
+    + sec('building', 'ข้อมูลการจอง', row('วันที่เข้าพัก', fd(f.date)) + row('ห้อง / เตียง', esc(f.room) + bed) + row('แพทย์เจ้าของไข้', esc(f.surgeon) || '-') + row('ผู้รับจอง', esc(f.agent) || '-'));
+  if (!rec) html += sec('card', 'ข้อมูลการชำระเงิน', row('รูปแบบการชำระ', esc(pp.m))
+      + (items.length ? items.map(([n, v]) => row(esc(n), `${money(v)} บาท`)).join('') : row('รายการเรียกเก็บ', '-'))
+      + (pp.m === SPLIT ? row('แบ่งชำระ', `โอน ${money(pp.t)} + เงินสด ${money(pp.c)}`) : '') + row('ยอดชำระ', `${money(f.amount)} บาท`, true));
+  if (!rec && qrAmt > 0) html += `<div class="rv-qr">${tqrCard(qrAmt, '300px', '210px', '14px')}<div>${ic('phone')} สแกนจ่าย ${money(qrAmt)} บาท</div></div>`;
+  return Swal.fire({title: `${ic('doc')} ตรวจสอบข้อมูลก่อนบันทึก`, html: `<div class="text-start">${html}</div>`, width: 620,
+    showCancelButton: true, reverseButtons: true, allowOutsideClick: false, confirmButtonColor: '#FE696E', cancelButtonColor: '#2A3C76',
+    confirmButtonText: `${ic('save')} ปิด · บันทึกเข้าระบบ`, cancelButtonText: `${ic('edit')} กลับไปแก้ไข`, customClass: {popup: 'rounded-4'}}).then(r => !!r.isConfirmed);
+}
+async function submitForm(e) {
+  e.preventDefault(); const room = $('room').value;
+  if (LOCKED.includes(room)) return msg('error', 'ข้อผิดพลาด', `ห้อง ${room} ติด Admit`);
+  const tr = +$('pT').value || 0, cs = +$('pC').value || 0;
+  if (role !== 'records' && $('pay').value === SPLIT) {
+    if (!anyItem() && tr + cs <= 0) return msg('warning', 'กรุณากรอกยอด', 'ระบุยอดโอนและยอดเงินสด');
+    if (anyItem() && Math.abs(tr + cs - total()) > 0.009) return msg('error', 'ยอดไม่ตรง', 'ยอดโอน + เงินสด ต้องเท่ากับยอดรวมสุทธิ');
+  }
+  const f = {id: editing || 'b' + Date.now(), room, bed: $('bed').value, date: $('date').value, hn: $('hn').value.trim(), patient: $('name').value.trim(),
+    age: $('age').value, rights: $('rights').value.trim(), surgeon: $('doc').value, agent: $('agent').value, payment: mkPay($('pay').value, tr, cs), amount: total(),
+    items: ITEMS.map((_, i) => $('c' + i).checked ? `${i}=${+$('a' + i).value || 0}` : '').filter(Boolean).join(';')};
+  if (role === 'records') { const o = editing ? DATA.find(b => b.id === editing) : null; Object.assign(f, {room: o ? o.room : WAIT, bed: o ? o.bed : '-', agent: REC_AGENT, payment: o ? o.payment : '-', amount: o ? (+o.amount || 0) : 0, items: o ? (o.items || '') : ''}); }
+  busy++; let okRv = false; try { okRv = await reviewBooking(f); } finally { busy--; }
+  if (!okRv) return;   // กลับไปแก้ไข: ยังไม่บันทึก
+  const wasEdit = !!editing; $('save').disabled = true; busy++;
+  try {
+    await gas('saveBooking', f);
+    const i = DATA.findIndex(b => b.id === f.id); i < 0 ? DATA.push(f) : DATA[i] = f;
+    toast(wasEdit ? 'แก้ไขข้อมูลเรียบร้อยแล้ว' : 'บันทึกการจองเรียบร้อยแล้ว'); resetForm(); draw();
+  } catch (x) { msg('error', 'เกิดข้อผิดพลาด', x.message || String(x)); }
+  finally { busy--; $('save').disabled = false; }
+}
+function editBooking(id) {
+  const b = DATA.find(x => x.id === id); if (!b) return;
+  editing = id; baseAmt = +b.amount || 0;
+  $('hn').value = b.hn || ''; $('name').value = b.patient; $('age').value = b.age || ''; $('rights').value = b.rights || ''; $('date').value = b.date;
+  typeChange(); $('room').value = b.room; bedOpts(); $('bed').value = b.bed || SOLO;
+  $('doc').value = b.surgeon || '-'; $('agent').value = role === 'records' ? REC_AGENT : (b.agent || AGENTS[0]); $('pay').value = parsePay(b).m;
+  const saved = {}; String(b.items || '').split(';').forEach(t => { const [k, v] = t.split('='); if (v !== undefined && ITEMS[+k]) saved[+k] = +v; });   // คืนค่ารายการที่ติ๊กไว้
+  ITEMS.forEach((_, i) => { const on = i in saved; $('c' + i).checked = on; $('a' + i).value = on ? saved[i] : ''; $('a' + i).disabled = !on; }); calc();
+  { const pp = parsePay(b); $('pT').value = pp.m === SPLIT ? pp.t : ''; $('pC').value = pp.m === SPLIT ? pp.c : ''; payChange(); }
+  $('formBox').classList.add('edit'); $('formTitle').innerHTML = `${ic('edit')} แก้ไข / จัดสรรห้อง`;
+  $('save').innerHTML = `${ic('save')} บันทึกการแก้ไข`; $('cancel').classList.remove('d-none'); scrollTo({top:0, behavior:'smooth'});
+}
+function resetForm() {
+  editing = null; baseAmt = 0; $('f').reset(); $('date').value = today();
+  ITEMS.forEach((_, i) => { $('a' + i).disabled = true; });
+  $('formBox').classList.remove('edit'); $('formTitle').innerHTML = `${ic('note')} ลงข้อมูลการจองห้องพัก`;
+  $('save').innerHTML = `${ic('save')} บันทึกการจอง`; $('cancel').classList.add('d-none');
+  if (role === 'records') $('agent').value = REC_AGENT;
+  typeChange(); payChange(); calc();
+}
+
+// ---------- D/C / คิว / ล็อก ----------
+async function dischargePatient(id) {
+  const b = DATA.find(x => x.id === id); if (!b) return;
+  if (!await ask('ยืนยันการจำหน่าย (D/C)?', 'ระบบจะจำหน่ายผู้ป่วย และบันทึกไว้ในรายงาน D/C', 'ยืนยัน D/C')) return;
+  const room = `D/C|${today()}|${b.room}`; busy++;
+  try { await gas('saveBooking', {...b, room}); b.room = room; if (editing === id) resetForm(); draw(); roomOpts(); toast('จำหน่ายผู้ป่วยเรียบร้อยแล้ว'); }
+  catch (e) { msg('error', 'เกิดข้อผิดพลาด', e.message || String(e)); } finally { busy--; }
+}
+async function cancelSurgery(id) {
+  const b = DATA.find(x => x.id === id); if (!b) return;
+  if (!await ask('ยืนยันยกเลิกผ่าตัด?', `ย้าย ${b.patient} ไปที่เมนู "ยกเลิกผ่าตัด" และคืนห้อง ${b.room}`, 'ยืนยันยกเลิกผ่า')) return;
+  const room = `CX|${today()}|${b.room}`; busy++;
+  try { await gas('saveBooking', {...b, room}); b.room = room; if (editing === id) resetForm(); draw(); roomOpts(); toast('ย้ายไปเมนูยกเลิกผ่าตัดเรียบร้อยแล้ว'); }
+  catch (e) { msg('error', 'เกิดข้อผิดพลาด', e.message || String(e)); } finally { busy--; }
+}
+async function dischargeAll() {
+  const list = active(); if (!list.length) return msg('info', 'ไม่มีผู้ป่วย', 'ไม่มีผู้ป่วยที่เข้าพักอยู่');
+  if (!await ask('ยืนยันจำหน่าย (D/C) ทั้งหมด?', `จำหน่ายผู้ป่วย ${list.length} รายการ`, 'ยืนยัน D/C ทั้งหมด')) return;
+  busy++; $('spin').style.display = 'block'; const day = today(), pay = list.map(b => ({...b, room: `D/C|${day}|${b.room}`}));
+  let ok = 0, err = '';
+  try { await gas('saveBookings', pay); list.forEach((b, i) => b.room = pay[i].room); ok = list.length; }
+  catch (e) { if (e && e.code === 'NO_ACTION') ok = await seq(list, async b => { const room = `D/C|${day}|${b.room}`; await gas('saveBooking', {...b, room}); b.room = room; }); else err = e.message || String(e); }
+  busy--; $('spin').style.display = 'none'; if (editing) resetForm(); draw(); roomOpts();
+  ok === list.length ? toast('จำหน่ายทั้งหมดเรียบร้อยแล้ว') : msg('warning', 'สำเร็จบางส่วน', `สำเร็จ ${ok}/${list.length} รายการ ${err}`);
+}
+async function cancelQueue(id) {
+  if (!await ask('ยืนยันยกเลิกคิว?', 'ระบบจะลบรายการจองนี้ออกจากคิว', 'ยืนยันลบคิว')) return; busy++;
+  try { await gas('deleteBooking', id); DATA = DATA.filter(b => b.id !== id); draw(); roomOpts(); toast('ลบคิวเรียบร้อยแล้ว'); }
+  catch (e) { msg('error', 'เกิดข้อผิดพลาด', e.message || String(e)); } finally { busy--; }
+}
+async function cancelAllQueue() {
+  const list = DATA.filter(isWait); if (!list.length) return msg('info', 'ไม่มีคิว', 'ไม่มีคิวรอจัดห้องให้ล้าง');
+  if (!await ask('ยืนยันล้างคิวทั้งหมด?', `ลบคิว ${list.length} คิว`, 'ยืนยันล้างคิว')) return;
+  busy++; $('spin').style.display = 'block'; const gone = new Set(); let err = '';
+  try { await gas('deleteBookings', list.map(b => b.id)); list.forEach(b => gone.add(b.id)); }
+  catch (e) { if (e && e.code === 'NO_ACTION') await seq(list, async b => { await gas('deleteBooking', b.id); gone.add(b.id); }); else err = e.message || String(e); }
+  DATA = DATA.filter(b => !gone.has(b.id)); busy--; $('spin').style.display = 'none'; draw(); roomOpts();
+  gone.size === list.length ? toast('ล้างคิวเรียบร้อยแล้ว') : msg('warning', 'สำเร็จบางส่วน', `ลบได้ ${gone.size}/${list.length} คิว ${err}`);
+}
+async function toggleLock(r) {
+  const on = LOCKED.includes(r);
+  if (!on && DATA.some(b => b.room === r)) return msg('error', 'ไม่สามารถล็อคได้', `ห้อง ${r} มีการจองคิวผ่าตาอยู่`);
+  const ok = await Swal.fire({title: on ? 'ปลดล็อคห้อง?' : 'ล็อคห้องสำหรับ Admit?', text: `ห้อง ${r}`, icon:'question', showCancelButton:true, confirmButtonText:'ยืนยัน', cancelButtonText:'ยกเลิก', confirmButtonColor:'#2A3C76'}).then(x => x.isConfirmed);
+  if (!ok) return; busy++;
+  try { await gas('toggleRoomLockSheet', r, !on); LOCKED = on ? LOCKED.filter(x => x !== r) : [...LOCKED, r]; draw(); roomOpts(); }
+  catch (e) { msg('error', 'เกิดข้อผิดพลาด', e.message || String(e)); } finally { busy--; }
+}
+
+// ---------- แดชบอร์ด ----------
+function dashboard() {
+  const sc = $('dash').scrollTop, qsc = (document.querySelector('#tabQ .tscroll') || {}).scrollTop || 0, sEl = $('qSearch'), q = sEl ? sEl.value : '', foc = !!sEl && document.activeElement === sEl, tabQ = $('tabQ') && $('tabQ').style.display === 'flex';
+  const by = {}, wait = [], rsv = []; DATA.forEach(b => { if (isWait(b)) wait.push(b); else if (isRsv(b)) rsv.push(b); else if (!isOut(b)) (by[b.room] = by[b.room] || []).push(b); });
+  const fin = role === 'finance', rec = role === 'records', adm = role === 'admission' || rec;
+  const btnsOf = b => { const id = esc(b.id); return `${adm ? `<button class="sm ib" onclick="editBooking('${id}')" title="แก้ไข">${ic('edit')}<span>แก้ไข</span></button>` : ''}${fin ? '' : `<button class="sm dc ib" onclick="dischargePatient('${id}')" title="จำหน่ายผู้ป่วย (D/C)">${ic('dc')}<span>D/C</span></button>`}${role === 'ward' ? `<button class="sm pr ib" onclick="printLabel('${id}')" title="พิมพ์ใบติดหน้าห้อง (A5)">${ic('sign')}<span>ป้ายห้อง</span></button>` : ''}${adm ? `<button class="sm cx ib" onclick="cancelSurgery('${id}')" title="ยกเลิกผ่าตัด">${ic('cancel')}<span>ยกเลิก</span></button>` : ''}${adm && !rec ? `<button class="sm pr ib" onclick="printMenu('${id}')" title="พิมพ์เอกสาร">${ic('print')}<span>พิมพ์</span></button>` : ''}`; };
+  const card = r => {
+    const L = (by[r] || []).slice().sort((a, b) => new Date(a.date) - new Date(b.date) || (a.bed || '').localeCompare(b.bed || '')), lk = LOCKED.includes(r), e = esc(r);
+    const lb = fin ? `<span class="lockb ${lk ? 'on' : ''}">${lk ? ic('unlock') : ic('lock')}</span>` : `<button type="button" class="lockb ${lk ? 'on' : ''}" aria-label="ล็อก/ปลดล็อก ${e}" onclick="toggleLock('${e}')">${lk ? ic('unlock') : ic('lock')}</button>`;
+    let cls = '', h = '<div class="text-center mt-3 fw-bold text-success">ว่าง</div>';
+    if (lk) { cls = 'lk'; h = '<div class="text-center mt-2 fw-bold"><span style="display:block">' + ic('bed') + '</span>ติด Admit<br><small>ผู้ป่วยทั่วไป</small></div>'; }
+    else if (L.length) {
+      cls = 'bk'; const col = 'col' + r.replace(/\W+/g, ''); h = '';
+      if (L.length > 1) h += `<button class="btn btn-sm w-100 mb-2" data-bs-toggle="collapse" data-bs-target="#${col}" style="background:var(--sc);color:var(--on-sc);border:0">${ic('eye')} ดูคนไข้ (${L.length})</button><div class="collapse" id="${col}">`;
+      L.forEach(b => {
+        const bd = b.bed && b.bed !== SOLO && b.bed !== '-' ? `<span class="bed">${esc(b.bed)}</span><br>` : '', id = esc(b.id);
+        const btns = btnsOf(b);
+        h += `<div class="pt">${L.length > 1 ? `<div class="acts btn4">${btns}</div>` : ''}<div style="min-width:0;word-break:break-word">${bd}${b.hn ? `<small class="text-secondary fw-bold">HN: ${esc(b.hn)}</small><br>` : ''}<small class="fw-bold text-primary">${fd(b.date)}</small> | ${esc(b.patient)}${b.age ? ` (${esc(b.age)} ปี)` : ''}</div></div>`;
+      });
+      if (L.length > 1) h += '</div>';
+    }
+    return `<div class="col"><div class="room ${cls} ${r.includes('VIP') ? 'vip' : ''}">${lb}<div class="rh"><b>${e}</b>${L.length === 1 && !lk ? `<span class="acts btn4">${btnsOf(L[0])}</span>` : ''}</div>${h}</div></div>`;
+  };
+  const qs = wait.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).map((p, i) => { const id = esc(p.id);
+    return `<tr class="qrow" data-s="${esc((p.hn + ' ' + p.patient).toLowerCase())}"><td class="text-center text-muted">${i + 1}</td><td class="text-center text-nowrap fw-bold text-primary">${fd(p.date)}</td><td class="text-center text-nowrap">${esc(p.hn) || '-'}</td><td class="c-name">${esc(p.patient)}${p.age ? ` <small class="text-muted">(${esc(p.age)} ปี)</small>` : ''}</td><td class="c-rt"><small>${esc(p.rights) || '-'}</small></td><td class="c-doc"><small>${esc(p.surgeon) || '-'}</small></td>${adm ? `<td><div class="acts justify-content-end flex-nowrap">${rec ? '' : `<button class="sm" style="background:#fde047;color:#000" onclick="assignRoom('${id}')">${ic('bed')} จัดห้อง</button>`}<button class="sm" onclick="editBooking('${id}')" aria-label="แก้ไข" title="แก้ไข">${ic('edit')}</button>${rec ? '' : `<button class="sm pr" onclick="printMenu('${id}')" aria-label="พิมพ์" title="พิมพ์">${ic('print')}</button>`}<button class="sm dc" onclick="cancelQueue('${id}')">${ic('cancel')} ยกเลิก</button></div></td>` : ''}</tr>`; }).join('');
+  const qTable = wait.length ? `<div class="table-responsive tscroll"><table class="table table-sm table-hover align-middle qt mb-0"><thead><tr><th class="text-center c-min">#</th><th class="text-center c-min">วันที่</th><th class="text-center c-min">HN</th><th class="c-name">ชื่อ-สกุล (อายุ)</th><th class="c-rt">สิทธิ์</th><th class="c-doc">แพทย์เจ้าของไข้</th>${adm ? '<th class="text-end c-min">จัดการ</th>' : ''}</tr></thead><tbody>${qs}</tbody></table></div>` : '<p class="text-muted text-center py-5">' + ic('check') + ' ไม่มีคิวรอจัดห้องในขณะนี้</p>';
+  const waitCard = p => { const id = esc(p.id);
+    return `<div class="col-xl-3 col-lg-4 col-md-6 col-12"><div class="room rsv"><h6>${ic('clock')} รอห้องสำรอง</h6>${adm ? `<div class="acts mb-2"><button class="sm" onclick="assignRoom('${id}')">${ic('bed')} จัดห้อง</button><button class="sm" onclick="editBooking('${id}')">${ic('edit')} แก้ไข</button><button class="sm cx" onclick="cancelSurgery('${id}')">${ic('cancel')} ยกเลิกผ่า</button>${rec ? '' : `<button class="sm pr" onclick="printMenu('${id}')">${ic('print')} พิมพ์</button>`}</div>` : ''}<div style="word-break:break-word">${p.hn ? `<small class="text-secondary fw-bold">HN: ${esc(p.hn)}</small><br>` : ''}<small class="fw-bold text-primary">${fd(p.date)}</small> | ${esc(p.patient)}${p.age ? ` (${esc(p.age)} ปี)` : ''}<br><small class="text-muted">${esc(p.surgeon) || '-'}</small></div></div></div>`; };
+  const waitHtml = rsv.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).map(waitCard).join('') || '<div class="col-12 text-muted">ไม่มีผู้ป่วยรอห้องสำรอง</div>';
+  const occ = rs => rs.filter(r => (by[r] || []).length).length, ft = (i, label, cnt) => `<button type="button" role="tab" aria-selected="${floorTab === i}" class="ftab${floorTab === i ? ' on' : ''}" style="--fc:${FC[i]}" onclick="floorTabSet(${i})">${label} <span class="fcnt">${cnt}</span></button>`;
+  const fbar = `<div class="ftabs no-print" role="tablist">${FLOORS.map(([fl, rs], i) => ft(i, `${ic('layers')} ${fl}`, `${occ(rs)}/${rs.length}`)).join('')}${ft(3, `${ic('clock')} รอห้องสำรอง`, rsv.length)}</div>`;
+  $('dash').innerHTML = `<div class="dhead d-flex justify-content-between flex-wrap gap-2 mb-2 no-print"><div class="d-flex gap-2">${rec ? '' : `<button type="button" class="dtab" data-t="r" onclick="tab('r')">${ic('bed')} สถานะห้องพัก</button>`}<button type="button" class="dtab" data-t="q" onclick="tab('q')">${ic('clock')} คิวรอจัดห้อง (${wait.length})</button></div>${fin || rec ? '' : '<button class="btn btn-sm btn-outline-danger" style="border-width:2px" onclick="dischargeAll()">' + ic('dc') + ' D/C ทั้งหมด</button>'}</div>
+    <div id="tabR">${fbar}${FLOORS.map(([fl, rs], i) => `<div class="fpane" data-f="${i}" style="--fc:${FC[i]}${floorTab === i ? '' : ';display:none'}"><div class="row g-3 mb-3 row-cols-2 row-cols-sm-3 row-cols-lg-4 row-cols-xl-5">${rs.map(card).join('')}</div></div>`).join('')}<div class="fpane" data-f="3" style="--fc:${FC[3]}${floorTab === 3 ? '' : ';display:none'}"><div class="row g-3 mb-3">${waitHtml}</div></div></div>
+    <div id="tabQ" style="display:none"><div class="d-flex flex-wrap align-items-center gap-2 mb-2"><div class="input-group" style="width:min(100%,330px)"><input id="qSearch" class="form-control" style="border-color:#f59e0b;border-radius:var(--r) 0 0 var(--r)" placeholder="HN หรือชื่อ..." oninput="filterQ()" onkeydown="if(event.key==='Enter')filterQ()"><button class="btn btn-primary" type="button" onclick="filterQ()" style="border-radius:0 var(--r) var(--r) 0">${ic('search')} ค้นหา</button></div><div class="ms-auto d-flex gap-2">${rec ? '<button class="btn btn-sm btn-primary text-nowrap" onclick="importExcel()">' + ic('upload') + ' นำเข้า Excel</button>' : ''}${adm ? '<button class="btn btn-sm btn-outline-danger text-nowrap" onclick="cancelAllQueue()">' + ic('trash') + ' ล้างคิวทั้งหมด</button>' : ''}</div></div>${qTable}</div>`;
+  if (rec && $('tabR')) $('tabR').remove();
+  if (tabQ || rec) tab('q'); else markDtab('r'); $('dash').scrollTop = sc; { const qt = document.querySelector('#tabQ .tscroll'); if (qt) qt.scrollTop = qsc; } if (q) { $('qSearch').value = q; filterQ(); } if (foc) $('qSearch').focus();
+}
+const markDtab = t => document.querySelectorAll('.dtab').forEach(b => { b.classList.toggle('on', b.dataset.t === t); b.setAttribute('aria-selected', b.dataset.t === t); });
+const tab = t => { markDtab(t); if ($('tabR')) $('tabR').style.display = t === 'r' ? 'block' : 'none'; $('tabQ').style.display = t === 'q' ? 'flex' : 'none'; $('dash').scrollTop = 0; };
+function toggleRMenu(open) {
+  const l = $('rmenuList'); if (!l) return; open = open ?? l.hidden;
+  l.hidden = !open; $('rmenuBtn').setAttribute('aria-expanded', open);
+  if (open) { const f = [...l.querySelectorAll('button')].find(b => b.style.display !== 'none'); if (f) f.focus(); }
+}
+function rmGo(v) { toggleRMenu(false); show(v); }
+document.addEventListener('click', e => { const m = $('rmenu'); if (m && !m.contains(e.target)) toggleRMenu(false); });
+document.addEventListener('keydown', e => { const l = $('rmenuList'); if (e.key === 'Escape' && l && !l.hidden) { toggleRMenu(false); $('rmenuBtn').focus(); } });
+function floorTabSet(i) {
+  floorTab = i;
+  document.querySelectorAll('#tabR .fpane').forEach(p => { p.style.display = +p.dataset.f === i ? '' : 'none'; });
+  document.querySelectorAll('#tabR .ftab').forEach((t, j) => { t.classList.toggle('on', j === i); t.setAttribute('aria-selected', j === i); });
+  $('dash').scrollTop = 0;
+}
+function filterQ() { const v = $('qSearch').value.toLowerCase(); document.querySelectorAll('.qrow').forEach(e => e.style.display = e.dataset.s.includes(v) ? '' : 'none'); }
+
+// ---------- นำเข้าคิวจาก Excel (เวชระเบียน, ไม่เกิน 100 แถว) — วันที่มาจากไฟล์, แพทย์เลือกภายหลัง ----------
+const XL_MAX = 100; let XL = [];
+function xlDate(v) {                                   // รองรับ serial ของ Excel, 2026-10-24, 24/10/2569, 24/10/69
+  let y, m, d;
+  if (typeof v === 'number') { if (v < 1 || v > 80000) return ''; const t = new Date(Date.UTC(1899, 11, 30) + Math.round(v) * 864e5); y = t.getUTCFullYear(); m = t.getUTCMonth() + 1; d = t.getUTCDate(); }
+  else {
+    const t = String(v == null ? '' : v).trim(); let x;
+    if ((x = /^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/.exec(t))) { y = +x[1]; m = +x[2]; d = +x[3]; }
+    else if ((x = /^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})/.exec(t))) { d = +x[1]; m = +x[2]; y = +x[3]; }
+    else return '';
+  }
+  if (y < 100) y += y >= 50 ? 2500 : 2000;
+  if (y > 2400) y -= 543;
+  if (m < 1 || m > 12 || d < 1 || d > 31) return '';
+  return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
+function xlParse(rows) {
+  const norm = v => String(v == null ? '' : v).replace(/\s+/g, '').toLowerCase(), cell = (r, j) => j >= 0 && r[j] != null ? String(r[j]).trim() : '';
+  let hi = -1, col = null;
+  for (let i = 0; i < Math.min(rows.length, 10) && !col; i++) {          // หาแถวหัวตาราง
+    const hs = (rows[i] || []).map(norm), hn = hs.findIndex(h => h.includes('hn'));
+    const nm = hs.map((h, j) => /ชื่อ|สกุล|name/.test(h) && !/แพทย์|doctor|สิทธ|hn/.test(h) ? j : -1).filter(j => j >= 0);
+    if (hn >= 0 && nm.length) { hi = i; col = {hn, nm, age: hs.findIndex(h => /อายุ|^age/.test(h)), rt: hs.findIndex(h => /สิทธ|right/.test(h)), dt: hs.findIndex(h => /วันที่|date/.test(h))}; }
+  }
+  if (!col) { if (rows.length && /^\d+$/.test(cell(rows[0], 0))) col = {hn: 0, nm: [1], age: 2, rt: 3, dt: 4}; else return null; }   // ไม่มีหัวตาราง: A=HN B=ชื่อ C=อายุ D=สิทธิ์ E=วันที่
+  if (col.dt < 0) return {err: 'ไม่พบคอลัมน์ "วันที่" (วันที่เข้าพัก) ในไฟล์'};
+  const out = [], seen = new Set(); let skip = 0, badDate = 0;
+  for (const r of rows.slice(hi + 1)) {
+    const hn = cell(r, col.hn), name = col.nm.map(j => cell(r, j)).filter(Boolean).join(' ');
+    if (!hn && !name) continue;
+    const date = xlDate(r[col.dt]);
+    if (!hn || !name || !date) { skip++; if (hn && name && !date) badDate++; continue; }
+    if (seen.has(hn + '|' + date)) { skip++; continue; }
+    seen.add(hn + '|' + date); out.push({hn, name, date, age: (cell(r, col.age).match(/\d+/) || [''])[0], rights: cell(r, col.rt)});
+  }
+  return {out, skip, badDate};
+}
+async function importExcel() {
+  if (!window.XLSX) return msg('error', 'โหลดตัวอ่าน Excel ไม่สำเร็จ', 'ตรวจสอบอินเทอร์เน็ตแล้วรีเฟรชหน้าอีกครั้ง');
+  XL = [];
+  const r = await Swal.fire({
+    title: `${ic('upload')} นำเข้าคิวจาก Excel`, width: 660, showCancelButton: true, confirmButtonText: 'นำเข้า', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#2A3C76', customClass: {popup: 'rounded-4'},
+    html: `<div class="text-start"><label class="form-label">ไฟล์ .xlsx / .xls / .csv (ไม่เกิน ${XL_MAX} แถว)</label><input type="file" id="xlFile" accept=".xlsx,.xls,.csv" class="form-control mb-2">
+      <div class="small text-muted">คอลัมน์ที่ใช้: <b>HN, ชื่อ-สกุล, อายุ, สิทธิ์, วันที่เข้าพัก</b> (หัวตารางภาษาไทยหรืออังกฤษ)<br>ผู้ป่วยทุกคนเข้า "คิวรอจัดห้อง" · แพทย์เจ้าของไข้เลือกภายหลังได้ที่ปุ่ม ${ic('edit')} แก้ไข / จัดห้อง</div><div id="xlPrev" class="mt-2" style="max-height:250px;overflow:auto"></div></div>`,
+    didOpen: () => $('xlFile').addEventListener('change', async e => {
+      const f = e.target.files[0], pv = $('xlPrev'); XL = []; pv.innerHTML = ''; if (!f) return;
+      try {
+        const wb = XLSX.read(await f.arrayBuffer(), {type: 'array'}), rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header: 1, defval: '', raw: true}), res = xlParse(rows);
+        if (!res) { pv.innerHTML = '<div class="text-danger">ไม่พบหัวตาราง HN / ชื่อ-สกุล ในไฟล์</div>'; return; }
+        if (res.err) { pv.innerHTML = `<div class="text-danger">${esc(res.err)}</div>`; return; }
+        XL = res.out; const over = XL.length > XL_MAX;
+        pv.innerHTML = `<div class="small mb-1 fw-bold ${over ? 'text-danger' : 'text-success'}">พบ ${XL.length} แถวที่ใช้ได้${res.skip ? ` (ข้าม ${res.skip} แถว${res.badDate ? ` — วันที่ไม่ถูกต้อง ${res.badDate}` : ''}: ข้อมูลว่าง/ซ้ำ)` : ''}${over ? ` — เกิน ${XL_MAX} แถว กรุณาแบ่งไฟล์` : ''}</div>
+          <table class="table table-sm small mb-0"><thead><tr><th>วันที่</th><th>HN</th><th>ชื่อ-สกุล</th><th>อายุ</th><th>สิทธิ์</th></tr></thead><tbody>${XL.slice(0, 8).map(x => `<tr><td>${fd(x.date)}</td><td>${esc(x.hn)}</td><td>${esc(x.name)}</td><td>${esc(x.age)}</td><td>${esc(x.rights)}</td></tr>`).join('')}</tbody></table>${XL.length > 8 ? `<div class="small text-muted">…และอีก ${XL.length - 8} แถว</div>` : ''}`;
+      } catch (x) { pv.innerHTML = `<div class="text-danger">อ่านไฟล์ไม่สำเร็จ: ${esc(x.message || x)}</div>`; }
+    }),
+    preConfirm: () => {
+      if (!XL.length) return Swal.showValidationMessage('กรุณาเลือกไฟล์ที่มีข้อมูล');
+      if (XL.length > XL_MAX) return Swal.showValidationMessage(`เกิน ${XL_MAX} แถว กรุณาแบ่งไฟล์`);
+      return true;
+    }
+  });
+  if (!r.isConfirmed) return;
+  const have = new Set(DATA.filter(isWait).map(b => b.hn + '|' + b.date)), rows = XL.filter(x => !have.has(x.hn + '|' + x.date)), dup = XL.length - rows.length;
+  if (!rows.length) return msg('info', 'ไม่มีรายการใหม่', 'ทุกรายการอยู่ในคิวรอจัดห้องแล้ว (HN และวันที่ซ้ำ)');
+  const t = Date.now(), list = rows.map((x, i) => ({id: 'b' + (t + i), room: WAIT, bed: '-', date: x.date, hn: x.hn, patient: x.name, age: x.age, rights: x.rights, surgeon: '-', agent: REC_AGENT, payment: '-', amount: 0, items: ''}));
+  const done = []; busy++; $('spin').style.display = 'block';
+  try {
+    try { await gas('saveBookings', list); done.push(...list); }
+    catch (e) { if (!(e && e.code === 'NO_ACTION')) throw e; for (const b of list) { await gas('saveBooking', b); done.push(b); } }   // เซิร์ฟเวอร์เวอร์ชันเก่า
+    toast(`นำเข้า ${list.length} คิวเรียบร้อย${dup ? ` (ข้ามซ้ำ ${dup})` : ''}`);
+  } catch (e) { msg('error', 'นำเข้าไม่สำเร็จ', `${e.message || e}${done.length ? ` (นำเข้าได้ ${done.length}/${list.length})` : ''}`); }
+  finally { DATA.push(...done); busy--; $('spin').style.display = 'none'; draw(); }
+}
+
+// ---------- รายงาน (ตัวสร้างตารางเดียวใช้ร่วมกัน) ----------
+const pill = (t, bg, fg = '#fff') => `<span class="pill" style="background:${bg};color:${fg}">${t}</span>`;
+const bedTxt = b => b.bed !== SOLO ? b.bed : '-';
+const hnName = b => `${b.hn ? `<b>HN:</b> ${esc(b.hn)}<br>` : ''}${esc(b.patient)}${b.age ? ` (${esc(b.age)} ปี)` : ''}`;
+const byRoom = (a, b) => realRoom(a).localeCompare(realRoom(b)) || (a.bed || '').localeCompare(b.bed || '');
+const REPORTS = {
+  report: {t:'รายงานสถานะห้องพักผู้ป่วยประจำวัน', h:['ชั้น','ห้อง','เตียง','HN / ชื่อ-นามสกุล (อายุ)','สิทธิ์','แพทย์เจ้าของไข้','สถานะ'], rows: d => FLOORS.flatMap(([fl, rs]) => rs.flatMap(r => {
+    if (LOCKED.includes(r)) return [[fl, r, '-', '<i class="text-muted">ผู้ป่วยทั่วไป (Admit)</i>', '-', '-', pill('ไม่ว่าง', '#6c757d')]];
+    const L = DATA.filter(b => b.room === r && b.date === d).sort((a, b) => (a.bed || '').localeCompare(b.bed || ''));
+    return L.length ? L.map(b => [fl, r, b.bed, hnName(b), esc(b.rights) || '-', esc(b.surgeon) || '-', pill('จองผ่าตา', '#fde047', '#000')]) : [[fl, r, '-', '-', '-', '-', pill('ว่าง', '#28a745')]]; }))},
+  queue: {t:'รายงานคิวผู้ป่วยรอจัดห้อง', h:['ลำดับ','วันที่เข้าพัก','HN','ชื่อ-นามสกุล (อายุ)','สิทธิ์','แพทย์เจ้าของไข้','ผู้รับจอง','สถานะ'], all:1,
+    rows: d => DATA.filter(b => isWait(b) && (!d || b.date === d)).sort((a, b) => new Date(a.date) - new Date(b.date)).map((b, i) => [i+1, fd(b.date), esc(b.hn) || '-', `${esc(b.patient)} (${esc(b.age)} ปี)`, esc(b.rights) || '-', esc(b.surgeon) || '-', esc(b.agent) || '-', pill(WAIT, '#fde047', '#000')])},
+  dc: {t:'รายงานผู้ป่วยจำหน่าย (D/C) ประจำวัน', h:['ลำดับ','ห้องเดิม','วันที่ Admit','HN','ชื่อ-นามสกุล (อายุ)','สิทธิ์','แพทย์เจ้าของไข้','ผู้รับจอง'],
+    rows: d => DATA.filter(b => (b.room || '').startsWith(`D/C|${d}|`)).map((b, i) => [i+1, realRoom(b), fd(b.date), esc(b.hn) || '-', `${esc(b.patient)} (${esc(b.age)} ปี)`, esc(b.rights) || '-', esc(b.surgeon) || '-', esc(b.agent) || '-'])},
+  finance: {t:'รายงานสรุปยอดการชำระเงินค่าห้องพักประจำวัน', h:['ลำดับ','ห้อง/เตียง','HN / ชื่อ-นามสกุล','สิทธิ์','ผู้รับจอง','ช่องทาง','ยอดเงิน (บาท)'],
+    rows: d => { let n = 0; return DATA.filter(b => b.date === d && inFin(b)).sort(byRoom).flatMap(b => {
+      const c = {'เงินสด':'#198754', 'โอน':'#0d6efd', 'รูดบัตร':'#ec4899', 'ตามสิทธิ์':'#ffc107'}[parsePay(b).m] || (parsePay(b).m === SPLIT ? '#6f42c1' : '#dc3545'), amt = +b.amount || 0, x = isCX(b);
+      const row = [++n, `<b>${esc(realRoom(b))}</b>${b.bed !== SOLO ? `<br><small class="text-primary">(${esc(b.bed)})</small>` : ''}`, hnName(b), esc(b.rights) || '-', esc(b.agent) || '-', pill(esc(parsePay(b).m), c, parsePay(b).m === 'ตามสิทธิ์' ? '#000' : '#fff') + splitSub(b), x ? `<b class="text-success">+${money(amt)}</b>` : `<b>${money(amt)}</b>`];
+      return x ? [row, ['', `<b class="text-danger">↳ ยกเลิกผ่า</b><br><small>เมื่อ ${fd(cxDate(b))}</small>`, `<small class="text-muted">${esc(b.patient)}</small>`, '', esc(b.agent) || '-', pill('ยกเลิก', '#dc3545'), `<b class="text-danger">-${money(amt)}</b><br><small class="text-muted">สุทธิเคสนี้ 0.00</small>`]] : [row]; }); },
+    foot: d => { const L = DATA.filter(b => b.date === d && inFin(b) && !isCX(b)), X = DATA.filter(b => b.date === d && inFin(b) && isCX(b)), s = p => L.reduce((x, b) => x + (p === 'เงินสด' ? parsePay(b).c : parsePay(b).t), 0), xs = X.reduce((t, b) => t + (+b.amount || 0), 0);
+      return `<tr><td colspan="7" class="text-end border-0">เงินสด: <b>${money(s('เงินสด'))}</b> &nbsp; โอน: <b>${money(s('โอน'))}</b> &nbsp; <span class="fs-5 text-danger">รวม: <b>${money(s('เงินสด') + s('โอน'))}</b></span></td></tr>` +
+        (X.length ? `<tr><td colspan="7" class="text-end border-0 text-danger">รายการยกเลิกผ่า ${X.length} เคส: +${money(xs)} / -${money(xs)} = สุทธิ 0.00 (หักล้างแล้ว ไม่นับในยอดข้างต้น)</td></tr>` : ''); }},
+  cancel: {t:'รายงานผู้ป่วยยกเลิกผ่าตัด', h:['ลำดับ','วันที่ยกเลิก','ห้องเดิม','วันที่ Admit','HN / ชื่อ-นามสกุล (อายุ)','สิทธิ์','แพทย์เจ้าของไข้','ช่องทาง','ยอดเงิน (บาท)','ใบรับคืนเงิน'], all:1,
+    rows: d => cxList(d).map((b, i) => [i+1, fd(cxDate(b)), `<b class="text-danger">${esc(realRoom(b))}</b>`, fd(b.date), hnName(b), esc(b.rights) || '-', esc(b.surgeon) || '-', payTxt(b), `<b>${money(b.amount)}</b>`,
+      role === 'ward' ? '' : `<button class="btn btn-sm btn-outline-dark no-print" onclick="printRefund('${esc(b.id)}')">${ic('print')} ใบรับคืนเงิน</button>`]),
+    foot: d => `<tr><td colspan="10" class="text-end border-0 fs-6">รวมยอดคืนเงิน: <b class="text-danger">${money(cxList(d).reduce((t, b) => t + (+b.amount || 0), 0))}</b></td></tr>`},
+  label: {t:'พิมพ์ป้ายหน้าห้อง', h:['<input type="checkbox" class="form-check-input" id="lblAll" onchange="lblSelAll(this.checked)" title="เลือกทั้งหมด" aria-label="เลือกทั้งหมด">','ห้อง','เตียง','HN / ชื่อ-นามสกุล (อายุ)','สิทธิ์','แพทย์เจ้าของไข้','พิมพ์ป้าย'],
+    rows: d => active().filter(b => b.date === d).sort(byRoom).map(b => [`<input type="checkbox" class="form-check-input lbl-ck" value="${esc(b.id)}" onchange="lblSync()" aria-label="เลือก ${esc(b.patient)}">`, `<b class="fs-5 text-primary">${esc(b.room)}</b>`, bedTxt(b), hnName(b), esc(b.rights) || '-', esc(b.surgeon) || '-', `<div class="d-flex flex-nowrap gap-1 no-print lbl-btns"><button class="btn btn-sm btn-outline-dark" onclick="printLabel('${esc(b.id)}')" title="พิมพ์ป้ายหน้าห้อง A5">${ic('sign')} ป้ายห้อง A5</button><button class="btn btn-sm btn-primary" onclick="printChest('${esc(b.id)}')" title="พิมพ์ใบติดหน้าอก 8×5 ซม.">${ic('badge')} หน้าอก 8×5</button></div>`])}
+};
+function renderReport() {
+  const keepSel = cur === 'label' ? new Set([...document.querySelectorAll('.lbl-ck:checked')].map(c => c.value)) : null;
+  const R0 = REPORTS[cur]; if (!R0) return; const d = $('rDate').value, hide = cur === 'cancel' && role === 'records', n = hide ? 7 : 99;
+  const R = {...R0, h: R0.h.slice(0, n), rows: x => R0.rows(x).map(r => r.slice(0, n)), foot: hide ? null : R0.foot};   // เวชระเบียน: ซ่อนช่องทาง/ยอดเงิน/ปุ่มใบรับคืนเงิน
+  $('rTitle').textContent = R.t; $('rDateTxt').textContent = R.all && !d ? 'ทั้งหมด' : fd(d); $('rAll').style.display = R.all ? '' : 'none'; $('paper').value = paper;
+  $('rHead').innerHTML = `<tr>${R.h.map(h => `<th>${h}</th>`).join('')}</tr>`;
+  const rows = R.rows(d); $('rBody').innerHTML = rows.length ? rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${R.h.length}" class="text-center text-muted py-4">ไม่มีข้อมูลในวันที่เลือก</td></tr>`;
+  $('rFoot').innerHTML = R.foot ? R.foot(d) : '';
+  if (keepSel) document.querySelectorAll('.lbl-ck').forEach(c => { c.checked = keepSel.has(c.value); });   // คงรายการที่ติ๊กไว้เมื่อข้อมูลซิงค์ใหม่
+  $('rBatch').innerHTML = cur === 'label' ? `<button class="btn btn-sm btn-outline-primary" id="bDoor" onclick="printBatch('door')">${ic('sign')} พิมพ์ป้ายหน้าห้องที่เลือก (<span class="bcnt">0</span>)</button><button class="btn btn-sm btn-primary" id="bChest" onclick="printBatch('chest')">${ic('badge')} พิมพ์ใบติดหน้าอกที่เลือก (<span class="bcnt">0</span>)</button>` : '';
+  if (cur === 'label') lblSync();
+}
+function lblSync() {
+  const all = [...document.querySelectorAll('.lbl-ck')], n = all.filter(c => c.checked).length, a = $('lblAll');
+  if (a) { a.checked = all.length > 0 && n === all.length; a.indeterminate = n > 0 && n < all.length; }
+  document.querySelectorAll('#rBatch .bcnt').forEach(e => { e.textContent = n; });
+  document.querySelectorAll('#rBatch button').forEach(bt => { bt.disabled = !n; });
+}
+function lblSelAll(on) { document.querySelectorAll('.lbl-ck').forEach(c => { c.checked = on; }); lblSync(); }
+function printBatch(kind) {
+  const list = [...document.querySelectorAll('.lbl-ck:checked')].map(c => DATA.find(x => x.id === c.value)).filter(Boolean);
+  if (!list.length) return msg('warning', 'ยังไม่ได้เลือก', 'ติ๊กเลือกผู้ป่วยอย่างน้อย 1 คน');
+  const make = kind === 'door' ? doorHtml : chestHtml;
+  printArea(list.map(b => `<div class="pbk">${make(b)}</div>`).join(''), kind === 'door' ? 'A5 landscape' : '80mm 50mm');   // 1 ใบต่อ 1 หน้า
+}
+
+// ---------- พิมพ์ป้าย / ใบแจ้ง ----------
+// ---------- ตัวสร้าง QR Code (ฝังในไฟล์ ไม่พึ่งอินเทอร์เน็ต) ----------
+// QRCode for JavaScript · Copyright (c) 2009 Kazuhiko Arase · MIT License · www.d-project.com
+let _qrx = null;
+const getQRX = () => _qrx || (_qrx = (function () {
+  const M = {}, C = {};
+  function req(p) { if (!C[p]) { const m = {exports: {}}; M[p](m, m.exports, req); C[p] = m.exports; } return C[p]; }
+M['./QRMode']=function(module,exports,require){
+module.exports = {
+    MODE_NUMBER :       1 << 0,
+    MODE_ALPHA_NUM :    1 << 1,
+    MODE_8BIT_BYTE :    1 << 2,
+    MODE_KANJI :        1 << 3
+};
+
+};
+M['./QRMaskPattern']=function(module,exports,require){
+module.exports = {
+	PATTERN000 : 0,
+	PATTERN001 : 1,
+	PATTERN010 : 2,
+	PATTERN011 : 3,
+	PATTERN100 : 4,
+	PATTERN101 : 5,
+	PATTERN110 : 6,
+	PATTERN111 : 7
+};
+
+};
+M['./QRErrorCorrectLevel']=function(module,exports,require){
+module.exports = {
+	L : 1,
+	M : 0,
+	Q : 3,
+	H : 2
+};
+
+};
+M['./QRMath']=function(module,exports,require){
+var QRMath = {
+	glog : function(n) {
+		if (n < 1) {
+			throw new Error("glog(" + n + ")");
+		}
+		return QRMath.LOG_TABLE[n];
+	},
+	gexp : function(n) {
+		while (n < 0) {
+			n += 255;
+		}
+		while (n >= 256) {
+			n -= 255;
+		}
+		return QRMath.EXP_TABLE[n];
+	},
+	EXP_TABLE : new Array(256),
+	LOG_TABLE : new Array(256)
+};
+for (var i = 0; i < 8; i++) {
+	QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+		^ QRMath.EXP_TABLE[i - 5]
+		^ QRMath.EXP_TABLE[i - 6]
+		^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+module.exports = QRMath;
+
+};
+M['./QRPolynomial']=function(module,exports,require){
+var QRMath = require('./QRMath');
+function QRPolynomial(num, shift) {
+	if (num.length === undefined) {
+		throw new Error(num.length + "/" + shift);
+	}
+	var offset = 0;
+	while (offset < num.length && num[offset] === 0) {
+		offset++;
+	}
+	this.num = new Array(num.length - offset + shift);
+	for (var i = 0; i < num.length - offset; i++) {
+		this.num[i] = num[i + offset];
+	}
+}
+QRPolynomial.prototype = {
+	get : function(index) {
+		return this.num[index];
+	},
+	getLength : function() {
+		return this.num.length;
+	},
+	multiply : function(e) {
+		var num = new Array(this.getLength() + e.getLength() - 1);
+		for (var i = 0; i < this.getLength(); i++) {
+			for (var j = 0; j < e.getLength(); j++) {
+				num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
+			}
+		}
+		return new QRPolynomial(num, 0);
+	},
+	mod : function(e) {
+		if (this.getLength() - e.getLength() < 0) {
+			return this;
+		}
+		var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
+		var num = new Array(this.getLength() );
+		for (var i = 0; i < this.getLength(); i++) {
+			num[i] = this.get(i);
+		}
+		for (var x = 0; x < e.getLength(); x++) {
+			num[x] ^= QRMath.gexp(QRMath.glog(e.get(x) ) + ratio);
+		}
+		return new QRPolynomial(num, 0).mod(e);
+	}
+};
+module.exports = QRPolynomial;
+
+};
+M['./QRUtil']=function(module,exports,require){
+var QRMode = require('./QRMode');
+var QRPolynomial = require('./QRPolynomial');
+var QRMath = require('./QRMath');
+var QRMaskPattern = require('./QRMaskPattern');
+var QRUtil = {
+    PATTERN_POSITION_TABLE : [
+        [],
+        [6, 18],
+        [6, 22],
+        [6, 26],
+        [6, 30],
+        [6, 34],
+        [6, 22, 38],
+        [6, 24, 42],
+        [6, 26, 46],
+        [6, 28, 50],
+        [6, 30, 54],        
+        [6, 32, 58],
+        [6, 34, 62],
+        [6, 26, 46, 66],
+        [6, 26, 48, 70],
+        [6, 26, 50, 74],
+        [6, 30, 54, 78],
+        [6, 30, 56, 82],
+        [6, 30, 58, 86],
+        [6, 34, 62, 90],
+        [6, 28, 50, 72, 94],
+        [6, 26, 50, 74, 98],
+        [6, 30, 54, 78, 102],
+        [6, 28, 54, 80, 106],
+        [6, 32, 58, 84, 110],
+        [6, 30, 58, 86, 114],
+        [6, 34, 62, 90, 118],
+        [6, 26, 50, 74, 98, 122],
+        [6, 30, 54, 78, 102, 126],
+        [6, 26, 52, 78, 104, 130],
+        [6, 30, 56, 82, 108, 134],
+        [6, 34, 60, 86, 112, 138],
+        [6, 30, 58, 86, 114, 142],
+        [6, 34, 62, 90, 118, 146],
+        [6, 30, 54, 78, 102, 126, 150],
+        [6, 24, 50, 76, 102, 128, 154],
+        [6, 28, 54, 80, 106, 132, 158],
+        [6, 32, 58, 84, 110, 136, 162],
+        [6, 26, 54, 82, 110, 138, 166],
+        [6, 30, 58, 86, 114, 142, 170]
+    ],
+    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)    | (1 << 4) | (1 << 1),
+    getBCHTypeInfo : function(data) {
+        var d = data << 10;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+            d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) );    
+        }
+        return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+    },
+    getBCHTypeNumber : function(data) {
+        var d = data << 12;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+            d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) );    
+        }
+        return (data << 12) | d;
+    },
+    getBCHDigit : function(data) {
+        var digit = 0;
+        while (data !== 0) {
+            digit++;
+            data >>>= 1;
+        }
+        return digit;
+    },
+    getPatternPosition : function(typeNumber) {
+        return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+    },
+    getMask : function(maskPattern, i, j) {
+        switch (maskPattern) {
+        case QRMaskPattern.PATTERN000 : return (i + j) % 2 === 0;
+        case QRMaskPattern.PATTERN001 : return i % 2 === 0;
+        case QRMaskPattern.PATTERN010 : return j % 3 === 0;
+        case QRMaskPattern.PATTERN011 : return (i + j) % 3 === 0;
+        case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 === 0;
+        case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 === 0;
+        case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 === 0;
+        case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 === 0;
+        default :
+            throw new Error("bad maskPattern:" + maskPattern);
+        }
+    },
+    getErrorCorrectPolynomial : function(errorCorrectLength) {
+        var a = new QRPolynomial([1], 0);
+        for (var i = 0; i < errorCorrectLength; i++) {
+            a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
+        }
+        return a;
+    },
+    getLengthInBits : function(mode, type) {
+        if (1 <= type && type < 10) {
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 10;
+            case QRMode.MODE_ALPHA_NUM  : return 9;
+            case QRMode.MODE_8BIT_BYTE  : return 8;
+            case QRMode.MODE_KANJI      : return 8;
+            default :
+                throw new Error("mode:" + mode);
+            }
+        } else if (type < 27) {
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 12;
+            case QRMode.MODE_ALPHA_NUM  : return 11;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 10;
+            default :
+                throw new Error("mode:" + mode);
+            }
+        } else if (type < 41) {
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 14;
+            case QRMode.MODE_ALPHA_NUM  : return 13;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 12;
+            default :
+                throw new Error("mode:" + mode);
+            }
+        } else {
+            throw new Error("type:" + type);
+        }
+    },
+    getLostPoint : function(qrCode) {
+        var moduleCount = qrCode.getModuleCount();
+        var lostPoint = 0;
+        var row = 0; 
+        var col = 0;
+        for (row = 0; row < moduleCount; row++) {
+            for (col = 0; col < moduleCount; col++) {
+                var sameCount = 0;
+                var dark = qrCode.isDark(row, col);
+                for (var r = -1; r <= 1; r++) {
+                    if (row + r < 0 || moduleCount <= row + r) {
+                        continue;
+                    }
+                    for (var c = -1; c <= 1; c++) {
+                        if (col + c < 0 || moduleCount <= col + c) {
+                            continue;
+                        }
+                        if (r === 0 && c === 0) {
+                            continue;
+                        }
+                        if (dark === qrCode.isDark(row + r, col + c) ) {
+                            sameCount++;
+                        }
+                    }
+                }
+                if (sameCount > 5) {
+                    lostPoint += (3 + sameCount - 5);
+                }
+            }
+        }
+        for (row = 0; row < moduleCount - 1; row++) {
+            for (col = 0; col < moduleCount - 1; col++) {
+                var count = 0;
+                if (qrCode.isDark(row,     col    ) ) count++;
+                if (qrCode.isDark(row + 1, col    ) ) count++;
+                if (qrCode.isDark(row,     col + 1) ) count++;
+                if (qrCode.isDark(row + 1, col + 1) ) count++;
+                if (count === 0 || count === 4) {
+                    lostPoint += 3;
+                }
+            }
+        }
+        for (row = 0; row < moduleCount; row++) {
+            for (col = 0; col < moduleCount - 6; col++) {
+                if (qrCode.isDark(row, col) && 
+                        !qrCode.isDark(row, col + 1) && 
+                         qrCode.isDark(row, col + 2) && 
+                         qrCode.isDark(row, col + 3) && 
+                         qrCode.isDark(row, col + 4) && 
+                        !qrCode.isDark(row, col + 5) && 
+                         qrCode.isDark(row, col + 6) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount - 6; row++) {
+                if (qrCode.isDark(row, col) &&
+                        !qrCode.isDark(row + 1, col) &&
+                         qrCode.isDark(row + 2, col) &&
+                         qrCode.isDark(row + 3, col) &&
+                         qrCode.isDark(row + 4, col) &&
+                        !qrCode.isDark(row + 5, col) &&
+                         qrCode.isDark(row + 6, col) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+        var darkCount = 0;
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount; row++) {
+                if (qrCode.isDark(row, col) ) {
+                    darkCount++;
+                }
+            }
+        }
+        var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+        lostPoint += ratio * 10;
+        return lostPoint;       
+    }
+};
+module.exports = QRUtil;
+
+};
+M['./QRRSBlock']=function(module,exports,require){
+var QRErrorCorrectLevel = require('./QRErrorCorrectLevel');
+function QRRSBlock(totalCount, dataCount) {
+	this.totalCount = totalCount;
+	this.dataCount  = dataCount;
+}
+QRRSBlock.RS_BLOCK_TABLE = [
+	[1, 26, 19],
+	[1, 26, 16],
+	[1, 26, 13],
+	[1, 26, 9],
+	[1, 44, 34],
+	[1, 44, 28],
+	[1, 44, 22],
+	[1, 44, 16],
+	[1, 70, 55],
+	[1, 70, 44],
+	[2, 35, 17],
+	[2, 35, 13],
+	[1, 100, 80],
+	[2, 50, 32],
+	[2, 50, 24],
+	[4, 25, 9],
+	[1, 134, 108],
+	[2, 67, 43],
+	[2, 33, 15, 2, 34, 16],
+	[2, 33, 11, 2, 34, 12],
+	[2, 86, 68],
+	[4, 43, 27],
+	[4, 43, 19],
+	[4, 43, 15],
+	[2, 98, 78],
+	[4, 49, 31],
+	[2, 32, 14, 4, 33, 15],
+	[4, 39, 13, 1, 40, 14],
+	[2, 121, 97],
+	[2, 60, 38, 2, 61, 39],
+	[4, 40, 18, 2, 41, 19],
+	[4, 40, 14, 2, 41, 15],
+	[2, 146, 116],
+	[3, 58, 36, 2, 59, 37],
+	[4, 36, 16, 4, 37, 17],
+	[4, 36, 12, 4, 37, 13],
+	[2, 86, 68, 2, 87, 69],
+	[4, 69, 43, 1, 70, 44],
+	[6, 43, 19, 2, 44, 20],
+	[6, 43, 15, 2, 44, 16],
+	[4, 101, 81],
+	[1, 80, 50, 4, 81, 51],
+	[4, 50, 22, 4, 51, 23],
+	[3, 36, 12, 8, 37, 13],
+	[2, 116, 92, 2, 117, 93],
+	[6, 58, 36, 2, 59, 37],
+	[4, 46, 20, 6, 47, 21],
+	[7, 42, 14, 4, 43, 15],
+	[4, 133, 107],
+	[8, 59, 37, 1, 60, 38],
+	[8, 44, 20, 4, 45, 21],
+	[12, 33, 11, 4, 34, 12],
+	[3, 145, 115, 1, 146, 116],
+	[4, 64, 40, 5, 65, 41],
+	[11, 36, 16, 5, 37, 17],
+	[11, 36, 12, 5, 37, 13],
+	[5, 109, 87, 1, 110, 88],
+	[5, 65, 41, 5, 66, 42],
+	[5, 54, 24, 7, 55, 25],
+	[11, 36, 12],
+	[5, 122, 98, 1, 123, 99],
+	[7, 73, 45, 3, 74, 46],
+	[15, 43, 19, 2, 44, 20],
+	[3, 45, 15, 13, 46, 16],
+	[1, 135, 107, 5, 136, 108],
+	[10, 74, 46, 1, 75, 47],
+	[1, 50, 22, 15, 51, 23],
+	[2, 42, 14, 17, 43, 15],
+	[5, 150, 120, 1, 151, 121],
+	[9, 69, 43, 4, 70, 44],
+	[17, 50, 22, 1, 51, 23],
+	[2, 42, 14, 19, 43, 15],
+	[3, 141, 113, 4, 142, 114],
+	[3, 70, 44, 11, 71, 45],
+	[17, 47, 21, 4, 48, 22],
+	[9, 39, 13, 16, 40, 14],
+	[3, 135, 107, 5, 136, 108],
+	[3, 67, 41, 13, 68, 42],
+	[15, 54, 24, 5, 55, 25],
+	[15, 43, 15, 10, 44, 16],
+	[4, 144, 116, 4, 145, 117],
+	[17, 68, 42],
+	[17, 50, 22, 6, 51, 23],
+	[19, 46, 16, 6, 47, 17],
+	[2, 139, 111, 7, 140, 112],
+	[17, 74, 46],
+	[7, 54, 24, 16, 55, 25],
+	[34, 37, 13],
+	[4, 151, 121, 5, 152, 122],
+	[4, 75, 47, 14, 76, 48],
+	[11, 54, 24, 14, 55, 25],
+	[16, 45, 15, 14, 46, 16],
+	[6, 147, 117, 4, 148, 118],
+	[6, 73, 45, 14, 74, 46],
+	[11, 54, 24, 16, 55, 25],
+	[30, 46, 16, 2, 47, 17],
+	[8, 132, 106, 4, 133, 107],
+	[8, 75, 47, 13, 76, 48],
+	[7, 54, 24, 22, 55, 25],
+	[22, 45, 15, 13, 46, 16],
+	[10, 142, 114, 2, 143, 115],
+	[19, 74, 46, 4, 75, 47],
+	[28, 50, 22, 6, 51, 23],
+	[33, 46, 16, 4, 47, 17],
+	[8, 152, 122, 4, 153, 123],
+	[22, 73, 45, 3, 74, 46],
+	[8, 53, 23, 26, 54, 24],
+	[12, 45, 15, 28, 46, 16],
+	[3, 147, 117, 10, 148, 118],
+	[3, 73, 45, 23, 74, 46],
+	[4, 54, 24, 31, 55, 25],
+	[11, 45, 15, 31, 46, 16],
+	[7, 146, 116, 7, 147, 117],
+	[21, 73, 45, 7, 74, 46],
+	[1, 53, 23, 37, 54, 24],
+	[19, 45, 15, 26, 46, 16],
+	[5, 145, 115, 10, 146, 116],
+	[19, 75, 47, 10, 76, 48],
+	[15, 54, 24, 25, 55, 25],
+	[23, 45, 15, 25, 46, 16],
+	[13, 145, 115, 3, 146, 116],
+	[2, 74, 46, 29, 75, 47],
+	[42, 54, 24, 1, 55, 25],
+	[23, 45, 15, 28, 46, 16],
+	[17, 145, 115],
+	[10, 74, 46, 23, 75, 47],
+	[10, 54, 24, 35, 55, 25],
+	[19, 45, 15, 35, 46, 16],
+	[17, 145, 115, 1, 146, 116],
+	[14, 74, 46, 21, 75, 47],
+	[29, 54, 24, 19, 55, 25],
+	[11, 45, 15, 46, 46, 16],
+	[13, 145, 115, 6, 146, 116],
+	[14, 74, 46, 23, 75, 47],
+	[44, 54, 24, 7, 55, 25],
+	[59, 46, 16, 1, 47, 17],
+	[12, 151, 121, 7, 152, 122],
+	[12, 75, 47, 26, 76, 48],
+	[39, 54, 24, 14, 55, 25],
+	[22, 45, 15, 41, 46, 16],
+	[6, 151, 121, 14, 152, 122],
+	[6, 75, 47, 34, 76, 48],
+	[46, 54, 24, 10, 55, 25],
+	[2, 45, 15, 64, 46, 16],
+	[17, 152, 122, 4, 153, 123],
+	[29, 74, 46, 14, 75, 47],
+	[49, 54, 24, 10, 55, 25],
+	[24, 45, 15, 46, 46, 16],
+	[4, 152, 122, 18, 153, 123],
+	[13, 74, 46, 32, 75, 47],
+	[48, 54, 24, 14, 55, 25],
+	[42, 45, 15, 32, 46, 16],
+	[20, 147, 117, 4, 148, 118],
+	[40, 75, 47, 7, 76, 48],
+	[43, 54, 24, 22, 55, 25],
+	[10, 45, 15, 67, 46, 16],
+	[19, 148, 118, 6, 149, 119],
+	[18, 75, 47, 31, 76, 48],
+	[34, 54, 24, 34, 55, 25],
+	[20, 45, 15, 61, 46, 16]
+];
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+	if (rsBlock === undefined) {
+		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+	}
+	var length = rsBlock.length / 3;
+	var list = [];
+	for (var i = 0; i < length; i++) {
+		var count = rsBlock[i * 3 + 0];
+		var totalCount = rsBlock[i * 3 + 1];
+		var dataCount  = rsBlock[i * 3 + 2];
+		for (var j = 0; j < count; j++) {
+			list.push(new QRRSBlock(totalCount, dataCount) );	
+		}
+	}
+	return list;
+};
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+	switch(errorCorrectLevel) {
+	case QRErrorCorrectLevel.L :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+	case QRErrorCorrectLevel.M :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+	case QRErrorCorrectLevel.Q :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+	case QRErrorCorrectLevel.H :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+	default :
+		return undefined;
+	}
+};
+module.exports = QRRSBlock;
+
+};
+M['./QRBitBuffer']=function(module,exports,require){
+function QRBitBuffer() {
+	this.buffer = [];
+	this.length = 0;
+}
+QRBitBuffer.prototype = {
+	get : function(index) {
+		var bufIndex = Math.floor(index / 8);
+		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+	},
+	put : function(num, length) {
+		for (var i = 0; i < length; i++) {
+			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+		}
+	},
+	getLengthInBits : function() {
+		return this.length;
+	},
+	putBit : function(bit) {
+		var bufIndex = Math.floor(this.length / 8);
+		if (this.buffer.length <= bufIndex) {
+			this.buffer.push(0);
+		}
+		if (bit) {
+			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+		}
+		this.length++;
+	}
+};
+module.exports = QRBitBuffer;
+
+};
+M['./QR8bitByte']=function(module,exports,require){
+var QRMode = require('./QRMode');
+function QR8bitByte(data) {
+	this.mode = QRMode.MODE_8BIT_BYTE;
+	this.data = data;
+}
+QR8bitByte.prototype = {
+	getLength : function() {
+		return this.data.length;
+	},
+	write : function(buffer) {
+		for (var i = 0; i < this.data.length; i++) {
+			buffer.put(this.data.charCodeAt(i), 8);
+		}
+	}
+};
+module.exports = QR8bitByte;
+
+};
+M['./index']=function(module,exports,require){
+var QR8bitByte = require('./QR8bitByte');
+var QRUtil = require('./QRUtil');
+var QRPolynomial = require('./QRPolynomial');
+var QRRSBlock = require('./QRRSBlock');
+var QRBitBuffer = require('./QRBitBuffer');
+function QRCode(typeNumber, errorCorrectLevel) {
+	this.typeNumber = typeNumber;
+	this.errorCorrectLevel = errorCorrectLevel;
+	this.modules = null;
+	this.moduleCount = 0;
+	this.dataCache = null;
+	this.dataList = [];
+}
+QRCode.prototype = {
+	addData : function(data) {
+		var newData = new QR8bitByte(data);
+		this.dataList.push(newData);
+		this.dataCache = null;
+	},
+	isDark : function(row, col) {
+		if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+			throw new Error(row + "," + col);
+		}
+		return this.modules[row][col];
+	},
+	getModuleCount : function() {
+		return this.moduleCount;
+	},
+	make : function() {
+		if (this.typeNumber < 1 ){
+			var typeNumber = 1;
+			for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+				var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+				var buffer = new QRBitBuffer();
+				var totalDataCount = 0;
+				for (var i = 0; i < rsBlocks.length; i++) {
+					totalDataCount += rsBlocks[i].dataCount;
+				}
+				for (var x = 0; x < this.dataList.length; x++) {
+					var data = this.dataList[x];
+					buffer.put(data.mode, 4);
+					buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+					data.write(buffer);
+				}
+				if (buffer.getLengthInBits() <= totalDataCount * 8)
+					break;
+			}
+			this.typeNumber = typeNumber;
+		}
+		this.makeImpl(false, this.getBestMaskPattern() );
+	},
+	makeImpl : function(test, maskPattern) {
+		this.moduleCount = this.typeNumber * 4 + 17;
+		this.modules = new Array(this.moduleCount);
+		for (var row = 0; row < this.moduleCount; row++) {
+			this.modules[row] = new Array(this.moduleCount);
+			for (var col = 0; col < this.moduleCount; col++) {
+				this.modules[row][col] = null;//(col + row) % 3;
+			}
+		}
+		this.setupPositionProbePattern(0, 0);
+		this.setupPositionProbePattern(this.moduleCount - 7, 0);
+		this.setupPositionProbePattern(0, this.moduleCount - 7);
+		this.setupPositionAdjustPattern();
+		this.setupTimingPattern();
+		this.setupTypeInfo(test, maskPattern);
+		if (this.typeNumber >= 7) {
+			this.setupTypeNumber(test);
+		}
+		if (this.dataCache === null) {
+			this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+		}
+		this.mapData(this.dataCache, maskPattern);
+	},
+	setupPositionProbePattern : function(row, col)  {
+		for (var r = -1; r <= 7; r++) {
+			if (row + r <= -1 || this.moduleCount <= row + r) continue;
+			for (var c = -1; c <= 7; c++) {
+				if (col + c <= -1 || this.moduleCount <= col + c) continue;
+				if ( (0 <= r && r <= 6 && (c === 0 || c === 6) ) || 
+                     (0 <= c && c <= 6 && (r === 0 || r === 6) ) || 
+                     (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+					this.modules[row + r][col + c] = true;
+				} else {
+					this.modules[row + r][col + c] = false;
+				}
+			}		
+		}		
+	},
+	getBestMaskPattern : function() {
+		var minLostPoint = 0;
+		var pattern = 0;
+		for (var i = 0; i < 8; i++) {
+			this.makeImpl(true, i);
+			var lostPoint = QRUtil.getLostPoint(this);
+			if (i === 0 || minLostPoint >  lostPoint) {
+				minLostPoint = lostPoint;
+				pattern = i;
+			}
+		}
+		return pattern;
+	},
+	createMovieClip : function(target_mc, instance_name, depth) {
+		var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+		var cs = 1;
+		this.make();
+		for (var row = 0; row < this.modules.length; row++) {
+			var y = row * cs;
+			for (var col = 0; col < this.modules[row].length; col++) {
+				var x = col * cs;
+				var dark = this.modules[row][col];
+				if (dark) {
+					qr_mc.beginFill(0, 100);
+					qr_mc.moveTo(x, y);
+					qr_mc.lineTo(x + cs, y);
+					qr_mc.lineTo(x + cs, y + cs);
+					qr_mc.lineTo(x, y + cs);
+					qr_mc.endFill();
+				}
+			}
+		}
+		return qr_mc;
+	},
+	setupTimingPattern : function() {
+		for (var r = 8; r < this.moduleCount - 8; r++) {
+			if (this.modules[r][6] !== null) {
+				continue;
+			}
+			this.modules[r][6] = (r % 2 === 0);
+		}
+		for (var c = 8; c < this.moduleCount - 8; c++) {
+			if (this.modules[6][c] !== null) {
+				continue;
+			}
+			this.modules[6][c] = (c % 2 === 0);
+		}
+	},
+	setupPositionAdjustPattern : function() {
+		var pos = QRUtil.getPatternPosition(this.typeNumber);
+		for (var i = 0; i < pos.length; i++) {
+			for (var j = 0; j < pos.length; j++) {
+				var row = pos[i];
+				var col = pos[j];
+				if (this.modules[row][col] !== null) {
+					continue;
+				}
+				for (var r = -2; r <= 2; r++) {
+					for (var c = -2; c <= 2; c++) {
+						if (Math.abs(r) === 2 || 
+                            Math.abs(c) === 2 ||
+                            (r === 0 && c === 0) ) {
+							this.modules[row + r][col + c] = true;
+						} else {
+							this.modules[row + r][col + c] = false;
+						}
+					}
+				}
+			}
+		}
+	},
+	setupTypeNumber : function(test) {
+		var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+        var mod;
+		for (var i = 0; i < 18; i++) {
+			mod = (!test && ( (bits >> i) & 1) === 1);
+			this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+		}
+		for (var x = 0; x < 18; x++) {
+			mod = (!test && ( (bits >> x) & 1) === 1);
+			this.modules[x % 3 + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
+		}
+	},
+	setupTypeInfo : function(test, maskPattern) {
+		var data = (this.errorCorrectLevel << 3) | maskPattern;
+		var bits = QRUtil.getBCHTypeInfo(data);
+        var mod;
+		for (var v = 0; v < 15; v++) {
+			mod = (!test && ( (bits >> v) & 1) === 1);
+			if (v < 6) {
+				this.modules[v][8] = mod;
+			} else if (v < 8) {
+				this.modules[v + 1][8] = mod;
+			} else {
+				this.modules[this.moduleCount - 15 + v][8] = mod;
+			}
+		}
+		for (var h = 0; h < 15; h++) {
+			mod = (!test && ( (bits >> h) & 1) === 1);
+			if (h < 8) {
+				this.modules[8][this.moduleCount - h - 1] = mod;
+			} else if (h < 9) {
+				this.modules[8][15 - h - 1 + 1] = mod;
+			} else {
+				this.modules[8][15 - h - 1] = mod;
+			}
+		}
+		this.modules[this.moduleCount - 8][8] = (!test);
+	},
+	mapData : function(data, maskPattern) {
+		var inc = -1;
+		var row = this.moduleCount - 1;
+		var bitIndex = 7;
+		var byteIndex = 0;
+		for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+			if (col === 6) col--;
+			while (true) {
+				for (var c = 0; c < 2; c++) {
+					if (this.modules[row][col - c] === null) {
+						var dark = false;
+						if (byteIndex < data.length) {
+							dark = ( ( (data[byteIndex] >>> bitIndex) & 1) === 1);
+						}
+						var mask = QRUtil.getMask(maskPattern, row, col - c);
+						if (mask) {
+							dark = !dark;
+						}
+						this.modules[row][col - c] = dark;
+						bitIndex--;
+						if (bitIndex === -1) {
+							byteIndex++;
+							bitIndex = 7;
+						}
+					}
+				}
+				row += inc;
+				if (row < 0 || this.moduleCount <= row) {
+					row -= inc;
+					inc = -inc;
+					break;
+				}
+			}
+		}
+	}
+};
+QRCode.PAD0 = 0xEC;
+QRCode.PAD1 = 0x11;
+QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
+	var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+	var buffer = new QRBitBuffer();
+	for (var i = 0; i < dataList.length; i++) {
+		var data = dataList[i];
+		buffer.put(data.mode, 4);
+		buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+		data.write(buffer);
+	}
+	var totalDataCount = 0;
+	for (var x = 0; x < rsBlocks.length; x++) {
+		totalDataCount += rsBlocks[x].dataCount;
+	}
+	if (buffer.getLengthInBits() > totalDataCount * 8) {
+		throw new Error("code length overflow. (" + 
+            buffer.getLengthInBits() + 
+            ">" +  
+            totalDataCount * 8 + 
+            ")");
+	}
+	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+		buffer.put(0, 4);
+	}
+	while (buffer.getLengthInBits() % 8 !== 0) {
+		buffer.putBit(false);
+	}
+	while (true) {
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD0, 8);
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD1, 8);
+	}
+	return QRCode.createBytes(buffer, rsBlocks);
+};
+QRCode.createBytes = function(buffer, rsBlocks) {
+	var offset = 0;
+	var maxDcCount = 0;
+	var maxEcCount = 0;
+	var dcdata = new Array(rsBlocks.length);
+	var ecdata = new Array(rsBlocks.length);
+	for (var r = 0; r < rsBlocks.length; r++) {
+		var dcCount = rsBlocks[r].dataCount;
+		var ecCount = rsBlocks[r].totalCount - dcCount;
+		maxDcCount = Math.max(maxDcCount, dcCount);
+		maxEcCount = Math.max(maxEcCount, ecCount);
+		dcdata[r] = new Array(dcCount);
+		for (var i = 0; i < dcdata[r].length; i++) {
+			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+		}
+		offset += dcCount;
+		var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+		var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+		var modPoly = rawPoly.mod(rsPoly);
+		ecdata[r] = new Array(rsPoly.getLength() - 1);
+		for (var x = 0; x < ecdata[r].length; x++) {
+            var modIndex = x + modPoly.getLength() - ecdata[r].length;
+			ecdata[r][x] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+		}
+	}
+	var totalCodeCount = 0;
+	for (var y = 0; y < rsBlocks.length; y++) {
+		totalCodeCount += rsBlocks[y].totalCount;
+	}
+	var data = new Array(totalCodeCount);
+	var index = 0;
+	for (var z = 0; z < maxDcCount; z++) {
+		for (var s = 0; s < rsBlocks.length; s++) {
+			if (z < dcdata[s].length) {
+				data[index++] = dcdata[s][z];
+			}
+		}
+	}
+	for (var xx = 0; xx < maxEcCount; xx++) {
+		for (var t = 0; t < rsBlocks.length; t++) {
+			if (xx < ecdata[t].length) {
+				data[index++] = ecdata[t][xx];
+			}
+		}
+	}
+	return data;
+};
+module.exports = QRCode;
+
+};
+
+  return {QRCode: req('./index'), EC: req('./QRErrorCorrectLevel')};
+})());
+// ---------- QR Code ของ HN (จุดกลม + ตาหลักขอบวงกลม) ----------
+const QR_EYE_R = 1.5;   // ความโค้งของตาหลัก: 3.5 = วงกลมเต็ม · 1.5 = สี่เหลี่ยมมนเล็กน้อย (สแกนง่ายที่สุด)
+function qrSvg(text, size) {
+  const t = String(text == null ? '' : text).trim();
+  if (!t || t === '-') return '';
+  try {
+    const X = getQRX(), q = new X.QRCode(-1, X.EC.Q); q.addData(t); q.make();
+    const n = q.getModuleCount(), m = 1, W = n + 2 * m;
+    const finder = (r, c) => (r < 7 && c < 7) || (r < 7 && c >= n - 7) || (r >= n - 7 && c < 7);
+    let d = '';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c) && !finder(r, c)) d += `<circle cx="${c + m + 0.5}" cy="${r + m + 0.5}" r="0.45"/>`;
+    const R = QR_EYE_R, eye = (r, c) => `<rect x="${c + m + 0.5}" y="${r + m + 0.5}" width="6" height="6" rx="${R - 0.5}" fill="none" stroke="#000" stroke-width="1"/><rect x="${c + m + 2}" y="${r + m + 2}" width="3" height="3" rx="1.5"/>`;
+    return `<svg viewBox="0 0 ${W} ${W}" style="width:${size};height:${size};display:block;flex:none" shape-rendering="geometricPrecision"><rect width="${W}" height="${W}" fill="#fff"/><g fill="#000">${d}${eye(0, 0)}${eye(0, n - 7)}${eye(n - 7, 0)}</g></svg>`;
+  } catch (e) { console.warn('QR', e); return ''; }
+}
+const logoQr = (hn, logo = '75px', qr = '75px', gap = '8px', rad = '8px') =>
+  `<div style="display:flex;align-items:center;gap:${gap};flex:none"><img src="${LOGO}" style="width:${logo};height:${logo};border-radius:${rad};object-fit:cover">${qrSvg(hn, qr)}</div>`;
+// ---------- QR ชำระเงินแบบระบุยอด (Thai QR Payment / PromptPay ตามมาตรฐาน EMVCo) ----------
+const PAY_REF = 'KPS004KB000002326672', PAY_ACC = 'บจก. โรงพยาบาลรักษ์สกล ดิเวลลอปเม้นท์', PAY_NAME = 'โรงพยาบาลรักษ์สกล';
+const TQR_HEAD = 'data:image/jpeg;base64,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';   // ส่วนหัวกรอบ Thai QR Payment จากไฟล์ที่ผู้ใช้ส่งมา (ตัดเฉพาะหัว ไม่มี QR/ชื่อบัญชีเดิม)
+const PAY_QR_PAYLOAD = '0002010102110216478772000649220504155303920006493311531343007640052044640122433416400130810016A00000067701011201150107536000315010214KB0000023266720320KPS004KB00000232667231690016A00000067701011301030040214KB0000023266720420KPS004KB00000232667251430014A000000004101001064169710211123456789015204806253037645802TH5917RAKSAKOL HOSPITAL6004CITY6225050991070048107084240341763044B82';   // QR รับเงิน K SHOP ของ รพ. (RAKSAKOL HOSPITAL · KPS004KB000002326672) ถ้าว่าง = ใช้รูป QR เดิมแบบไม่มียอด
+// 11 = คงเป็น QR แบบคงที่ของร้าน (แอปกสิกรสแกนร้าน K SHOP ด้วยกันได้) · 12 = QR ใช้ครั้งเดียว (เดิม: K PLUS ปฏิเสธ, SCB รับ)
+const PAY_QR_POI = '11';
+function crc16(s) { let c = 0xFFFF; for (let i = 0; i < s.length; i++) { c ^= s.charCodeAt(i) << 8; for (let j = 0; j < 8; j++) c = c & 0x8000 ? ((c << 1) ^ 0x1021) & 0xFFFF : (c << 1) & 0xFFFF; } return c.toString(16).toUpperCase().padStart(4, '0'); }
+function emvTLV(s) { const out = []; let i = 0; while (i + 4 <= s.length) { const id = s.substr(i, 2), n = parseInt(s.substr(i + 2, 2), 10); if (!/^\d\d$/.test(id) || isNaN(n)) return null; out.push([id, s.substr(i + 4, n)]); i += 4 + n; } return i === s.length ? out : null; }
+function payQrPayload(amount) {
+  const base = String(PAY_QR_PAYLOAD || '').trim(); if (!base || !(amount > 0)) return '';
+  const t = emvTLV(base); if (!t || t[0][0] !== '00' || /[^\x20-\x7E]/.test(base)) return '';
+  const body = t.filter(([id]) => id !== '54' && id !== '63').map(([id, v]) => id === '01' ? ['01', PAY_QR_POI] : [id, v]);
+  if (!body.some(([id]) => id === '01')) body.splice(1, 0, ['01', PAY_QR_POI]);
+  let k = body.findIndex(([id]) => +id > 54); if (k < 0) k = body.length;
+  body.splice(k, 0, ['54', (Math.round(amount * 100) / 100).toFixed(2)]);
+  const out = body.map(([id, v]) => id + String(v.length).padStart(2, '0') + v).join('') + '6304';
+  return out + crc16(out);
+}
+function tqrCard(amount, w, qr, fs) {   // การ์ด QR ชำระเงินแนวตั้งตามกรอบตัวอย่าง: หัว Thai QR + QR ระบุยอด + ชื่อบัญชี รพ.
+  return `<div style="width:${w};font-size:${fs};background:#fff;border:1px solid #c9d3e3;border-radius:8px;overflow:hidden;text-align:center;color:#000;flex:none;line-height:1.3;break-inside:avoid">`
+    + `<img src="${TQR_HEAD}" alt="Thai QR Payment" style="width:100%;display:block">`
+    + `<div style="padding:0 .5em .45em"><div style="display:flex;justify-content:center">${payQrHtml(amount, qr)}</div>`
+    + `<div style="font-weight:700;font-size:1.35em;margin-top:.1em">${PAY_NAME}</div><div style="font-size:.9em">บัญชี: ${PAY_ACC}</div><div style="font-size:.85em;color:#555">เลขอ้างอิง: ${PAY_REF}</div></div></div>`;
+}
+function payQrHtml(amount, size = '200px') {   // QR มาตรฐานสี่เหลี่ยม (ให้แอปธนาคารอ่านง่ายที่สุด); ถ้าสร้างไม่ได้ใช้รูป QR เดิม
+  try {
+    const t = payQrPayload(amount);
+    if (t) {
+      const X = getQRX(), q = new X.QRCode(-1, X.EC.M); q.addData(t); q.make();
+      const n = q.getModuleCount(), m = 4, W = n + 2 * m; let d = '';
+      for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c + m} ${r + m}h1v1h-1z`;
+      return `<svg viewBox="0 0 ${W} ${W}" style="width:${size};height:${size};display:block;flex:none" shape-rendering="crispEdges"><rect width="${W}" height="${W}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
+    }
+  } catch (e) { console.warn('payQR', e); }
+  return `<img src="${QR}" style="width:${size};height:${size};object-fit:contain;flex:none">`;
+}
+function printArea(html, size) { $('pa').innerHTML = html; document.body.classList.add('pa'); setPage(size); setTimeout(() => window.print(), 100); }
+function roomName(r) {
+  const c = String(r || '').replace('VIP', '').trim();
+  return ['1201','1209','301','309'].includes(c) ? 'VIP ' + c : (/^(20[1-9]|120[2-8]|30[2-8])$/.test(c) ? 'พิเศษ ' + c : r || '-');
+}
+function thDate(s) { const d = new Date(s); return isNaN(d) ? (s || '-') : `${d.getDate()} ${['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'][d.getMonth()]} ${d.getFullYear() + 543}`; }
+const hasBed = b => !!b.bed && b.bed !== SOLO && b.bed !== '-';   // มีเลขเตียงจริง (ไม่ใช่เหมาห้อง)
+const bedLabel = b => b.bed && b.bed !== SOLO && b.bed !== '-' ? b.bed : (b.bed === SOLO ? 'เหมาห้อง' : '-');
+// ---------- สัญลักษณ์เตือนสำหรับผู้ป่วยสูงอายุผ่าตัดตา (ไอคอนวาดเอง) — แก้รายการได้ที่ WARNS ----------
+const WIC = {
+  fall: '<circle cx="15" cy="4.5" r="2"/><path d="M13.5 7.5 9 13M13 9l4 2.5M11 10 7 9M9 13l3 5M9 13l-4 3M3 21h18M18 15l2.5-1M17 18l2.5.5"/>',
+  norub: '<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.5"/><path d="M4 4l16 16"/>',
+  nowater: '<path d="M12 3c3 4 5.5 7 5.5 10a5.5 5.5 0 0 1-11 0C6.5 10 9 7 12 3z"/><path d="M4 4l16 16"/>',
+  shield: '<path d="M4.5 7c4.5-2.5 10.5-2.5 15 0 .8 6.5-2.5 11-7.5 13-5-2-8.3-6.5-7.5-13z"/><path d="M8 12.5s1.6-2.3 4-2.3 4 2.3 4 2.3-1.6 2.3-4 2.3-4-2.3-4-2.3z"/>',
+  nobend: '<circle cx="7.5" cy="5" r="1.8"/><path d="M8.5 7.5l5 4M13.5 11.5v7M13.5 11.5l3 7M10 10l-2 4"/><rect x="5" y="15" width="5" height="4" rx=".6"/><path d="M3 3l18 18"/>',
+  cane: '<circle cx="11" cy="4" r="2"/><path d="M11 7v7M11 14l-3 6M11 14l3 6M11 9l4 3M15 12l1 8M7 10l4-1"/>'
+};
+const WARNS = [['fall', 'เสี่ยงพลัดตก', '#d93025'], ['norub', 'ห้ามขยี้ตา', '#d93025'], ['nowater', 'ห้ามน้ำเข้าตา', '#1e6fd9'],
+  ['shield', 'ครอบตาขณะนอน', '#2e8b57'], ['nobend', 'ห้ามก้ม/ยกของหนัก', '#e08a00'], ['cane', 'ลุกช้าๆ มีผู้ช่วย', '#2e8b57']];
+const WARN_DARK = {'#d93025': '#a1170f', '#1e6fd9': '#0b44a8', '#2e8b57': '#1b5e37', '#e08a00': '#7a4a00'};   // สีเข้มสำหรับเครื่องพิมพ์ความร้อน (สีอ่อนจะพิมพ์ไม่ติด)
+const warnSvg = (k, size) => `<svg viewBox="0 0 24 24" style="width:${size};height:${size};display:block" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${WIC[k] || ''}</svg>`;
+// ใบติดหน้าห้อง A5 แนวนอน (ขนาดจริง 100%) — แผ่นข้อมูลแบ่งช่องสี + สัญลักษณ์เตือน
+function doorHtml(b) {
+  const tile = (k, v) => `<div style="background:#fff;color:#0f1b33;border:.4mm solid #c9d3e3;border-radius:3mm;padding:2mm 4mm;min-width:0"><div style="font-size:12pt;color:#5f6368">${k}</div><div style="font-size:21pt;font-weight:700;line-height:1.15;overflow-wrap:anywhere">${v}</div></div>`;
+  const warns = WARNS.map(([k, t, c]) => `<div style="background:${c};border-radius:2.5mm;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1mm;padding:1.2mm .8mm;min-width:0">${warnSvg(k, '14mm')}<div style="font-size:9pt;font-weight:700;line-height:1.05;text-align:center">${t}</div></div>`).join('');
+  return `<div style="width:194mm;height:130mm;box-sizing:border-box;display:flex;flex-direction:column;font-family:Sarabun,sans-serif;color:#0f1b33;background:#fff;overflow:hidden">
+    <div style="display:flex;height:26mm;flex:none;border-bottom:.4mm solid #d0d5dd">
+      <div style="width:28mm;display:flex;align-items:center;justify-content:center"><img src="${LOGO}" style="width:21mm;height:21mm;border-radius:3mm;object-fit:cover"></div>
+      <div style="flex:1;display:flex;align-items:center;padding:0 4mm 0 1mm;font-size:42pt;font-weight:800;letter-spacing:.5pt;white-space:nowrap;overflow:hidden">ห้อง ${esc(roomName(b.room))}</div>
+      ${hasBed(b) ? `<div style="width:42mm;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f5c04a;font-weight:800;text-align:center"><div style="font-size:12pt;font-weight:600">เตียง</div><div style="font-size:25pt;line-height:1.05">${esc(b.bed.replace('เตียง ', ''))}</div></div>` : ''}
+    </div>
+    <div style="padding:3mm 6mm 1.5mm;flex:none"><div style="font-size:31pt;font-weight:800;line-height:1.15;overflow-wrap:anywhere">${esc(b.patient) || '-'}</div><div style="font-size:14pt;font-weight:600;color:#43474e">HN ${esc(b.hn) || '-'}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1.6fr 1.4fr;gap:3mm;padding:0 6mm 3mm;flex:none">${tile('อายุ', `${esc(b.age) || '-'} ปี`)}${tile('สิทธิ์', esc(b.rights) || '-')}${tile('วันที่เข้าพัก', thDate(b.date))}</div>
+    <div style="flex:1;display:flex;gap:5mm;padding:3mm 6mm;min-height:0">
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div style="font-size:12pt;color:#43474e;border-bottom:.4mm solid #43474e;padding-bottom:.8mm;margin-bottom:1.5mm">แพทย์เจ้าของไข้</div>
+        <div style="font-size:19pt;font-weight:700;color:#000;line-height:1.2;overflow-wrap:anywhere">${esc(b.surgeon) || '-'}</div>
+        <div style="margin-top:auto;display:flex;align-items:flex-end;gap:2mm;font-size:8pt;font-weight:700">${qrSvg(b.hn, '19mm')}<span>HN</span></div>
+      </div>
+      <div style="flex:none;width:96mm;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:2mm">${warns}</div>
+    </div></div>`;
+}
+function printLabel(id) { const b = DATA.find(x => x.id === id); if (b) printArea(doorHtml(b), 'A5 landscape'); }
+// ใบติดหน้าอกคนไข้ 8×5 ซม. — แบบเครื่องพิมพ์ความร้อน (ขาว-ดำล้วน): ชื่อ/อายุตัวใหญ่ · QR ของ HN · โลโก้ รพ.
+function chestHtml(b) {
+  const nm = String(b.patient || '-'), nfz = nm.length > 32 ? '13pt' : nm.length > 24 ? '15.5pt' : '18pt';
+  return `<div style="width:80mm;height:50mm;box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;font-family:Sarabun,sans-serif;color:#000;background:#fff;break-inside:avoid">
+    <div style="display:flex;height:12mm;flex:none;border-bottom:.5mm solid #000">
+      <div style="width:11.5mm;display:flex;align-items:center;justify-content:center"><img src="${LOGO}" style="width:9mm;height:9mm;border-radius:1.5mm;object-fit:cover;filter:grayscale(1) contrast(1.8)"></div>
+      <div style="flex:1;display:flex;align-items:center;padding:0 1.5mm 0 .5mm;font-size:${roomName(b.room).length > 9 ? '15pt' : '18pt'};font-weight:800;line-height:1.4;white-space:nowrap;overflow:hidden">ห้อง ${esc(roomName(b.room))}</div>
+      ${hasBed(b) ? `<div style="width:19mm;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;color:#fff;font-weight:800;line-height:1;border-radius:1.5mm;margin:.8mm .8mm .8mm 0"><div style="font-size:6.5pt;font-weight:600">เตียง</div><div style="font-size:23pt">${esc(b.bed.replace('เตียง ', ''))}</div></div>` : ''}
+    </div>
+    <div style="flex:1;display:flex;gap:2mm;padding:1.2mm 2.5mm .8mm;min-height:0">
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center">
+        <div style="font-size:${nfz};font-weight:800;line-height:1.38;padding-bottom:.08em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere">${esc(nm)}</div>
+        <div style="font-size:15pt;font-weight:800;line-height:1.4;margin-top:.5mm">อายุ ${esc(b.age) || '-'} ปี</div>
+        <div style="font-size:8pt;font-weight:600;line-height:1.45">เข้าพัก ${thDate(b.date)}</div>
+      </div>
+      <div style="flex:none;width:20mm;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3mm">${qrSvg(b.hn, '18mm')}<div style="font-size:7.5pt;font-weight:800;line-height:1.3;white-space:nowrap">HN ${esc(b.hn) || '-'}</div></div>
+    </div>
+    <div style="flex:none;padding:.4mm 2.5mm .6mm;font-size:7pt;line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-top:.3mm solid #000"><b>แพทย์:</b> <span style="font-weight:700">${esc(b.surgeon) || '-'}</span></div>
+  </div>`;
+}
+function printChest(id) { const b = DATA.find(x => x.id === id); if (b) printArea(chestHtml(b), '80mm 50mm'); }
+// ใบรายการรับคืนเงิน (ยกเลิกผ่าตัด) — ผู้ป่วย/ญาติลงชื่อรับเงินคืน
+function printRefund(id) {
+  if (role === 'records') return;
+  const b = DATA.find(x => x.id === id); if (!b || !isCX(b)) return;
+  const amt = +b.amount || 0, bed = b.bed && b.bed !== SOLO && b.bed !== '-' ? ` (${b.bed})` : '';
+  let agent = b.agent || ''; if (agent === 'แผนกเวชระเบียน') agent = '';
+  const dot = 'border-bottom:1px dotted #000;text-align:center;padding-bottom:2px', cell = 'border:1px solid #000;padding:7px', line = 'border-bottom:1px dotted #000;height:1.3em;margin:18px 0 6px';
+  printArea(`<div style="font-family:Sarabun,sans-serif;width:100%;max-width:13.5cm;margin:0 auto;line-height:1.4;font-size:.95rem"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="flex:1;text-align:center"><h3 style="font-size:1.25rem;font-weight:700;margin:0">ใบรายการรับคืนเงิน</h3><h4 style="font-size:1rem;margin:4px 0 0">ยกเลิกผ่าตัด รพ.ศุภมิตร-รักษ์สกล</h4></div>${logoQr(b.hn)}</div>
+    <div style="display:flex;gap:8px;margin-bottom:8px"><b>ชื่อผู้ป่วย</b><span style="flex:1;${dot}">${esc(b.patient)}</span><b>HN</b><span style="width:100px;${dot}">${esc(b.hn) || '-'}</span></div>
+    <div style="display:flex;gap:8px;margin-bottom:8px"><b>วันที่เข้าพัก</b><span style="width:80px;${dot}">${fd(b.date)}</span><b>ห้องพัก</b><span style="flex:1;${dot}">${esc(realRoom(b) + bed)}</span><b>ชำระเดิม</b><span style="min-width:80px;${dot}">${payTxt(b)}</span></div>
+    <div style="display:flex;gap:8px;margin-bottom:14px"><b>วันที่ยกเลิกผ่าตัด</b><span style="width:90px;${dot}">${fd(cxDate(b))}</span><b>แพทย์</b><span style="flex:1;${dot}">${esc(b.surgeon) || '-'}</span></div>
+    <table style="width:100%;border-collapse:collapse;text-align:center;font-size:.9rem;margin-bottom:12px"><thead><tr style="background:#f8f9fa"><th style="${cell};width:12%">ลำดับ</th><th style="${cell}">รายการ</th><th style="${cell};width:28%">จำนวนเงิน (บาท)</th></tr></thead>
+      <tbody><tr><td style="${cell}">1</td><td style="${cell};text-align:left">คืนเงินค่าจองห้องพัก/ค่าใช้จ่ายส่วนเกิน (ยกเลิกผ่าตัด)</td><td style="${cell}">${money(amt)}</td></tr></tbody></table>
+    <div style="display:flex;gap:8px;font-weight:700;margin-bottom:26px"><span>รวมคืน</span><span style="flex:1;${dot}">( ${THB(amt)} )</span><span style="width:100px;${dot};text-align:right">${money(amt)}</span><span>บาท</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:.9rem;text-align:center"><div style="width:48%"><div style="${line}"></div><div>ลงชื่อ ผู้รับเงินคืน</div><div>( ${esc(b.patient)} )</div><div>ผู้ป่วย/ญาติ</div><div style="${line}"></div><div>วันที่</div></div>
+    <div style="width:48%"><div style="${line}"></div><div>ลงชื่อ ผู้จ่ายเงินคืน</div><div>( <span style="display:inline-block;min-width:120px">${esc(agent)}</span> )</div><div>เจ้าหน้าที่การเงิน</div><div style="${line}"></div><div>วันที่</div></div></div>
+    <div style="margin-top:16px;text-align:center;font-size:.8rem;color:#444;border-top:1px dashed #ccc;padding-top:8px">* ข้าพเจ้าได้รับเงินคืนตามจำนวนข้างต้นครบถ้วนถูกต้องแล้ว</div></div>`, 'A5 portrait');
+}
+// ---------- ปุ่มพิมพ์ในบอร์ดห้อง: เลือก ใบจอง / ใบติดหน้าอก / ใบติดหน้าห้อง ----------
+function bookingSlip(b) {            // แปลงรายการจองที่บันทึกไว้ ให้อยู่ในรูปข้อมูลเดียวกับฟอร์ม
+  const pp = parsePay(b), saved = {};
+  String(b.items || '').split(';').forEach(t => { const [k, v] = t.split('='); if (v !== undefined && ITEMS[+k]) saved[+k] = +v; });
+  return {name: b.patient || '', hn: b.hn || '', room: realRoom(b), bed: b.bed || '', pay: pp.m, rights: b.rights || '', tr: pp.t, cs: pp.c,
+    agent: b.agent || '', date: b.date, doc: b.surgeon || '', items: ITEMS.map((_, i) => ({on: i in saved, v: saved[i] || 0})), total: +b.amount || 0};
+}
+function printBookingOf(id) { const b = DATA.find(x => x.id === id); if (b) printReceipt(bookingSlip(b)); }
+function printMenu(id) {
+  const b = DATA.find(x => x.id === id); if (!b) return;
+  let pick = null; const i = esc(id), bed = b.bed && b.bed !== SOLO && b.bed !== '-' ? ` (${esc(b.bed)})` : '';
+  Swal.fire({
+    title: `${ic('print')} เลือกเอกสารที่ต้องการพิมพ์`, showConfirmButton: false, showCloseButton: true, customClass: {popup: 'rounded-4'},
+    html: `<div class="text-muted mb-3">${esc(b.patient)} · ห้อง ${esc(b.room)}${bed}</div><div class="d-grid gap-2">
+      <button type="button" class="btn btn-primary" onclick="window.__pm='slip';Swal.close()">${ic('doc')} ใบจอง (A5)</button>
+      <button type="button" class="btn btn-outline-primary" onclick="window.__pm='chest';Swal.close()">${ic('badge')} ใบติดหน้าอก 8×5 ซม.</button>
+      <button type="button" class="btn btn-outline-primary" onclick="window.__pm='door';Swal.close()">${ic('sign')} ใบติดหน้าห้อง (A5)</button></div>`,
+    willOpen: () => { window.__pm = null; },
+    didClose: () => { pick = window.__pm; window.__pm = null;   // พิมพ์หลังป๊อบอัพปิดสนิท ไม่ให้ติดไปในกระดาษ
+      if (pick === 'slip') printBookingOf(id); else if (pick === 'chest') printChest(id); else if (pick === 'door') printLabel(id); }
+  });
+}
+function printReceipt(src) {
+  const F = src || {name: $('name').value, hn: $('hn').value, room: $('room').value, bed: $('bed').value, pay: $('pay').value, rights: $('rights').value.trim(),
+    tr: +$('pT').value || 0, cs: +$('pC').value || 0, agent: $('agent').value, date: $('date').value, doc: $('doc').value,
+    items: ITEMS.map((_, i) => ({on: $('c' + i).checked, v: +$('a' + i).value})), total: total()};
+  if (!F.name) return msg('warning', 'แจ้งเตือน', 'กรุณากรอกชื่อผู้ป่วยก่อนพิมพ์เอกสาร');
+  const room = F.room, bed = F.bed, pay = F.pay, rights = F.rights, sp = pay === SPLIT, tr = F.tr, cs = F.cs; let agent = F.agent; if (agent === 'แผนกเวชระเบียน') agent = '';
+  const dispRoom = (room || '-') + (room && room !== WAIT && room !== RSV && bed && bed !== SOLO && bed !== '-' ? ` (${bed})` : '');
+  const dt = fd(F.date), t = F.total, dot = 'border-bottom:1px dotted #000;text-align:center;padding-bottom:2px', cell = 'border:1px solid #000;padding:5px';
+  if (pay === 'ตามสิทธิ์') {   // ตามสิทธิ์: พิมพ์ "ใบแจ้งรับการจองห้องพัก" (ไม่มีตารางรายการ/ราคา) พร้อมระเบียบห้องพัก
+    printArea(`<div style="font-family:Sarabun,sans-serif;width:100%;max-width:13.5cm;margin:0 auto;line-height:1.35;font-size:.95rem;color:#000"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="flex:1;text-align:center"><h3 style="font-size:1.25rem;font-weight:700;margin:0">ใบแจ้งรับการจองห้องพัก</h3><h4 style="font-size:1rem;margin:4px 0 0">ผ่าตัดตา รพ.ศุภมิตร-รักษ์สกล</h4></div>${logoQr(F.hn)}</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px"><b>ชื่อผู้ป่วย</b><span style="flex:1;${dot}">${esc(F.name)}</span><b>HN</b><span style="width:100px;${dot}">${esc(F.hn) || '-'}</span></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:8px"><b>วันที่</b><span style="width:100px;${dot}">${dt}</span><b>ห้องพัก</b><span style="flex:1;min-width:0;overflow-wrap:anywhere;${dot}">${esc(dispRoom)}</span></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:8px"><b>สิทธิ์</b><span style="flex:1;min-width:0;overflow-wrap:anywhere;${dot}">${esc(rights) || '-'}</span><b>วิธีชำระเงินส่วนเกิน</b><span style="flex:1;min-width:0;overflow-wrap:anywhere;${dot}">${esc(pay)}</span></div>
+    <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:22px"><b>แพทย์เจ้าของไข้</b><span style="flex:1;min-width:0;overflow-wrap:anywhere;${dot}">${esc(F.doc) || '-'}</span></div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:22px"><div style="width:52%;text-align:center"><div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:8px"><b style="white-space:nowrap">ผู้รับจอง</b><span style="flex:1;border-bottom:1px dotted #000;height:1.2em"></span></div><div style="margin-bottom:8px">( <span style="display:inline-block;min-width:130px">${esc(agent)}</span> )</div><div style="display:flex;gap:6px;align-items:flex-end"><b>วันที่</b><span style="flex:1;${dot}">${dt}</span></div></div></div>
+      <div style="border:1px solid #000;border-radius:8px;padding:10px 12px;font-size:.85rem;line-height:1.55"><div style="font-weight:700;font-size:.95rem;text-align:center;margin-bottom:6px">ระเบียบ การจองห้องพักและการจัดสรรห้อง</div><ul style="margin:0;padding-left:1.1rem"><li style="margin-bottom:5px"><b>การจองห้องพัก :</b> ผู้ป่วยหรือญาติสามารถแจ้งความจำนงจองห้องพักล่วงหน้าได้ที่จุดรับรอง ทั้งนี้ การได้สิทธิ์เข้าพักจะขึ้นอยู่กับจำนวนห้องว่างในวันและเวลาที่ผู้ป่วยเข้ารับการรักษา</li><li style="margin-bottom:5px"><b>การยืนยันห้องพัก :</b> โรงพยาบาลขอสงวนสิทธิ์ในการจัดสรรห้องพักตามลำดับการจอง และตามความเหมาะสมของอาการผู้ป่วย (ภายใต้ดุลยพินิจของแพทย์)</li><li><b>กรณีห้องพักตามสิทธิ์ที่ไม่ต้องชำระเรียกเก็บส่วนเกิน ห้องพักเต็ม :</b> โรงพยาบาลจะจัดหาห้องพักประเภทอื่น และผู้ป่วยจะต้องชำระเงินในส่วนเกินของห้องพักประเภทนั้นๆ</li></ul></div></div>`, 'A5 portrait');
+    return;
+  }
+  const sel = ITEMS.map((it, i) => [it, F.items[i]]).filter(([, x]) => x.on);
+  const rows = sel.length ? sel.map(([it, x], k) => `<tr><td style="${cell}">${k + 1}</td><td style="${cell};text-align:left">${it[0]}</td><td style="${cell}">${it[1].toLocaleString('th-TH')}</td><td style="${cell}">${x.v > 0 ? x.v.toLocaleString('th-TH') : '-'}</td></tr>`).join('')
+    : `<tr><td colspan="4" style="${cell};color:#555">ไม่มีรายการเรียกเก็บส่วนเกิน</td></tr>`;
+  const qrAmt = pay === 'โอน' ? t : tr, qr = (pay === 'โอน' || (sp && tr > 0)) ? (() => { const dyn = !!payQrPayload(qrAmt); return `<div style="margin-top:8px;display:flex;align-items:center;gap:14px;break-inside:avoid;page-break-inside:avoid">${tqrCard(qrAmt, '40mm', '28mm', '7pt')}<div style="font-size:.9rem;line-height:1.5;color:#000"><div style="font-weight:700">${ic('phone')} สแกนจ่ายผ่านแอปธนาคาร</div><div>${dyn ? 'ยอดเงินขึ้นอัตโนมัติ ไม่ต้องกรอก' : 'กรุณากรอกยอดตามที่ระบุ'}</div><div style="margin-top:6px;padding:4px 10px;border:1.5px solid #0b57d0;border-radius:8px;display:inline-block;font-weight:700;font-size:1.05rem">ยอดชำระ ${money(qrAmt)} บาท</div></div></div>`; })() : '';
+  printArea(`<div style="font-family:Sarabun,sans-serif;width:100%;max-width:13.5cm;margin:0 auto;line-height:1.35;font-size:.95rem"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="flex:1;text-align:center"><h3 style="font-size:1.2rem;font-weight:700;margin:0">ใบรายการจองห้องพักและเรียกเก็บค่าใช้จ่ายส่วนเกิน</h3><h4 style="font-size:1rem;margin:4px 0 0">ผ่าตัดตา รพ.ศุภมิตร-รักษ์สกล</h4></div>${logoQr(F.hn)}</div>
+    <div style="display:flex;gap:8px;margin-bottom:8px"><b>ชื่อผู้ป่วย</b><span style="flex:1;${dot}">${esc(F.name)}</span><b>HN</b><span style="width:100px;${dot}">${esc(F.hn) || '-'}</span></div>
+    <div style="display:flex;align-items:flex-end;gap:6px;margin-bottom:8px;font-size:.85rem"><b>วันที่</b><span style="width:64px;${dot}">${dt}</span><b>ห้องพัก</b><span style="flex:1.2;min-width:0;overflow-wrap:anywhere;${dot}">${esc(dispRoom)}</span><b>สิทธิ์</b><span style="flex:1;min-width:0;overflow-wrap:anywhere;${dot}">${esc(rights) || '-'}</span><b>วิธีชำระเงินส่วนเกิน</b><span style="flex:1;min-width:0;overflow-wrap:anywhere;${dot}">${esc(pay)}</span></div>
+    <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:12px"><b>แพทย์เจ้าของไข้</b><span style="flex:1;min-width:0;overflow-wrap:anywhere;${dot}">${esc(F.doc) || '-'}</span></div>
+    <table style="width:100%;border-collapse:collapse;text-align:center;font-size:.85rem;margin-bottom:12px"><thead><tr style="background:#f8f9fa"><th style="${cell};width:12%">ลำดับ</th><th style="${cell}">รายการ</th><th style="${cell}">ราคา</th><th style="${cell}">ส่วนเกิน (บาท)</th></tr></thead><tbody>${rows}</tbody></table>
+    <div style="display:flex;gap:8px;font-weight:700;margin-bottom:22px"><span>รวม</span><span style="flex:1;${dot}">( ${THB(t)} )</span><span style="width:100px;${dot};text-align:right">${money(t)}</span><span>บาท</span></div>
+    ${sp ? `<div style="font-size:.9rem;font-weight:600;margin:-8px 0 14px">ชำระโดย: โอน ${money(tr)} บาท + เงินสด ${money(cs)} บาท</div>` : ''}<div style="display:flex;justify-content:space-between;font-size:.9rem"><div style="width:48%"><div style="display:flex;gap:6px;margin-bottom:20px"><b>ผู้ชำระเงิน</b><span style="flex:1;border-bottom:1px dotted #000"></span><span>ผู้ป่วย/ญาติ</span></div><div style="border-bottom:1px dotted #000;margin:0 10%;height:1em"></div></div>
+    <div style="width:48%"><div style="display:flex;gap:6px;margin-bottom:8px"><b>ผู้รับเงิน</b><span style="flex:1;border-bottom:1px dotted #000"></span></div><div style="text-align:center;margin-bottom:8px">( <span style="display:inline-block;min-width:130px">${esc(agent)}</span> )</div><div style="display:flex;gap:6px;margin-bottom:8px"><b>วันที่</b><span style="flex:1;${dot}">${dt}</span></div><div style="text-align:center">(เจ้าหน้าที่การเงิน)</div></div></div>${qr}
+    <div style="margin-top:12px;text-align:center;font-size:.8rem;color:#444;border-top:1px dashed #ccc;padding-top:8px">* เอกสารนี้เป็นเพียงใบแสดงหลักฐานการชำระเงิน ส่วนใบเสร็จรับเงินทางโรงพยาบาลจะออกให้ในวันที่ผู้ป่วยออกจากโรงพยาบาล หากท่านยังไม่ได้รับโปรดแจ้งเจ้าหน้าที่</div></div>`, 'A5 portrait');
+}
+</script>
+</body>
+</html>

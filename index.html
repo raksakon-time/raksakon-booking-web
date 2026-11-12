@@ -418,7 +418,7 @@ const maxBeds = r => r === '210' || r === '214' ? 9 : r === '213' ? 4 : 8;
 
 // ---------- Apps Script (Promise + timeout; อ่านซ้ำได้ ส่วนเขียนไม่ซ้ำ) ----------
 // ---------- API ของ Apps Script (หน้าเว็บนี้โฮสต์บน GitHub Pages) ----------
-const API_URL = 'https://script.google.com/macros/s/วาง_DEPLOYMENT_ID_ตรงนี้/exec';   // ← ใส่ URL ของ Web app ที่ deploy แล้ว
+const API_URL = 'https://script.google.com/macros/s/AKfycbye-Htxn_FNsWcEFWTbza40iKSZMGBYbWWRPFIZEM6LkpmGBSNeZSnnHnCqtrlMaanRnw/exec';   // ← ใส่ URL ของ Web app ที่ deploy แล้ว
 let TOKEN = sessionStorage.getItem('rk_token') || '';
 async function api(action, body = {}) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 30000);

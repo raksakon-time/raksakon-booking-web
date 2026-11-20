@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b57d0">
+<meta name="theme-color" content="#6C3CE1">
 <title>ระบบจองห้องพัก รพ.ศุภมิตร-รักษ์สกล</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -275,6 +275,85 @@ body{font-size:15px}
 #pa,#pa *{font-family:'Sarabun',sans-serif}
 @media print{body{background:#fff!important}.card-md{box-shadow:none!important}}
 </style>
+<style id="theme-v4">
+/* ===== Theme v4 · Purple Smart (ม่วง #6C3CE1 · ม่วงอ่อน #F3F0FC · ส้มชมพู gradient) ===== */
+:root{--pu:#6C3CE1;--pu2:#8B5CF6;--pu-d:#5527c9;--lav:#F3F0FC;--lav2:#E9E3FA;--line:#E6E0F5;--ink:#221B3A;--muted:#8E88A6;
+ --hot:linear-gradient(90deg,#F59A6C 0%,#EC5F86 100%);--navy:#6C3CE1;--navy-d:#5527c9;--coral:#EC5F86;--peri:#B39DF3;--soft:#F3F0FC;
+ --p:#6C3CE1;--pc:#ECE5FD;--sc:#EFEAFD;--on-sc:#4B25B8;--g:linear-gradient(135deg,#6C3CE1,#8B5CF6)}
+body{background:var(--lav)!important;color:var(--ink)}
+#main::before,#rep::before{background:linear-gradient(160deg,#5B2ED6 0%,#7C4DFF 55%,#A383FF 100%)!important;height:230px!important;border-radius:0 0 36px 36px!important}
+.appbar{background:transparent!important;box-shadow:none!important}
+.appbar h5,.appbar small{color:#fff!important}
+.appbar .btn-outline-danger{background:rgba(255,255,255,.16)!important;border:0!important;color:#fff!important;border-radius:999px}
+.appbar .btn-outline-danger:hover{background:#fff!important;color:var(--pu)!important}
+.appbar-logo{box-shadow:0 0 0 3px rgba(255,255,255,.35)!important;border-radius:12px!important}
+.card-md{border-radius:26px!important;box-shadow:0 14px 40px rgba(76,45,170,.12)!important;border:0!important}
+.sec{background:#fff!important;border:1px solid var(--line)!important;border-radius:20px!important}
+#paySec{border:1.5px solid #CDBDF8!important}
+.sec h6,.rv-h,#formTitle,.dhead h5{color:var(--ink)!important}
+.sec h6 .ic,#formTitle .ic{color:var(--pu)}
+.form-label{color:#5d5776!important;font-weight:600!important;font-size:.85rem}
+.form-control,.form-select{background-color:#fff!important;border:1.5px solid var(--line)!important;border-radius:12px!important;color:var(--ink)}
+.form-control::placeholder{color:#b3aec6}
+.form-control:hover,.form-select:hover{border-color:#cfc4f1!important}
+.form-control:focus,.form-select:focus{border-color:var(--pu)!important;box-shadow:0 0 0 4px rgba(108,60,225,.14)!important}
+.form-check-input:checked{background-color:var(--pu)!important;border-color:var(--pu)!important}
+.btn{border-radius:999px!important}
+.btn-primary{background:var(--pu)!important;box-shadow:0 6px 16px rgba(108,60,225,.28)!important}
+.btn-primary:hover,.btn-primary:focus{background:var(--pu-d)!important}
+#save{background:var(--hot)!important;box-shadow:0 8px 20px rgba(236,95,134,.35)!important;color:#fff!important;border:0!important}
+#cancel{background:var(--ink)!important}
+.btn-outline-primary{background:#fff!important;border:1.5px solid var(--line)!important;color:var(--pu)!important}
+.btn-outline-primary:hover{background:var(--pu)!important;color:#fff!important}
+.btn-outline-danger{border-color:#F6B3C6!important;color:var(--coral)!important}.btn-outline-danger:hover{background:var(--hot)!important;color:#fff!important;border-color:transparent!important}
+.hn-group .input-group-text{background:var(--pu)!important;border-radius:12px 0 0 12px!important}
+.hn-group .btn{border-radius:0 12px 12px 0!important}
+.text-primary{color:var(--pu)!important}.text-danger{color:var(--coral)!important}
+/* แท็บ สถานะห้อง/คิว: เส้นใต้ม่วง */
+.dtab.on{color:var(--pu)!important;border-bottom-color:var(--pu)!important}.dtab:hover{color:var(--pu)!important}
+/* แท็บชั้น: ชิปเม็ดยา (active = ม่วงเต็ม) */
+.ftabs{border:0!important;gap:10px!important;margin:6px 0 14px!important}
+.ftab{border:0!important;border-radius:999px!important;background:#EFECF6!important;color:#6f6a86!important;padding:9px 12px!important;box-shadow:none!important;font-size:1.05rem!important}
+.ftab:hover{background:#E6E0F7!important;color:var(--pu)!important}
+.ftab.on{background:var(--pu)!important;color:#fff!important;box-shadow:0 6px 16px rgba(108,60,225,.30)!important}
+.fcnt{background:#fff!important;color:var(--pu)!important}.ftab.on .fcnt{background:rgba(255,255,255,.25)!important;color:#fff!important}
+.fpane{background:transparent!important;border:0!important}
+/* การ์ดห้อง: ไทล์มน แบบปุ่มอุปกรณ์ */
+.room{border:1.5px solid transparent!important;border-left:1.5px solid transparent!important;border-right:1.5px solid transparent!important;border-radius:20px!important;background:#fff!important;box-shadow:0 6px 18px rgba(76,45,170,.08)!important}
+.room .rh{border-bottom:0!important}
+.room .rh b{color:var(--ink)!important}
+.room .text-success{color:#22a06b!important}
+.room.bk{border-color:#D9CCFB!important;background:linear-gradient(180deg,#F8F5FF,#fff)!important}
+.room.bk .rh b{color:var(--pu)!important}
+.room.rsv{border-color:#FAD4BF!important;background:linear-gradient(180deg,#FFF6F0,#fff)!important}
+.room.lk{background:#F2F1F6!important;color:#9a96ab!important}
+.room.vip::after{content:'VIP';position:absolute;top:10px;right:34px;font-size:.62rem;font-weight:700;color:#fff;background:var(--hot);border-radius:999px;padding:1px 7px}
+.pt{background:var(--lav)!important;border:0!important;border-radius:14px!important}
+.bed{background:var(--pu)!important}
+.sm.ib{border-radius:14px!important;border:1.5px solid var(--line)!important;background:#fff!important;color:var(--pu)!important}
+.sm.ib:hover{background:var(--pu)!important;color:#fff!important;border-color:var(--pu)!important}
+.sm.dc{color:#E25578!important;background:#FFF0F4!important;border-color:#FBD3DE!important}
+.sm.cx{color:#E2804F!important;background:#FFF4EC!important;border-color:#FADBC6!important}
+.sm.pr{color:var(--pu)!important;background:#F3EEFF!important;border-color:#E3D8FD!important}
+.lockb{color:#b2acc8!important}.lockb.on{color:var(--pu)!important}
+/* ตาราง / เมนู / ป๊อปอัป */
+.tbl th,.qt th{background:var(--lav)!important;color:#6f6a86!important}
+.qt tbody td:first-child{border-left:3px solid var(--pu)!important}
+.qt tbody tr:hover td{background:#FAF8FF!important}
+#rmenuBtn{background:var(--pu)!important}
+.rmenu-list button:hover{background:var(--lav)!important;color:var(--pu)!important}
+.rv-sec{border-color:var(--line)!important}
+.split-box{border-color:#CDBDF8!important}
+.swal2-popup{border-radius:26px!important}
+/* หน้า Login แบบฟอร์มขาว + ปุ่ม gradient */
+#login{background:linear-gradient(150deg,#5B2ED6 0%,#7C4DFF 45%,#C9B6FF 100%)!important}
+#login .card-md{border-radius:30px!important;padding:40px 34px!important;box-shadow:0 24px 60px rgba(43,16,120,.35)!important}
+#login h4{color:var(--ink)!important;font-size:1.7rem}
+#login .btn-primary{background:var(--hot)!important;box-shadow:0 10px 22px rgba(236,95,134,.38)!important;font-size:1.05rem;padding:.7rem}
+#pinEye{border-color:var(--line)!important;color:var(--pu)!important}
+.tscroll::-webkit-scrollbar-thumb,#dash::-webkit-scrollbar-thumb{background:#C6B5F7!important}
+@media print{#main::before,#rep::before{display:none!important}}
+</style>
 </head>
 <body>
 
@@ -438,9 +517,9 @@ function sessionExpired() {
 }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const gasRead = async (n, ...a) => { try { return await gas(n, ...a); } catch (e) { if (e.code === 'AUTH') throw e; await sleep(800); return gas(n, ...a); } };
-const msg = (icon, title, text) => Swal.fire({icon, title, text, confirmButtonText:'ตกลง', confirmButtonColor:'#2A3C76', customClass:{popup:'rounded-4'}});
+const msg = (icon, title, text) => Swal.fire({icon, title, text, confirmButtonText:'ตกลง', confirmButtonColor:'#6C3CE1', customClass:{popup:'rounded-4'}});
 const toast = t => Swal.fire({icon:'success', title:'สำเร็จ', text:t, timer:1500, showConfirmButton:false, customClass:{popup:'rounded-4'}});
-const ask = (title, text, ok) => Swal.fire({title, text, icon:'warning', showCancelButton:true, confirmButtonColor:'#FE696E', cancelButtonColor:'#8a93ad', confirmButtonText:ok, cancelButtonText:'ยกเลิก', customClass:{popup:'rounded-4'}}).then(r => r.isConfirmed);
+const ask = (title, text, ok) => Swal.fire({title, text, icon:'warning', showCancelButton:true, confirmButtonColor:'#EC5F86', cancelButtonColor:'#8E88A6', confirmButtonText:ok, cancelButtonText:'ยกเลิก', customClass:{popup:'rounded-4'}}).then(r => r.isConfirmed);
 async function seq(items, fn) { let ok = 0; for (const i of items) { try { await fn(i); ok++; } catch (e) { console.error(e); } } return ok; }
 
 // ---------- เริ่มต้น ----------
@@ -613,7 +692,7 @@ function reviewBooking(f) {
       + (pp.m === SPLIT ? row('แบ่งชำระ', `โอน ${money(pp.t)} + เงินสด ${money(pp.c)}`) : '') + row('ยอดชำระ', `${money(f.amount)} บาท`, true));
   if (!rec && qrAmt > 0) html += `<div class="rv-qr">${tqrCard(qrAmt, '300px', '210px', '14px')}<div>${ic('phone')} สแกนจ่าย ${money(qrAmt)} บาท</div></div>`;
   return Swal.fire({title: `${ic('doc')} ตรวจสอบข้อมูลก่อนบันทึก`, html: `<div class="text-start">${html}</div>`, width: 620,
-    showCancelButton: true, reverseButtons: true, allowOutsideClick: false, confirmButtonColor: '#FE696E', cancelButtonColor: '#2A3C76',
+    showCancelButton: true, reverseButtons: true, allowOutsideClick: false, confirmButtonColor: '#EC5F86', cancelButtonColor: '#6C3CE1',
     confirmButtonText: `${ic('save')} ปิด · บันทึกเข้าระบบ`, cancelButtonText: `${ic('edit')} กลับไปแก้ไข`, customClass: {popup: 'rounded-4'}}).then(r => !!r.isConfirmed);
 }
 async function submitForm(e) {
@@ -701,7 +780,7 @@ async function cancelAllQueue() {
 async function toggleLock(r) {
   const on = LOCKED.includes(r);
   if (!on && DATA.some(b => b.room === r)) return msg('error', 'ไม่สามารถล็อคได้', `ห้อง ${r} มีการจองคิวผ่าตาอยู่`);
-  const ok = await Swal.fire({title: on ? 'ปลดล็อคห้อง?' : 'ล็อคห้องสำหรับ Admit?', text: `ห้อง ${r}`, icon:'question', showCancelButton:true, confirmButtonText:'ยืนยัน', cancelButtonText:'ยกเลิก', confirmButtonColor:'#2A3C76'}).then(x => x.isConfirmed);
+  const ok = await Swal.fire({title: on ? 'ปลดล็อคห้อง?' : 'ล็อคห้องสำหรับ Admit?', text: `ห้อง ${r}`, icon:'question', showCancelButton:true, confirmButtonText:'ยืนยัน', cancelButtonText:'ยกเลิก', confirmButtonColor:'#6C3CE1'}).then(x => x.isConfirmed);
   if (!ok) return; busy++;
   try { await gas('toggleRoomLockSheet', r, !on); LOCKED = on ? LOCKED.filter(x => x !== r) : [...LOCKED, r]; draw(); roomOpts(); }
   catch (e) { msg('error', 'เกิดข้อผิดพลาด', e.message || String(e)); } finally { busy--; }
@@ -803,7 +882,7 @@ async function importExcel() {
   if (!window.XLSX) return msg('error', 'โหลดตัวอ่าน Excel ไม่สำเร็จ', 'ตรวจสอบอินเทอร์เน็ตแล้วรีเฟรชหน้าอีกครั้ง');
   XL = [];
   const r = await Swal.fire({
-    title: `${ic('upload')} นำเข้าคิวจาก Excel`, width: 660, showCancelButton: true, confirmButtonText: 'นำเข้า', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#2A3C76', customClass: {popup: 'rounded-4'},
+    title: `${ic('upload')} นำเข้าคิวจาก Excel`, width: 660, showCancelButton: true, confirmButtonText: 'นำเข้า', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#6C3CE1', customClass: {popup: 'rounded-4'},
     html: `<div class="text-start"><label class="form-label">ไฟล์ .xlsx / .xls / .csv (ไม่เกิน ${XL_MAX} แถว)</label><input type="file" id="xlFile" accept=".xlsx,.xls,.csv" class="form-control mb-2">
       <div class="small text-muted">คอลัมน์ที่ใช้: <b>HN, ชื่อ-สกุล, อายุ, สิทธิ์, วันที่เข้าพัก</b> (หัวตารางภาษาไทยหรืออังกฤษ)<br>ผู้ป่วยทุกคนเข้า "คิวรอจัดห้อง" · แพทย์เจ้าของไข้เลือกภายหลังได้ที่ปุ่ม ${ic('edit')} แก้ไข / จัดห้อง</div><div id="xlPrev" class="mt-2" style="max-height:250px;overflow:auto"></div></div>`,
     didOpen: () => $('xlFile').addEventListener('change', async e => {

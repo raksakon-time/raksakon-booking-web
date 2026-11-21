@@ -367,6 +367,19 @@ body{background:var(--lav)!important;color:var(--ink)}
 .rv-pay-cash{font-size:.85rem;font-weight:600;color:#E2804F;background:#FFF4EC;border-radius:12px;padding:6px}
 @media(max-width:780px){.rv-grid.two{grid-template-columns:1fr}.rv-pay{position:static}}
 .rv-actions{gap:12px;margin-top:18px}
+/* ป๊อปอัปตรวจสอบ: แถวละ 1 รายการ (ป้ายซ้าย · ค่าขวา) ตัวอักษรใหญ่ อ่านง่ายสำหรับผู้สูงอายุ */
+.rv-tbl{width:100%;border-collapse:collapse}
+.rv-row>th,.rv-row>td{padding:7px 10px;text-align:left;vertical-align:middle;border-top:1px solid #F1EDFA}
+.rv-row:first-child>th,.rv-row:first-child>td{border-top:0}
+.rv-row>th{width:36%;font-weight:600;color:#5d5776;font-size:1.15rem;line-height:1.35}
+.rv-row>td{font-weight:700;color:#221B3A;font-size:1.4rem;line-height:1.35;overflow-wrap:anywhere}
+.rv-row.rv-strong>th,.rv-row.rv-strong>td{background:#FFF0F4;border-top:0}
+.rv-row.rv-strong>th{color:#9c2f55;border-radius:12px 0 0 12px}
+.rv-row.rv-strong>td{font-family:'Prompt','Sarabun',sans-serif;font-weight:600;color:#D6336C;font-size:1.9rem;line-height:1.25;border-radius:0 12px 12px 0}
+.rv-sec .rv-h{font-family:'Prompt','Sarabun',sans-serif;font-size:1.2rem!important;font-weight:600!important;margin-bottom:6px}
+.rv-sec .rv-h .ic{width:1.15em;height:1.15em}
+.rv-status{font-size:1.1rem}
+.rv-pay-h{font-size:1.15rem}.rv-amt span{font-size:1rem!important}.rv-pay-note{font-size:1rem!important}
 .rv-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:150px;border:0;border-radius:999px;padding:.8rem 1.9rem;font:600 1.02rem 'Sarabun',sans-serif;cursor:pointer;transition:filter .15s,box-shadow .15s}
 .rv-btn .ic{width:1.25em;height:1.25em}
 .rv-btn:hover{filter:brightness(1.06)}.rv-btn:focus-visible{outline:3px solid #B39DF3;outline-offset:3px}
@@ -523,7 +536,7 @@ const ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hid
 const FC = ['#2A3C76', '#5d78c0', '#FE696E', '#f4a340'];   // สีประจำแท็บ: ชั้น 2B · ชั้น 2 · ชั้น 3 · รอห้องสำรอง
 const LOGO = 'https://i.postimg.cc/pXHW7T4D/Squre-profile-pink-bg.jpg';
 const QR = "https://i.postimg.cc/Vkz5S5dX/QR-r-ks'-skl.jpg";
-const PINS = {ward:'1111', finance:'2222', records:'3333', admission:'4444'};
+const ROLES = ['ward', 'finance', 'records', 'admission'];
 const SOLO = 'เหมาห้อง/เตียงเดี่ยว', WAIT = 'รอจัดห้อง', RSV = 'รอห้องสำรอง';
 const FLOORS = [['ชั้น 2B', ['201','202','203','204','205','206','207','208','209','210','211','212','213','214']],
   ['ชั้น 2', ['VIP 1201','1202','1203','1204','1205','1206','1207','1208','VIP 1209']], ['ชั้น 3', ['VIP 301','302','303','304','305','306','307','308','VIP 309']]];
@@ -553,13 +566,27 @@ const active = () => DATA.filter(b => !isWait(b) && !isRsv(b) && !isOut(b));
 const maxBeds = r => r === '210' || r === '214' ? 9 : r === '213' ? 4 : 8;
 
 // ---------- Apps Script (Promise + timeout; อ่านซ้ำได้ ส่วนเขียนไม่ซ้ำ) ----------
-const gas = (name, ...a) => new Promise((ok, ko) => {
-  if (!window.google || !google.script) return ko(new Error('ไม่ได้เปิดผ่าน Apps Script'));
-  const t = setTimeout(() => ko(new Error('หมดเวลาเชื่อมต่อ กรุณาลองใหม่')), 30000);
-  google.script.run.withSuccessHandler(r => { clearTimeout(t); ok(r); }).withFailureHandler(e => { clearTimeout(t); ko(e); })[name](...a);
-});
+// ---------- API ของ Apps Script (หน้าเว็บนี้โฮสต์บน GitHub Pages) ----------
+const API_URL = 'https://script.google.com/macros/s/วาง_DEPLOYMENT_ID_ตรงนี้/exec';   // ← ใส่ URL ของ Web app ที่ deploy แล้ว
+let TOKEN = sessionStorage.getItem('rk_token') || '';
+async function api(action, body = {}) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 30000);
+  let res;
+  try {
+    const r = await fetch(API_URL, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify({action, token: TOKEN, ...body}), signal: ctl.signal, redirect: 'follow'});
+    res = await r.json();
+  } catch (e) { const err = new Error(e.name === 'AbortError' ? 'หมดเวลาเชื่อมต่อ กรุณาลองใหม่' : 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ตรวจสอบอินเทอร์เน็ต'); err.code = 'NET'; throw err; }
+  finally { clearTimeout(t); }
+  if (!res || !res.ok) { const err = new Error((res && res.error) || 'เกิดข้อผิดพลาด'); err.code = res && res.code; if (err.code === 'AUTH' && action !== 'login') sessionExpired(); throw err; }
+  return res.data;
+}
+const gas = (name, ...args) => api(name, {args});
+function sessionExpired() {
+  const was = !!role; TOKEN = ''; sessionStorage.removeItem('rk_token'); sessionStorage.removeItem('rk_role');
+  if (was) { logout(true); msg('warning', 'หมดเวลาการใช้งาน', 'กรุณาเข้าสู่ระบบใหม่'); }
+}
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-const gasRead = async (n, ...a) => { try { return await gas(n, ...a); } catch (e) { await sleep(800); return gas(n, ...a); } };
+const gasRead = async (n, ...a) => { try { return await gas(n, ...a); } catch (e) { if (e.code === 'AUTH') throw e; await sleep(800); return gas(n, ...a); } };
 const msg = (icon, title, text) => Swal.fire({icon, title, text, confirmButtonText:'ตกลง', confirmButtonColor:'#6C3CE1', customClass:{popup:'rounded-4'}});
 const toast = t => Swal.fire({icon:'success', title:'สำเร็จ', text:t, timer:1500, showConfirmButton:false, customClass:{popup:'rounded-4'}});
 const ask = (title, text, ok) => Swal.fire({title, text, icon:'warning', showCancelButton:true, confirmButtonColor:'#EC5F86', cancelButtonColor:'#8E88A6', confirmButtonText:ok, cancelButtonText:'ยกเลิก', customClass:{popup:'rounded-4'}}).then(r => r.isConfirmed);
@@ -581,6 +608,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('pinEye').innerHTML = EYE;
   $('hn').addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); findHN(); } });
   setPage('auto'); roomOpts();
+  const sr = sessionStorage.getItem('rk_role'); if (TOKEN && ROLES.includes(sr)) enterAs(sr);
 });
 function setPage(v, rep = true) {
   const m = v === 'auto' ? '10mm' : v.includes('mm') ? '0' : '8mm';
@@ -597,9 +625,16 @@ function togglePin() {
   $('pinEye').setAttribute('aria-pressed', show); $('pinEye').setAttribute('aria-label', show ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'); i.focus();
 }
 function hidePin() { $('pin').type = 'password'; $('pinEye').innerHTML = EYE; $('pinEye').setAttribute('aria-pressed', 'false'); $('pinEye').setAttribute('aria-label', 'แสดงรหัสผ่าน'); }
-function login() {
-  const r = $('role').value;
-  if ($('pin').value !== PINS[r]) { $('pin').value = ''; $('pin').focus(); return msg('error', 'รหัสผ่านไม่ถูกต้อง', 'กรุณาลองใหม่อีกครั้ง'); }
+async function login() {
+  const r = $('role').value, pin = $('pin').value.trim(), btn = document.querySelector('#login .btn-primary');
+  if (!pin) { $('pin').focus(); return; }
+  if (/วาง_DEPLOYMENT_ID/.test(API_URL)) return msg('error', 'ยังไม่ได้ตั้งค่า API_URL', 'ใส่ URL ของ Apps Script Web app ในไฟล์ index.html ก่อน');
+  btn.disabled = true;
+  try { const d = await api('login', {role: r, pin}); TOKEN = d.token; sessionStorage.setItem('rk_token', TOKEN); sessionStorage.setItem('rk_role', r); enterAs(r); }
+  catch (e) { $('pin').value = ''; $('pin').focus(); msg('error', e.code === 'BAD_PIN' ? 'รหัสผ่านไม่ถูกต้อง' : 'เข้าสู่ระบบไม่สำเร็จ', e.code === 'BAD_PIN' ? 'กรุณาลองใหม่อีกครั้ง' : e.message); }
+  finally { btn.disabled = false; }
+}
+function enterAs(r) {
   role = r; $('pin').value = ''; hidePin();
   const canBook = r === 'admission' || r === 'records';
   $('agent').disabled = r === 'records';
@@ -609,7 +644,10 @@ function login() {
   resetForm();
   show('main'); refresh();
 }
-function logout() { role = ''; floorTab = 0; hidePin(); $('pin').value = ''; document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); $('login').style.display = 'flex'; }
+function logout(expired) {
+  if (!expired && TOKEN) api('logout').catch(() => {});
+  TOKEN = ''; sessionStorage.removeItem('rk_token'); sessionStorage.removeItem('rk_role');
+  role = ''; floorTab = 0; hidePin(); $('pin').value = ''; document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); $('login').style.display = 'flex'; }
 
 // ---------- โหลด/ซิงค์ ----------
 function apply(d, force) {
@@ -619,7 +657,7 @@ function apply(d, force) {
 }
 async function refresh() {
   $('spin').style.display = 'block';
-  try { apply(await gasRead('getInitialData'), true); } catch (e) { msg('error', 'โหลดข้อมูลไม่สำเร็จ', e.message || String(e)); }
+  try { apply(await gasRead('getInitialData'), true); } catch (e) { if (e.code !== 'AUTH') msg('error', 'โหลดข้อมูลไม่สำเร็จ', e.message || String(e)); }
   finally { $('spin').style.display = 'none'; }
 }
 let timer;
@@ -716,8 +754,8 @@ async function findHN() {
 // ---------- ตรวจสอบข้อมูลก่อนบันทึก (ป๊อปอัป) ----------
 function reviewBooking(f, doSave) {
   const rec = role === 'records', pp = parsePay(f), bed = f.bed && f.bed !== SOLO && f.bed !== '-' ? ` (${esc(f.bed)})` : '';
-  const row = (k, v, strong) => `<tr><th style="width:40%;font-weight:600;color:#43474e;padding:3px 8px;text-align:left;vertical-align:top">${k}</th><td style="padding:3px 8px;text-align:left${strong ? ';font-weight:700;font-size:1.15rem;color:#b3261e' : ''}">${v}</td></tr>`;
-  const sec = (i, title, rows) => `<div class="rv-sec"><div class="rv-h">${ic(i)} ${title}</div><table style="width:100%;font-size:.95rem">${rows}</table></div>`;
+  const row = (k, v, strong) => `<tr class="rv-row${strong ? ' rv-strong' : ''}"><th>${k}</th><td>${v}</td></tr>`;
+  const sec = (i, title, rows) => `<div class="rv-sec"><div class="rv-h">${ic(i)} ${title}</div><table class="rv-tbl">${rows}</table></div>`;
   const items = ITEMS.map((it, i) => $('c' + i).checked ? [it[0], +$('a' + i).value || 0] : null).filter(Boolean);
   const qrAmt = pp.m === 'โอน' ? +f.amount || 0 : pp.m === SPLIT ? pp.t : 0;
   let html = sec('user', 'ข้อมูลผู้ป่วย', row('HN', esc(f.hn) || '-') + row('ชื่อ-นามสกุล', esc(f.patient)) + row('อายุ', `${esc(f.age)} ปี`) + row('สิทธิ์', esc(f.rights) || '-'))
@@ -807,7 +845,7 @@ async function dischargeAll() {
   busy++; $('spin').style.display = 'block'; const day = today(), pay = list.map(b => ({...b, room: `D/C|${day}|${b.room}`}));
   let ok = 0, err = '';
   try { await gas('saveBookings', pay); list.forEach((b, i) => b.room = pay[i].room); ok = list.length; }
-  catch (e) { if (e instanceof TypeError) ok = await seq(list, async b => { const room = `D/C|${day}|${b.room}`; await gas('saveBooking', {...b, room}); b.room = room; }); else err = e.message || String(e); }
+  catch (e) { if (e && e.code === 'NO_ACTION') ok = await seq(list, async b => { const room = `D/C|${day}|${b.room}`; await gas('saveBooking', {...b, room}); b.room = room; }); else err = e.message || String(e); }
   busy--; $('spin').style.display = 'none'; if (editing) resetForm(); draw(); roomOpts();
   ok === list.length ? toast('จำหน่ายทั้งหมดเรียบร้อยแล้ว') : msg('warning', 'สำเร็จบางส่วน', `สำเร็จ ${ok}/${list.length} รายการ ${err}`);
 }
@@ -821,7 +859,7 @@ async function cancelAllQueue() {
   if (!await ask('ยืนยันล้างคิวทั้งหมด?', `ลบคิว ${list.length} คิว`, 'ยืนยันล้างคิว')) return;
   busy++; $('spin').style.display = 'block'; const gone = new Set(); let err = '';
   try { await gas('deleteBookings', list.map(b => b.id)); list.forEach(b => gone.add(b.id)); }
-  catch (e) { if (e instanceof TypeError) await seq(list, async b => { await gas('deleteBooking', b.id); gone.add(b.id); }); else err = e.message || String(e); }
+  catch (e) { if (e && e.code === 'NO_ACTION') await seq(list, async b => { await gas('deleteBooking', b.id); gone.add(b.id); }); else err = e.message || String(e); }
   DATA = DATA.filter(b => !gone.has(b.id)); busy--; $('spin').style.display = 'none'; draw(); roomOpts();
   gone.size === list.length ? toast('ล้างคิวเรียบร้อยแล้ว') : msg('warning', 'สำเร็จบางส่วน', `ลบได้ ${gone.size}/${list.length} คิว ${err}`);
 }
@@ -979,7 +1017,7 @@ async function importExcel() {
   const done = []; busy++; $('spin').style.display = 'block';
   try {
     try { await gas('saveBookings', list); done.push(...list); }
-    catch (e) { if (!(e instanceof TypeError)) throw e; for (const b of list) { await gas('saveBooking', b); done.push(b); } }   // เซิร์ฟเวอร์เวอร์ชันเก่า
+    catch (e) { if (!(e && e.code === 'NO_ACTION')) throw e; for (const b of list) { await gas('saveBooking', b); done.push(b); } }   // เซิร์ฟเวอร์เวอร์ชันเก่า
     toast(`นำเข้า ${list.length} คิวเรียบร้อย${dup ? ` (ข้ามซ้ำ ${dup})` : ''}`);
   } catch (e) { msg('error', 'นำเข้าไม่สำเร็จ', `${e.message || e}${done.length ? ` (นำเข้าได้ ${done.length}/${list.length})` : ''}`); }
   finally { DATA.push(...done); busy--; $('spin').style.display = 'none'; draw(); }

@@ -385,6 +385,9 @@ body{background:var(--lav)!important;color:var(--ink)}
 .rv-btn:hover{filter:brightness(1.06)}.rv-btn:focus-visible{outline:3px solid #B39DF3;outline-offset:3px}
 .rv-save{background:linear-gradient(90deg,#F59A6C,#EC5F86);color:#fff;box-shadow:0 8px 20px rgba(236,95,134,.35)}
 .rv-save.done,.rv-save.done:disabled{background:#22a06b;box-shadow:0 6px 16px rgba(34,160,107,.3);opacity:1;cursor:default}
+.rv-print{background:#fff;color:#6C3CE1;border:2px solid #6C3CE1;box-shadow:0 6px 16px rgba(108,60,225,.18)}
+.rv-print:hover:not(:disabled){background:#6C3CE1;color:#fff}
+.rv-print:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;filter:none}
 .rv-close{background:#221B3A;color:#fff;box-shadow:0 6px 16px rgba(34,27,58,.22)}
 .rv-status{background:#E8F7EF;color:#17804f;border:1px solid #BFE8D2;border-radius:14px;padding:10px 14px;margin-bottom:12px;font-weight:600;text-align:center}
 .swal2-actions .swal2-styled{border-radius:999px!important;padding:.7rem 1.6rem!important;display:inline-flex!important;align-items:center;gap:6px}
@@ -767,18 +770,26 @@ function reviewBooking(f, doSave) {
   const pay = qr ? `<aside class="rv-pay"><div class="rv-pay-h">${ic('phone')} สแกนเพื่อชำระเงิน</div>
       <div class="rv-amt"><span>ยอดโอน (บาท)</span><b style="font-size:${money(qrAmt).length > 10 ? '1.5rem' : money(qrAmt).length > 8 ? '1.8rem' : '2.1rem'}">${money(qrAmt)}</b></div>${tqrCard(qrAmt, '100%', '200px', '13px')}
       <div class="rv-pay-note">${ic('check')} ยอดเงินขึ้นอัตโนมัติ ไม่ต้องกรอก</div>${pp.m === SPLIT ? `<div class="rv-pay-cash">${ic('cash')} รับเงินสดที่เคาน์เตอร์ ${money(pp.c)} บาท</div>` : ''}</aside>` : '';
-  let saved = false;
+  let saved = false, pbtn = null;
   return Swal.fire({title: `${ic('doc')} ตรวจสอบข้อมูลก่อนบันทึก`,
     html: `<div id="rvStatus" class="rv-status" hidden>${ic('check')} บันทึกเข้าระบบเรียบร้อยแล้ว${qr ? ' · ลูกค้าสแกนชำระต่อได้ กด "ปิด" เมื่อเสร็จ' : ''}</div><div class="rv-grid${qr ? ' two' : ''} text-start"><div class="rv-left">${html}</div>${pay}</div>`,
     width: qr ? 960 : 620, showCancelButton: true, allowOutsideClick: false, buttonsStyling: false,
     confirmButtonText: `${ic('save')} บันทึก`, cancelButtonText: `${ic('x')} ปิด`,
     customClass: {popup: 'rounded-4', actions: 'rv-actions', confirmButton: 'rv-btn rv-save', cancelButton: 'rv-btn rv-close'},
+    didOpen: () => {   // ปุ่มพิมพ์ใบจอง ต่อจากปุ่มบันทึก (กดได้หลังบันทึกแล้ว; เวชระเบียนไม่มีใบจอง)
+      if (rec) return;
+      pbtn = document.createElement('button'); pbtn.type = 'button'; pbtn.className = 'rv-btn rv-print';
+      pbtn.innerHTML = `${ic('print')} พิมพ์ใบจอง`; pbtn.disabled = true; pbtn.title = 'กดบันทึกก่อน จึงพิมพ์ใบจองได้';
+      pbtn.onclick = () => printReceipt(bookingSlip(f));
+      Swal.getConfirmButton().after(pbtn);
+    },
     preConfirm: async () => {
       if (saved) return false;
       const b = Swal.getConfirmButton(); b.innerHTML = `${ic('clock')} กำลังบันทึก...`;
       try { await doSave(); }
       catch (x) { b.innerHTML = `${ic('save')} บันทึก`; Swal.showValidationMessage('บันทึกไม่สำเร็จ: ' + (x.message || x)); return false; }
       saved = true; b.innerHTML = `${ic('check')} บันทึกแล้ว`; b.classList.add('done');
+      if (pbtn) { pbtn.disabled = false; pbtn.title = 'พิมพ์ใบจองห้องพัก (A5)'; pbtn.focus(); }
       setTimeout(() => { b.disabled = true; }, 0);
       const st = document.getElementById('rvStatus'); if (st) st.hidden = false;
       return false;   // ค้างป๊อปอัปไว้ ไม่ปิดเอง

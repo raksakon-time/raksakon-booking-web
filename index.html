@@ -354,6 +354,46 @@ body{background:var(--lav)!important;color:var(--ink)}
 .tscroll::-webkit-scrollbar-thumb,#dash::-webkit-scrollbar-thumb{background:#C6B5F7!important}
 @media print{#main::before,#rep::before{display:none!important}}
 </style>
+<style id="docs-v1">
+/* ===== ป๊อปอัปตรวจสอบ: ซ้ายรายละเอียด · ขวา QR ===== */
+.rv-grid.two{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
+.rv-left .rv-sec:last-child{margin-bottom:0}
+.rv-pay{position:sticky;top:0;background:linear-gradient(180deg,#F3EEFF 0%,#fff 70%);border:1.5px solid #E3D8FD;border-radius:22px;padding:14px;display:flex;flex-direction:column;align-items:stretch;gap:10px;text-align:center}
+.rv-pay-h{font-family:'Prompt','Sarabun',sans-serif;font-weight:600;color:#4B25B8}
+.rv-amt{display:flex;align-items:baseline;justify-content:center;gap:6px;color:#5d5776;font-weight:600}
+.rv-amt b{font-family:'Prompt','Sarabun',sans-serif;font-size:2.1rem;line-height:1.1;color:#EC5F86}
+.rv-pay-note{font-size:.85rem;color:#22a06b;font-weight:600}
+.rv-pay-cash{font-size:.85rem;font-weight:600;color:#E2804F;background:#FFF4EC;border-radius:12px;padding:6px}
+@media(max-width:780px){.rv-grid.two{grid-template-columns:1fr}.rv-pay{position:static}}
+/* ===== รายงานที่พิมพ์: รูปแบบเอกสารโรงพยาบาล ===== */
+.pf,.pf-note{display:none}
+@media print{
+ #rep .card-md{padding:0!important;box-shadow:none!important;border-radius:0!important;background:#fff!important;border:0!important;height:auto!important}
+ #rep .ph{display:block!important;border:0!important;margin:0 0 4mm!important;padding:0!important}
+ .ph-top{display:flex;align-items:center;gap:4mm;padding-bottom:3mm;border-bottom:1.4pt solid #4B2BB8}
+ .ph-top .logo{width:15mm;height:15mm;border-radius:3mm;object-fit:cover}
+ .ph-name{font-family:'Prompt','Sarabun',sans-serif;font-size:14pt;font-weight:600;color:#1d1640;line-height:1.3}
+ .ph-sub{font-size:8.5pt;color:#5d5776}
+ .ph-conf{margin-left:auto;text-align:right;font-size:7.5pt;color:#5d5776;border:.6pt solid #b9b0d8;border-radius:1.5mm;padding:1.2mm 2.5mm;line-height:1.35}
+ .ph-conf b{color:#1d1640}
+ #rTitle{font-family:'Prompt','Sarabun',sans-serif;font-size:15pt!important;font-weight:600!important;color:#1d1640;margin:4mm 0 2.5mm!important}
+ .ph-meta{display:grid;grid-template-columns:repeat(4,1fr);border:.6pt solid #cfc8e6;border-radius:2mm;background:#F6F4FB!important;overflow:hidden}
+ .ph-meta>div{padding:1.6mm 3mm;border-left:.6pt solid #cfc8e6;line-height:1.35}.ph-meta>div:first-child{border-left:0}
+ .ph-meta span{display:block;font-size:7.5pt;color:#77708f}.ph-meta b{font-size:9.5pt;color:#1d1640}
+ #rep .tbl{border-collapse:collapse!important;margin:0!important}
+ #rep .tbl th{background:#EEEAF8!important;color:#1d1640!important;font-size:8.8pt!important;font-weight:700!important;border-top:1pt solid #4B2BB8!important;border-bottom:1pt solid #4B2BB8!important;padding:2.2mm 2mm!important;white-space:nowrap;border-radius:0!important}
+ #rep .tbl td{font-size:9.3pt!important;padding:1.8mm 2mm!important;border-bottom:.5pt solid #ddd8ea!important;vertical-align:top;background:#fff!important}
+ #rep .tbl tbody tr:nth-child(even) td{background:#FAF9FD!important}
+ #rep .tbl tfoot td{border-top:1pt solid #4B2BB8!important;border-bottom:0!important;background:#fff!important;padding-top:2.5mm!important}
+ #rep .tbl .pill{background:none!important;color:#1d1640!important;border:.6pt solid #8f87ad;padding:.2mm 2mm;font-size:8pt}
+ #rep .tbl .fs-5{font-size:11pt!important}#rep .text-primary{color:#1d1640!important}
+ table.np-first tr>*:first-child,table.np-last tr>*:last-child{display:none!important}
+ .pf{display:flex!important;justify-content:space-between;gap:12mm;margin-top:12mm;break-inside:avoid;page-break-inside:avoid}
+ .pf-sign{flex:1;text-align:center;font-size:9.3pt;line-height:1.9;color:#1d1640}
+ .pf-line{border-bottom:.6pt dotted #1d1640;height:9mm;margin:0 6mm 1mm}
+ .pf-note{display:block!important;margin-top:7mm;padding-top:2mm;border-top:.5pt solid #cfc8e6;font-size:7.5pt;color:#77708f;text-align:center}
+}
+</style>
 </head>
 <body>
 
@@ -437,7 +477,11 @@ body{background:var(--lav)!important;color:var(--ink)}
 
 <div id="rep" class="screen container-fluid p-4">
   <div class="card-md">
-    <div class="ph"><div><h3 class="fw-bold mb-1" id="rTitle"></h3><p class="mb-0">รพ.ศุภมิตร-รักษ์สกล | วันที่: <b id="rDateTxt"></b></p></div><img class="logo" alt="Logo" style="width:18mm;height:18mm;border-radius:8px;object-fit:cover"></div>
+    <div class="ph">
+      <div class="ph-top"><img class="logo" alt="โลโก้ รพ."><div class="ph-org"><div class="ph-name">โรงพยาบาลศุภมิตร-รักษ์สกล</div><div class="ph-sub">งานบริการห้องพักผู้ป่วย · ระบบจองห้องพัก</div></div><div class="ph-conf">เอกสารใช้ภายใน<br><b>ข้อมูลผู้ป่วยเป็นความลับ</b></div></div>
+      <h3 id="rTitle"></h3>
+      <div class="ph-meta"><div><span>วันที่ข้อมูล</span><b id="rDateTxt"></b></div><div><span>จำนวนรายการ</span><b id="rCount"></b></div><div><span>ผู้พิมพ์</span><b id="rBy"></b></div><div><span>วันเวลาที่พิมพ์</span><b id="rAt"></b></div></div>
+    </div>
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3 no-print">
       <button class="btn btn-sm btn-outline-dark" onclick="show('main')"><i data-ic="back"></i> หน้าหลัก</button>
       <div class="d-flex flex-wrap align-items-center gap-2">
@@ -449,6 +493,9 @@ body{background:var(--lav)!important;color:var(--ink)}
       </div>
     </div>
     <div class="table-responsive tscroll"><table class="table table-hover align-middle tbl"><thead id="rHead"></thead><tbody id="rBody"></tbody><tfoot id="rFoot"></tfoot></table></div>
+    <div class="pf"><div class="pf-sign"><div class="pf-line"></div><div>ผู้จัดทำรายงาน</div><div>(.......................................................)</div><div>วันที่ ........./........./.........</div></div>
+      <div class="pf-sign"><div class="pf-line"></div><div>ผู้ตรวจสอบ / หัวหน้าแผนก</div><div>(.......................................................)</div><div>วันที่ ........./........./.........</div></div></div>
+    <div class="pf-note">เอกสารนี้พิมพ์จากระบบจองห้องพัก โรงพยาบาลศุภมิตร-รักษ์สกล · มีข้อมูลส่วนบุคคลของผู้ป่วย ห้ามเผยแพร่หรือทำสำเนาโดยไม่ได้รับอนุญาต</div>
   </div>
 </div>
 <div id="pa"></div>
@@ -461,7 +508,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const today = () => { const d = new Date(); return new Date(d - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); };
 const fd = s => { const d = new Date(s); return isNaN(d) ? s : `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getFullYear()+543).slice(-2)}`; };
 const money = n => (+n || 0).toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2});
-const IC = {chev: '<path d="M6 9l6 6 6-6"/>', hosp: '<path d="M3 21h18M5 21V5h14v16M10 9h4M12 7v4M10 21v-4h4v4"/>', note: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>', building: '<path d="M3 21h18M5 21V5h14v16M9 9h2M13 9h2M9 13h2M13 13h2M10 21v-4h4v4"/>', card: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>', bank: '<path d="M3 10h18L12 4 3 10zM5 10v8M9 10v8M15 10v8M19 10v8M3 21h18"/>', cash: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/>', print: '<path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="7" rx="1"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>', board: '<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>', table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/>', list: '<path d="M8 6h13M8 12h13M8 18h13M4 6h.01M4 12h.01M4 18h.01"/>', money: '<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .9-3 2s1.3 1.7 3 2 3 .9 3 2-1.3 2-3 2c-1.4 0-2.5-.5-3-1.5M12 6v2M12 16v2"/>', dc: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>', cancel: '<circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/>', sign: '<rect x="3" y="4" width="18" height="11" rx="2"/><path d="M12 15v6M8 21h8M7 9h10"/>', badge: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M10 3v3h4V3M9 11h6M9 15h6"/>', doc: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>', back: '<path d="M15 18l-6-6 6-6"/>', logout: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l-5-5 5-5M5 12h12"/>', login: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/>', save: '<path d="M5 12l5 5L20 7"/>', check: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>', search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>', bed: '<path d="M3 18V7M21 18v-5a3 3 0 0 0-3-3h-8v6M3 15h18"/><circle cx="6.5" cy="11.5" r="1.5"/>', clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', layers: '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>', unlock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/>', eye: '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>', upload: '<path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 21h14"/>', trash: '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/>', phone: '<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/>', x: '<path d="M18 6L6 18M6 6l12 12"/>'};
+const IC = {download: '<path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/>', chev: '<path d="M6 9l6 6 6-6"/>', hosp: '<path d="M3 21h18M5 21V5h14v16M10 9h4M12 7v4M10 21v-4h4v4"/>', note: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>', building: '<path d="M3 21h18M5 21V5h14v16M9 9h2M13 9h2M9 13h2M13 13h2M10 21v-4h4v4"/>', card: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>', bank: '<path d="M3 10h18L12 4 3 10zM5 10v8M9 10v8M15 10v8M19 10v8M3 21h18"/>', cash: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/>', print: '<path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="7" rx="1"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>', board: '<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>', table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/>', list: '<path d="M8 6h13M8 12h13M8 18h13M4 6h.01M4 12h.01M4 18h.01"/>', money: '<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .9-3 2s1.3 1.7 3 2 3 .9 3 2-1.3 2-3 2c-1.4 0-2.5-.5-3-1.5M12 6v2M12 16v2"/>', dc: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>', cancel: '<circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/>', sign: '<rect x="3" y="4" width="18" height="11" rx="2"/><path d="M12 15v6M8 21h8M7 9h10"/>', badge: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M10 3v3h4V3M9 11h6M9 15h6"/>', doc: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>', back: '<path d="M15 18l-6-6 6-6"/>', logout: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l-5-5 5-5M5 12h12"/>', login: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/>', save: '<path d="M5 12l5 5L20 7"/>', check: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>', search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>', bed: '<path d="M3 18V7M21 18v-5a3 3 0 0 0-3-3h-8v6M3 15h18"/><circle cx="6.5" cy="11.5" r="1.5"/>', clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', layers: '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>', unlock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/>', eye: '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>', upload: '<path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 21h14"/>', trash: '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/>', phone: '<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/>', x: '<path d="M18 6L6 18M6 6l12 12"/>'};
 const ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${IC[n] || ''}</svg>`;
 const FC = ['#2A3C76', '#5d78c0', '#FE696E', '#f4a340'];   // สีประจำแท็บ: ชั้น 2B · ชั้น 2 · ชั้น 3 · รอห้องสำรอง
 const LOGO = 'https://i.postimg.cc/pXHW7T4D/Squre-profile-pink-bg.jpg';
@@ -540,7 +587,10 @@ document.addEventListener('DOMContentLoaded', () => {
   setPage('auto'); roomOpts();
   const sr = sessionStorage.getItem('rk_role'); if (TOKEN && ROLES.includes(sr)) enterAs(sr);
 });
-function setPage(v) { $('pg').textContent = `@page{size:${v};margin:${v === 'auto' ? '10mm' : v.includes('mm') ? '0' : '8mm'}}`; }
+function setPage(v, rep = true) {
+  const m = v === 'auto' ? '10mm' : v.includes('mm') ? '0' : '8mm';
+  $('pg').textContent = rep && !v.includes('mm') ? `@page{size:${v};margin:12mm 10mm 14mm}@page{@bottom-left{content:"โรงพยาบาลศุภมิตร-รักษ์สกล · ระบบจองห้องพัก";font:7.5pt Sarabun,sans-serif;color:#77708f}@bottom-right{content:"หน้า " counter(page) " / " counter(pages);font:7.5pt Sarabun,sans-serif;color:#77708f}}` : `@page{size:${v};margin:${m}}`;
+}
 window.onafterprint = () => { document.body.classList.remove('pa'); setPage(paper); };
 
 const SVG = d => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
@@ -690,8 +740,11 @@ function reviewBooking(f) {
   if (!rec) html += sec('card', 'ข้อมูลการชำระเงิน', row('รูปแบบการชำระ', esc(pp.m))
       + (items.length ? items.map(([n, v]) => row(esc(n), `${money(v)} บาท`)).join('') : row('รายการเรียกเก็บ', '-'))
       + (pp.m === SPLIT ? row('แบ่งชำระ', `โอน ${money(pp.t)} + เงินสด ${money(pp.c)}`) : '') + row('ยอดชำระ', `${money(f.amount)} บาท`, true));
-  if (!rec && qrAmt > 0) html += `<div class="rv-qr">${tqrCard(qrAmt, '300px', '210px', '14px')}<div>${ic('phone')} สแกนจ่าย ${money(qrAmt)} บาท</div></div>`;
-  return Swal.fire({title: `${ic('doc')} ตรวจสอบข้อมูลก่อนบันทึก`, html: `<div class="text-start">${html}</div>`, width: 620,
+  const qr = !rec && qrAmt > 0;
+  const pay = qr ? `<aside class="rv-pay"><div class="rv-pay-h">${ic('phone')} สแกนเพื่อชำระเงิน</div>
+      <div class="rv-amt"><span>ยอดโอน</span><b>${money(qrAmt)}</b><span>บาท</span></div>${tqrCard(qrAmt, '100%', '200px', '13px')}
+      <div class="rv-pay-note">${ic('check')} ยอดเงินขึ้นอัตโนมัติ ไม่ต้องกรอก</div>${pp.m === SPLIT ? `<div class="rv-pay-cash">${ic('cash')} รับเงินสดที่เคาน์เตอร์ ${money(pp.c)} บาท</div>` : ''}</aside>` : '';
+  return Swal.fire({title: `${ic('doc')} ตรวจสอบข้อมูลก่อนบันทึก`, html: `<div class="rv-grid${qr ? ' two' : ''} text-start"><div class="rv-left">${html}</div>${pay}</div>`, width: qr ? 960 : 620,
     showCancelButton: true, reverseButtons: true, allowOutsideClick: false, confirmButtonColor: '#EC5F86', cancelButtonColor: '#6C3CE1',
     confirmButtonText: `${ic('save')} ปิด · บันทึกเข้าระบบ`, cancelButtonText: `${ic('edit')} กลับไปแก้ไข`, customClass: {popup: 'rounded-4'}}).then(r => !!r.isConfirmed);
 }
@@ -819,7 +872,7 @@ function dashboard() {
   const fbar = `<div class="ftabs no-print" role="tablist">${FLOORS.map(([fl, rs], i) => ft(i, `${ic('layers')} ${fl}`, `${occ(rs)}/${rs.length}`)).join('')}${ft(3, `${ic('clock')} รอห้องสำรอง`, rsv.length)}</div>`;
   $('dash').innerHTML = `<div class="dhead d-flex justify-content-between flex-wrap gap-2 mb-2 no-print"><div class="d-flex gap-2">${rec ? '' : `<button type="button" class="dtab" data-t="r" onclick="tab('r')">${ic('bed')} สถานะห้องพัก</button>`}<button type="button" class="dtab" data-t="q" onclick="tab('q')">${ic('clock')} คิวรอจัดห้อง (${wait.length})</button></div>${fin || rec ? '' : '<button class="btn btn-sm btn-outline-danger" style="border-width:2px" onclick="dischargeAll()">' + ic('dc') + ' D/C ทั้งหมด</button>'}</div>
     <div id="tabR">${fbar}${FLOORS.map(([fl, rs], i) => `<div class="fpane" data-f="${i}" style="--fc:${FC[i]}${floorTab === i ? '' : ';display:none'}"><div class="row g-3 mb-3 row-cols-2 row-cols-sm-3 row-cols-lg-4 row-cols-xl-5">${rs.map(card).join('')}</div></div>`).join('')}<div class="fpane" data-f="3" style="--fc:${FC[3]}${floorTab === 3 ? '' : ';display:none'}"><div class="row g-3 mb-3">${waitHtml}</div></div></div>
-    <div id="tabQ" style="display:none"><div class="d-flex flex-wrap align-items-center gap-2 mb-2"><div class="input-group" style="width:min(100%,330px)"><input id="qSearch" class="form-control" style="border-color:#f59e0b;border-radius:var(--r) 0 0 var(--r)" placeholder="HN หรือชื่อ..." oninput="filterQ()" onkeydown="if(event.key==='Enter')filterQ()"><button class="btn btn-primary" type="button" onclick="filterQ()" style="border-radius:0 var(--r) var(--r) 0">${ic('search')} ค้นหา</button></div><div class="ms-auto d-flex gap-2">${rec ? '<button class="btn btn-sm btn-primary text-nowrap" onclick="importExcel()">' + ic('upload') + ' นำเข้า Excel</button>' : ''}${adm ? '<button class="btn btn-sm btn-outline-danger text-nowrap" onclick="cancelAllQueue()">' + ic('trash') + ' ล้างคิวทั้งหมด</button>' : ''}</div></div>${qTable}</div>`;
+    <div id="tabQ" style="display:none"><div class="d-flex flex-wrap align-items-center gap-2 mb-2"><div class="input-group" style="width:min(100%,330px)"><input id="qSearch" class="form-control" style="border-color:#f59e0b;border-radius:var(--r) 0 0 var(--r)" placeholder="HN หรือชื่อ..." oninput="filterQ()" onkeydown="if(event.key==='Enter')filterQ()"><button class="btn btn-primary" type="button" onclick="filterQ()" style="border-radius:0 var(--r) var(--r) 0">${ic('search')} ค้นหา</button></div><div class="ms-auto d-flex gap-2">${rec ? '<button class="btn btn-sm btn-outline-primary text-nowrap" onclick="downloadTemplate()" title="ไฟล์ตัวอย่างสำหรับกรอกแล้วนำเข้า">' + ic('download') + ' เทมเพลต Excel</button><button class="btn btn-sm btn-primary text-nowrap" onclick="importExcel()">' + ic('upload') + ' นำเข้า Excel</button>' : ''}${adm ? '<button class="btn btn-sm btn-outline-danger text-nowrap" onclick="cancelAllQueue()">' + ic('trash') + ' ล้างคิวทั้งหมด</button>' : ''}</div></div>${qTable}</div>`;
   if (rec && $('tabR')) $('tabR').remove();
   if (tabQ || rec) tab('q'); else markDtab('r'); $('dash').scrollTop = sc; { const qt = document.querySelector('#tabQ .tscroll'); if (qt) qt.scrollTop = qsc; } if (q) { $('qSearch').value = q; filterQ(); } if (foc) $('qSearch').focus();
 }
@@ -878,13 +931,35 @@ function xlParse(rows) {
   }
   return {out, skip, badDate};
 }
+// เทมเพลตไฟล์นำเข้า: ชีตแรก = กรอกข้อมูล (หัวคอลัมน์ตรงกับตัวอ่าน), ชีตที่สอง = วิธีกรอก + ตัวอย่าง
+function downloadTemplate() {
+  if (!window.XLSX) return msg('error', 'สร้างไฟล์ไม่สำเร็จ', 'โหลดตัวสร้าง Excel ไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วรีเฟรชหน้า');
+  const head = ['วันที่เข้าพัก', 'HN', 'ชื่อ-สกุล', 'อายุ', 'สิทธิ์'], ws = XLSX.utils.aoa_to_sheet([head]);
+  for (let r = 2; r <= XL_MAX + 1; r++) ['A', 'B'].forEach(c => { ws[c + r] = {t: 's', v: '', z: '@'}; });   // วันที่/HN เป็นข้อความ เลข 0 นำหน้าไม่หาย
+  ws['!ref'] = `A1:E${XL_MAX + 1}`; ws['!cols'] = [{wch: 15}, {wch: 12}, {wch: 34}, {wch: 8}, {wch: 22}]; ws['!autofilter'] = {ref: 'A1:E1'};
+  const guide = XLSX.utils.aoa_to_sheet([
+    ['วิธีกรอกเทมเพลตนำเข้าคิวรอจัดห้อง (โรงพยาบาลศุภมิตร-รักษ์สกล)'], [],
+    ['คอลัมน์', 'จำเป็น', 'รูปแบบ', 'ตัวอย่าง'],
+    ['วันที่เข้าพัก', 'ใช่', 'วว/ดด/ปปปป (พ.ศ. หรือ ค.ศ.) หรือ ปปปป-ดด-วว', '24/10/2569'],
+    ['HN', 'ใช่', 'ตัวเลข (กรอกเป็นข้อความ เลข 0 นำหน้าไม่หาย)', '6904088'],
+    ['ชื่อ-สกุล', 'ใช่', 'คำนำหน้า ชื่อ นามสกุล', 'นาย สมชาย ใจดี'],
+    ['อายุ', '', 'ตัวเลข (หน่วยปี)', '72'],
+    ['สิทธิ์', '', 'สิทธิ์การรักษา', 'บัตรทอง (UC)'], [],
+    ['ข้อควรทราบ'],
+    [`• กรอกในชีต "นำเข้าคิว" เท่านั้น ไม่เกิน ${XL_MAX} แถวต่อไฟล์ ห้ามแก้ชื่อหัวคอลัมน์`],
+    ['• แถวที่ไม่มี HN, ชื่อ หรือวันที่ ระบบจะข้าม · HN + วันที่ที่อยู่ในคิวแล้วจะไม่ถูกนำเข้าซ้ำ'],
+    ['• ผู้ป่วยทุกคนเข้า "คิวรอจัดห้อง" แพทย์เจ้าของไข้เลือกภายหลังได้ที่ปุ่มแก้ไข']]);
+  guide['!cols'] = [{wch: 16}, {wch: 8}, {wch: 46}, {wch: 18}];
+  const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'นำเข้าคิว'); XLSX.utils.book_append_sheet(wb, guide, 'วิธีกรอก');
+  XLSX.writeFile(wb, `เทมเพลตนำเข้าคิว_${today()}.xlsx`);
+}
 async function importExcel() {
   if (!window.XLSX) return msg('error', 'โหลดตัวอ่าน Excel ไม่สำเร็จ', 'ตรวจสอบอินเทอร์เน็ตแล้วรีเฟรชหน้าอีกครั้ง');
   XL = [];
   const r = await Swal.fire({
     title: `${ic('upload')} นำเข้าคิวจาก Excel`, width: 660, showCancelButton: true, confirmButtonText: 'นำเข้า', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#6C3CE1', customClass: {popup: 'rounded-4'},
     html: `<div class="text-start"><label class="form-label">ไฟล์ .xlsx / .xls / .csv (ไม่เกิน ${XL_MAX} แถว)</label><input type="file" id="xlFile" accept=".xlsx,.xls,.csv" class="form-control mb-2">
-      <div class="small text-muted">คอลัมน์ที่ใช้: <b>HN, ชื่อ-สกุล, อายุ, สิทธิ์, วันที่เข้าพัก</b> (หัวตารางภาษาไทยหรืออังกฤษ)<br>ผู้ป่วยทุกคนเข้า "คิวรอจัดห้อง" · แพทย์เจ้าของไข้เลือกภายหลังได้ที่ปุ่ม ${ic('edit')} แก้ไข / จัดห้อง</div><div id="xlPrev" class="mt-2" style="max-height:250px;overflow:auto"></div></div>`,
+      <div class="small text-muted">ยังไม่มีไฟล์? <a href="#" onclick="downloadTemplate();return false">ดาวน์โหลดเทมเพลต Excel</a><br>คอลัมน์ที่ใช้: <b>HN, ชื่อ-สกุล, อายุ, สิทธิ์, วันที่เข้าพัก</b> (หัวตารางภาษาไทยหรืออังกฤษ)<br>ผู้ป่วยทุกคนเข้า "คิวรอจัดห้อง" · แพทย์เจ้าของไข้เลือกภายหลังได้ที่ปุ่ม ${ic('edit')} แก้ไข / จัดห้อง</div><div id="xlPrev" class="mt-2" style="max-height:250px;overflow:auto"></div></div>`,
     didOpen: () => $('xlFile').addEventListener('change', async e => {
       const f = e.target.files[0], pv = $('xlPrev'); XL = []; pv.innerHTML = ''; if (!f) return;
       try {
@@ -952,10 +1027,14 @@ function renderReport() {
   $('rHead').innerHTML = `<tr>${R.h.map(h => `<th>${h}</th>`).join('')}</tr>`;
   const rows = R.rows(d); $('rBody').innerHTML = rows.length ? rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${R.h.length}" class="text-center text-muted py-4">ไม่มีข้อมูลในวันที่เลือก</td></tr>`;
   $('rFoot').innerHTML = R.foot ? R.foot(d) : '';
+  $('rCount').textContent = `${rows.length} รายการ`; $('rBy').textContent = ROLE_TH[role] || '-'; stampPrint();
+  const tb = $('rHead').closest('table'); tb.classList.toggle('np-first', cur === 'label'); tb.classList.toggle('np-last', cur === 'label' || (cur === 'cancel' && !hide));   // ซ่อนช่องติ๊ก/ปุ่มตอนพิมพ์
   if (keepSel) document.querySelectorAll('.lbl-ck').forEach(c => { c.checked = keepSel.has(c.value); });   // คงรายการที่ติ๊กไว้เมื่อข้อมูลซิงค์ใหม่
   $('rBatch').innerHTML = cur === 'label' ? `<button class="btn btn-sm btn-outline-primary" id="bDoor" onclick="printBatch('door')">${ic('sign')} พิมพ์ป้ายหน้าห้องที่เลือก (<span class="bcnt">0</span>)</button><button class="btn btn-sm btn-primary" id="bChest" onclick="printBatch('chest')">${ic('badge')} พิมพ์ใบติดหน้าอกที่เลือก (<span class="bcnt">0</span>)</button>` : '';
   if (cur === 'label') lblSync();
 }
+function stampPrint() { const n = new Date(); if ($('rAt')) $('rAt').textContent = `${thDate(today())} ${String(n.getHours()).padStart(2, '0')}:${String(n.getMinutes()).padStart(2, '0')} น.`; }
+window.addEventListener('beforeprint', stampPrint);
 function lblSync() {
   const all = [...document.querySelectorAll('.lbl-ck')], n = all.filter(c => c.checked).length, a = $('lblAll');
   if (a) { a.checked = all.length > 0 && n === all.length; a.indeterminate = n > 0 && n < all.length; }
@@ -1939,11 +2018,12 @@ function payQrHtml(amount, size = '200px') {   // QR มาตรฐานสี
   } catch (e) { console.warn('payQR', e); }
   return `<img src="${QR}" style="width:${size};height:${size};object-fit:contain;flex:none">`;
 }
-function printArea(html, size) { $('pa').innerHTML = html; document.body.classList.add('pa'); setPage(size); setTimeout(() => window.print(), 100); }
+function printArea(html, size) { $('pa').innerHTML = html; document.body.classList.add('pa'); setPage(size, false); setTimeout(() => window.print(), 100); }
 function roomName(r) {
   const c = String(r || '').replace('VIP', '').trim();
   return ['1201','1209','301','309'].includes(c) ? 'VIP ' + c : (/^(20[1-9]|120[2-8]|30[2-8])$/.test(c) ? 'พิเศษ ' + c : r || '-');
 }
+const ROLE_TH = {ward: 'แผนกผู้ป่วยใน (Ward)', finance: 'แผนกการเงิน', records: 'แผนกเวชระเบียน', admission: 'แผนกจอง'};
 function thDate(s) { const d = new Date(s); return isNaN(d) ? (s || '-') : `${d.getDate()} ${['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'][d.getMonth()]} ${d.getFullYear() + 543}`; }
 const hasBed = b => !!b.bed && b.bed !== SOLO && b.bed !== '-';   // มีเลขเตียงจริง (ไม่ใช่เหมาห้อง)
 const bedLabel = b => b.bed && b.bed !== SOLO && b.bed !== '-' ? b.bed : (b.bed === SOLO ? 'เหมาห้อง' : '-');
@@ -2007,19 +2087,7 @@ function printChest(id) { const b = DATA.find(x => x.id === id); if (b) printAre
 function printRefund(id) {
   if (role === 'records') return;
   const b = DATA.find(x => x.id === id); if (!b || !isCX(b)) return;
-  const amt = +b.amount || 0, bed = b.bed && b.bed !== SOLO && b.bed !== '-' ? ` (${b.bed})` : '';
-  let agent = b.agent || ''; if (agent === 'แผนกเวชระเบียน') agent = '';
-  const dot = 'border-bottom:1px dotted #000;text-align:center;padding-bottom:2px', cell = 'border:1px solid #000;padding:7px', line = 'border-bottom:1px dotted #000;height:1.3em;margin:18px 0 6px';
-  printArea(`<div style="font-family:Sarabun,sans-serif;width:100%;max-width:13.5cm;margin:0 auto;line-height:1.4;font-size:.95rem"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="flex:1;text-align:center"><h3 style="font-size:1.25rem;font-weight:700;margin:0">ใบรายการรับคืนเงิน</h3><h4 style="font-size:1rem;margin:4px 0 0">ยกเลิกผ่าตัด รพ.ศุภมิตร-รักษ์สกล</h4></div>${logoQr(b.hn)}</div>
-    <div style="display:flex;gap:8px;margin-bottom:8px"><b>ชื่อผู้ป่วย</b><span style="flex:1;${dot}">${esc(b.patient)}</span><b>HN</b><span style="width:100px;${dot}">${esc(b.hn) || '-'}</span></div>
-    <div style="display:flex;gap:8px;margin-bottom:8px"><b>วันที่เข้าพัก</b><span style="width:80px;${dot}">${fd(b.date)}</span><b>ห้องพัก</b><span style="flex:1;${dot}">${esc(realRoom(b) + bed)}</span><b>ชำระเดิม</b><span style="min-width:80px;${dot}">${payTxt(b)}</span></div>
-    <div style="display:flex;gap:8px;margin-bottom:14px"><b>วันที่ยกเลิกผ่าตัด</b><span style="width:90px;${dot}">${fd(cxDate(b))}</span><b>แพทย์</b><span style="flex:1;${dot}">${esc(b.surgeon) || '-'}</span></div>
-    <table style="width:100%;border-collapse:collapse;text-align:center;font-size:.9rem;margin-bottom:12px"><thead><tr style="background:#f8f9fa"><th style="${cell};width:12%">ลำดับ</th><th style="${cell}">รายการ</th><th style="${cell};width:28%">จำนวนเงิน (บาท)</th></tr></thead>
-      <tbody><tr><td style="${cell}">1</td><td style="${cell};text-align:left">คืนเงินค่าจองห้องพัก/ค่าใช้จ่ายส่วนเกิน (ยกเลิกผ่าตัด)</td><td style="${cell}">${money(amt)}</td></tr></tbody></table>
-    <div style="display:flex;gap:8px;font-weight:700;margin-bottom:26px"><span>รวมคืน</span><span style="flex:1;${dot}">( ${THB(amt)} )</span><span style="width:100px;${dot};text-align:right">${money(amt)}</span><span>บาท</span></div>
-    <div style="display:flex;justify-content:space-between;font-size:.9rem;text-align:center"><div style="width:48%"><div style="${line}"></div><div>ลงชื่อ ผู้รับเงินคืน</div><div>( ${esc(b.patient)} )</div><div>ผู้ป่วย/ญาติ</div><div style="${line}"></div><div>วันที่</div></div>
-    <div style="width:48%"><div style="${line}"></div><div>ลงชื่อ ผู้จ่ายเงินคืน</div><div>( <span style="display:inline-block;min-width:120px">${esc(agent)}</span> )</div><div>เจ้าหน้าที่การเงิน</div><div style="${line}"></div><div>วันที่</div></div></div>
-    <div style="margin-top:16px;text-align:center;font-size:.8rem;color:#444;border-top:1px dashed #ccc;padding-top:8px">* ข้าพเจ้าได้รับเงินคืนตามจำนวนข้างต้นครบถ้วนถูกต้องแล้ว</div></div>`, 'A5 portrait');
+  printArea(refundHtmlV2(b), 'A5 portrait');
 }
 // ---------- ปุ่มพิมพ์ในบอร์ดห้อง: เลือก ใบจอง / ใบติดหน้าอก / ใบติดหน้าห้อง ----------
 function bookingSlip(b) {            // แปลงรายการจองที่บันทึกไว้ ให้อยู่ในรูปข้อมูลเดียวกับฟอร์ม
@@ -2043,37 +2111,88 @@ function printMenu(id) {
       if (pick === 'slip') printBookingOf(id); else if (pick === 'chest') printChest(id); else if (pick === 'door') printLabel(id); }
   });
 }
+// ชุดส่วนประกอบเอกสารพิมพ์ของโรงพยาบาล (หัว/กรอบข้อมูล/ลายเซ็น/หมายเหตุ) ใช้ร่วมกันทุกใบ
+function docKit(hn) {
+  const P = '#4B2BB8', INK = '#1d1640', MUT = '#6b6585', LN = '#cfc8e6';
+  const now = new Date(), issued = `${fd(today())} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} น.`;
+  const cell = (k, v, span) => `<div style="padding:1mm 2.5mm;border-left:.3mm solid ${LN};border-top:.3mm solid ${LN};${span ? 'grid-column:span 2;' : ''}min-width:0"><div style="font-size:7pt;color:${MUT};line-height:1.3">${k}</div><div style="font-size:9.5pt;font-weight:700;color:${INK};line-height:1.3;overflow-wrap:anywhere">${v}</div></div>`;
+  const head = (title) => `<div style="display:flex;align-items:center;gap:3mm;padding-bottom:2mm;border-bottom:1.2pt solid ${P}">
+      <img src="${LOGO}" style="width:11.5mm;height:11.5mm;border-radius:2.5mm;object-fit:cover">
+      <div style="flex:1;min-width:0"><div style="font-family:Prompt,Sarabun,sans-serif;font-size:12.5pt;font-weight:600;color:${INK};line-height:1.25">โรงพยาบาลศุภมิตร-รักษ์สกล</div><div style="font-size:7.8pt;color:${MUT}">งานบริการห้องพักผู้ป่วย · ผ่าตัดตา</div></div>
+      <div style="text-align:center;flex:none">${qrSvg(hn, '12.5mm')}<div style="font-size:6.5pt;font-weight:700;color:${INK};line-height:1.2">HN</div></div></div>
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:3mm;margin:2.5mm 0 2mm"><div style="font-family:Prompt,Sarabun,sans-serif;font-size:12.5pt;font-weight:600;color:${INK};line-height:1.25">${title}</div><div style="font-size:7.3pt;color:${MUT};text-align:right;white-space:nowrap">ออกเอกสาร<br><b style="color:${INK}">${issued}</b></div></div>`;
+  const sign = (label, name, role) => `<div style="flex:1;text-align:center;font-size:8.6pt;color:${INK};line-height:1.5"><div style="border-bottom:.3mm dotted ${INK};height:6mm;margin:0 3mm .8mm"></div><div>${label}</div><div>( ${name ? esc(name) : '<span style="display:inline-block;min-width:34mm"></span>'} )</div><div style="color:${MUT};font-size:7.8pt">${role}</div></div>`;
+  const note = (t) => `<div style="margin-top:2.5mm;padding-top:1.5mm;border-top:.3mm solid ${LN};font-size:7pt;color:${MUT};text-align:center;line-height:1.45">${t}</div>`;
+  const wrap = (body) => `<div style="font-family:Sarabun,sans-serif;width:100%;max-width:132mm;margin:0 auto;color:${INK};line-height:1.35">${body}</div>`;
+  return {P, INK, MUT, LN, issued, cell, head, sign, note, wrap};
+}
+// ใบจองห้องพัก A5 แบบเอกสารโรงพยาบาล (ใช้ทั้งแบบเรียกเก็บส่วนเกิน และแบบตามสิทธิ์)
+function slipHtmlV2(F) {
+  const {P, INK, MUT, LN, cell, head, sign, note, wrap} = docKit(F.hn);
+  const pay = F.pay, rightsMode = pay === 'ตามสิทธิ์', sp = pay === SPLIT;
+  let agent = F.agent; if (agent === 'แผนกเวชระเบียน') agent = '';
+  const dispRoom = (F.room || '-') + (F.room && F.room !== WAIT && F.room !== RSV && F.bed && F.bed !== SOLO && F.bed !== '-' ? ` (${F.bed})` : '');
+  const info = `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-right:.3mm solid ${LN};border-bottom:.3mm solid ${LN};border-radius:1.5mm;overflow:hidden;margin-bottom:3mm">
+      ${cell('ชื่อ-นามสกุลผู้ป่วย', esc(F.name), true)}${cell('HN', esc(F.hn) || '-')}
+      ${cell('วันที่เข้าพัก', fd(F.date))}${cell('ห้องพัก / เตียง', esc(dispRoom))}${cell('สิทธิ์การรักษา', esc(F.rights) || '-')}
+      ${cell('วิธีชำระเงินส่วนเกิน', esc(pay) || '-')}${cell('แพทย์เจ้าของไข้', esc(F.doc) || '-', true)}</div>`;
+
+  if (rightsMode) {
+    const pol = [['การจองห้องพัก', 'ผู้ป่วยหรือญาติสามารถแจ้งความจำนงจองห้องพักล่วงหน้าได้ที่จุดรับรอง ทั้งนี้ การได้สิทธิ์เข้าพักจะขึ้นอยู่กับจำนวนห้องว่างในวันและเวลาที่ผู้ป่วยเข้ารับการรักษา'],
+      ['การยืนยันห้องพัก', 'โรงพยาบาลขอสงวนสิทธิ์ในการจัดสรรห้องพักตามลำดับการจอง และตามความเหมาะสมของอาการผู้ป่วย (ภายใต้ดุลยพินิจของแพทย์)'],
+      ['กรณีห้องพักตามสิทธิ์ที่ไม่ต้องชำระเรียกเก็บส่วนเกิน ห้องพักเต็ม', 'โรงพยาบาลจะจัดหาห้องพักประเภทอื่น และผู้ป่วยจะต้องชำระเงินในส่วนเกินของห้องพักประเภทนั้นๆ']];
+    return wrap(head('ใบแจ้งรับการจองห้องพัก') + info
+      + `<div style="border:.3mm solid ${LN};border-radius:1.5mm;overflow:hidden;margin-bottom:4mm"><div style="background:#EEEAF8;padding:1.6mm 3mm;font-weight:700;font-size:9.3pt;border-bottom:.3mm solid ${LN}">ระเบียบการจองห้องพักและการจัดสรรห้อง</div>
+         <ol style="margin:0;padding:2mm 3mm 2mm 7mm;font-size:8.6pt;line-height:1.55">${pol.map(([k, v]) => `<li style="margin-bottom:1mm"><b>${k} :</b> ${v}</li>`).join('')}</ol></div>`
+      + `<div style="display:flex;justify-content:flex-end">${sign('ผู้รับจอง', agent, `วันที่ ${fd(F.date)}`)}</div>`
+      + note('เอกสารนี้เป็นหลักฐานการรับจองห้องพัก กรุณานำมาแสดงในวันเข้ารับการรักษา'));
+  }
+  const sel = ITEMS.map((it, i) => [it, F.items[i]]).filter(([, x]) => x.on);
+  const th = `background:#EEEAF8;color:${INK};font-weight:700;font-size:8.4pt;padding:1.3mm 2mm;border-top:.9pt solid ${P};border-bottom:.9pt solid ${P}`;
+  const td = `padding:.9mm 2mm;font-size:8.7pt;line-height:1.3;border-bottom:.3mm solid #e3dff0`;
+  const rows = sel.length ? sel.map(([it, x], k) => `<tr><td style="${td};text-align:center">${k + 1}</td><td style="${td}">${it[0]}</td><td style="${td};text-align:right">${it[1].toLocaleString('th-TH')}</td><td style="${td};text-align:right;font-weight:700">${x.v > 0 ? money(x.v) : '-'}</td></tr>`).join('')
+    : `<tr><td colspan="4" style="${td};text-align:center;color:${MUT}">ไม่มีรายการเรียกเก็บส่วนเกิน</td></tr>`;
+  const qrAmt = pay === 'โอน' ? F.total : F.tr, showQr = pay === 'โอน' || (sp && F.tr > 0);
+  const total = `<div style="display:flex;align-items:center;gap:3mm;margin:2mm 0 0;padding:1.6mm 3mm;border:.3mm solid ${LN};border-left:1.2mm solid ${P};border-radius:1.5mm;background:#F6F4FB">
+      <div style="flex:1;min-width:0"><div style="font-size:7.3pt;color:${MUT}">รวมเป็นเงิน (ตัวอักษร)</div><div style="font-size:9.3pt;font-weight:700">${THB(F.total)}</div></div>
+      <div style="text-align:right"><div style="font-size:7.3pt;color:${MUT}">ยอดชำระสุทธิ</div><div style="font-family:Prompt,Sarabun,sans-serif;font-size:15pt;font-weight:600;line-height:1.15">${money(F.total)} <span style="font-size:9pt">บาท</span></div>${sp ? `<div style="font-size:7.8pt">โอน <b>${money(F.tr)}</b> + เงินสด <b>${money(F.cs)}</b></div>` : ''}</div></div>`;
+  const signs = `<div style="display:flex;gap:3mm">${sign('ผู้ชำระเงิน', '', 'ผู้ป่วย / ญาติ')}${sign('ผู้รับเงิน', agent, `เจ้าหน้าที่การเงิน · ${fd(F.date)}`)}</div>`;
+  const bottom = showQr ? `<div style="display:flex;gap:4mm;margin-top:2.5mm;break-inside:avoid">${tqrCard(qrAmt, '35mm', '24mm', '6.3pt')}
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between"><div style="padding:1.5mm 3mm;border:.3mm solid ${LN};border-radius:1.5mm;font-size:8.4pt;line-height:1.45"><div style="font-weight:700;font-size:9.5pt">สแกนชำระผ่านแอปธนาคาร</div><div>ยอดเงินขึ้นอัตโนมัติ ไม่ต้องกรอก</div><div style="margin-top:1.2mm;display:inline-block;padding:.8mm 3mm;border:.4mm solid ${P};border-radius:1.5mm;font-weight:700;font-size:10pt">ยอดโอน ${money(qrAmt)} บาท</div></div>${signs}</div></div>`
+    : `<div style="margin-top:4mm">${signs}</div>`;
+  return wrap(head('ใบรายการจองห้องพักและค่าใช้จ่ายส่วนเกิน') + info
+    + `<table style="width:100%;border-collapse:collapse"><thead><tr><th style="${th};width:11%;text-align:center">ลำดับ</th><th style="${th};text-align:left">รายการ</th><th style="${th};width:19%;text-align:right">ราคาปกติ</th><th style="${th};width:22%;text-align:right">ส่วนเกิน (บาท)</th></tr></thead><tbody>${rows}</tbody></table>`
+    + total + bottom
+    + note('เอกสารนี้เป็นเพียงใบแสดงหลักฐานการชำระเงิน ใบเสร็จรับเงินโรงพยาบาลจะออกให้ในวันที่ผู้ป่วยออกจากโรงพยาบาล หากยังไม่ได้รับโปรดแจ้งเจ้าหน้าที่'));
+}
+
+// ใบรายการรับคืนเงิน (ยกเลิกผ่าตัด) A5 — แบบเดียวกับใบจอง
+function refundHtmlV2(b) {
+  const {P, INK, MUT, LN, cell, head, sign, note, wrap} = docKit(b.hn);
+  const amt = +b.amount || 0, bed = b.bed && b.bed !== SOLO && b.bed !== '-' ? ` (${b.bed})` : '';
+  let agent = b.agent || ''; if (agent === 'แผนกเวชระเบียน') agent = '';
+  const th = `background:#EEEAF8;color:${INK};font-weight:700;font-size:8.4pt;padding:1.3mm 2mm;border-top:.9pt solid ${P};border-bottom:.9pt solid ${P}`;
+  const td = `padding:1.6mm 2mm;font-size:9pt;border-bottom:.3mm solid #e3dff0`;
+  const info = `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-right:.3mm solid ${LN};border-bottom:.3mm solid ${LN};border-radius:1.5mm;overflow:hidden;margin-bottom:3mm">
+      ${cell('ชื่อ-นามสกุลผู้ป่วย', esc(b.patient), true)}${cell('HN', esc(b.hn) || '-')}
+      ${cell('วันที่เข้าพัก', fd(b.date))}${cell('ห้องพัก / เตียง', esc(realRoom(b) + bed))}${cell('วันที่ยกเลิกผ่าตัด', fd(cxDate(b)))}
+      ${cell('ชำระเดิม', payTxt(b))}${cell('แพทย์เจ้าของไข้', esc(b.surgeon) || '-', true)}</div>`;
+  return wrap(head('ใบรายการรับคืนเงิน · ยกเลิกผ่าตัด') + info
+    + `<table style="width:100%;border-collapse:collapse"><thead><tr><th style="${th};width:12%;text-align:center">ลำดับ</th><th style="${th};text-align:left">รายการ</th><th style="${th};width:28%;text-align:right">จำนวนเงิน (บาท)</th></tr></thead>
+       <tbody><tr><td style="${td};text-align:center">1</td><td style="${td}">คืนเงินค่าจองห้องพัก / ค่าใช้จ่ายส่วนเกิน (ยกเลิกผ่าตัด)</td><td style="${td};text-align:right;font-weight:700">${money(amt)}</td></tr></tbody></table>`
+    + `<div style="display:flex;align-items:center;gap:3mm;margin:2.5mm 0 0;padding:1.8mm 3mm;border:.3mm solid ${LN};border-left:1.2mm solid ${P};border-radius:1.5mm;background:#F6F4FB">
+        <div style="flex:1;min-width:0"><div style="font-size:7.3pt;color:${MUT}">รวมคืนเงิน (ตัวอักษร)</div><div style="font-size:9.3pt;font-weight:700">${THB(amt)}</div></div>
+        <div style="text-align:right"><div style="font-size:7.3pt;color:${MUT}">ยอดคืนสุทธิ</div><div style="font-family:Prompt,Sarabun,sans-serif;font-size:15pt;font-weight:600;line-height:1.15">${money(amt)} <span style="font-size:9pt">บาท</span></div></div></div>`
+    + `<div style="margin-top:3mm;font-size:8.8pt">ข้าพเจ้าได้รับเงินคืนตามจำนวนข้างต้นครบถ้วนถูกต้องแล้ว</div>`
+    + `<div style="display:flex;gap:4mm;margin-top:3mm">${sign('ผู้รับเงินคืน', b.patient, 'ผู้ป่วย / ญาติ · วันที่ ........./........./.........')}${sign('ผู้จ่ายเงินคืน', agent, 'เจ้าหน้าที่การเงิน · วันที่ ........./........./.........')}</div>`
+    + note('เอกสารนี้เป็นหลักฐานการคืนเงินกรณียกเลิกผ่าตัด โปรดเก็บไว้เป็นหลักฐาน'));
+}
 function printReceipt(src) {
   const F = src || {name: $('name').value, hn: $('hn').value, room: $('room').value, bed: $('bed').value, pay: $('pay').value, rights: $('rights').value.trim(),
     tr: +$('pT').value || 0, cs: +$('pC').value || 0, agent: $('agent').value, date: $('date').value, doc: $('doc').value,
     items: ITEMS.map((_, i) => ({on: $('c' + i).checked, v: +$('a' + i).value})), total: total()};
   if (!F.name) return msg('warning', 'แจ้งเตือน', 'กรุณากรอกชื่อผู้ป่วยก่อนพิมพ์เอกสาร');
-  const room = F.room, bed = F.bed, pay = F.pay, rights = F.rights, sp = pay === SPLIT, tr = F.tr, cs = F.cs; let agent = F.agent; if (agent === 'แผนกเวชระเบียน') agent = '';
-  const dispRoom = (room || '-') + (room && room !== WAIT && room !== RSV && bed && bed !== SOLO && bed !== '-' ? ` (${bed})` : '');
-  const dt = fd(F.date), t = F.total, dot = 'border-bottom:1px dotted #000;text-align:center;padding-bottom:2px', cell = 'border:1px solid #000;padding:5px';
-  if (pay === 'ตามสิทธิ์') {   // ตามสิทธิ์: พิมพ์ "ใบแจ้งรับการจองห้องพัก" (ไม่มีตารางรายการ/ราคา) พร้อมระเบียบห้องพัก
-    printArea(`<div style="font-family:Sarabun,sans-serif;width:100%;max-width:13.5cm;margin:0 auto;line-height:1.35;font-size:.95rem;color:#000"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="flex:1;text-align:center"><h3 style="font-size:1.25rem;font-weight:700;margin:0">ใบแจ้งรับการจองห้องพัก</h3><h4 style="font-size:1rem;margin:4px 0 0">ผ่าตัดตา รพ.ศุภมิตร-รักษ์สกล</h4></div>${logoQr(F.hn)}</div>
-      <div style="display:flex;gap:8px;margin-bottom:8px"><b>ชื่อผู้ป่วย</b><span style="flex:1;${dot}">${esc(F.name)}</span><b>HN</b><span style="width:100px;${dot}">${esc(F.hn) || '-'}</span></div>
-      <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:8px"><b>วันที่</b><span style="width:100px;${dot}">${dt}</span><b>ห้องพัก</b><span style="flex:1;min-width:0;overflow-wrap:anywhere;${dot}">${esc(dispRoom)}</span></div>
-      <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:8px"><b>สิทธิ์</b><span style="flex:1;min-width:0;overflow-wrap:anywhere;${dot}">${esc(rights) || '-'}</span><b>วิธีชำระเงินส่วนเกิน</b><span style="flex:1;min-width:0;overflow-wrap:anywhere;${dot}">${esc(pay)}</span></div>
-    <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:22px"><b>แพทย์เจ้าของไข้</b><span style="flex:1;min-width:0;overflow-wrap:anywhere;${dot}">${esc(F.doc) || '-'}</span></div>
-      <div style="display:flex;justify-content:flex-end;margin-bottom:22px"><div style="width:52%;text-align:center"><div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:8px"><b style="white-space:nowrap">ผู้รับจอง</b><span style="flex:1;border-bottom:1px dotted #000;height:1.2em"></span></div><div style="margin-bottom:8px">( <span style="display:inline-block;min-width:130px">${esc(agent)}</span> )</div><div style="display:flex;gap:6px;align-items:flex-end"><b>วันที่</b><span style="flex:1;${dot}">${dt}</span></div></div></div>
-      <div style="border:1px solid #000;border-radius:8px;padding:10px 12px;font-size:.85rem;line-height:1.55"><div style="font-weight:700;font-size:.95rem;text-align:center;margin-bottom:6px">ระเบียบ การจองห้องพักและการจัดสรรห้อง</div><ul style="margin:0;padding-left:1.1rem"><li style="margin-bottom:5px"><b>การจองห้องพัก :</b> ผู้ป่วยหรือญาติสามารถแจ้งความจำนงจองห้องพักล่วงหน้าได้ที่จุดรับรอง ทั้งนี้ การได้สิทธิ์เข้าพักจะขึ้นอยู่กับจำนวนห้องว่างในวันและเวลาที่ผู้ป่วยเข้ารับการรักษา</li><li style="margin-bottom:5px"><b>การยืนยันห้องพัก :</b> โรงพยาบาลขอสงวนสิทธิ์ในการจัดสรรห้องพักตามลำดับการจอง และตามความเหมาะสมของอาการผู้ป่วย (ภายใต้ดุลยพินิจของแพทย์)</li><li><b>กรณีห้องพักตามสิทธิ์ที่ไม่ต้องชำระเรียกเก็บส่วนเกิน ห้องพักเต็ม :</b> โรงพยาบาลจะจัดหาห้องพักประเภทอื่น และผู้ป่วยจะต้องชำระเงินในส่วนเกินของห้องพักประเภทนั้นๆ</li></ul></div></div>`, 'A5 portrait');
-    return;
-  }
-  const sel = ITEMS.map((it, i) => [it, F.items[i]]).filter(([, x]) => x.on);
-  const rows = sel.length ? sel.map(([it, x], k) => `<tr><td style="${cell}">${k + 1}</td><td style="${cell};text-align:left">${it[0]}</td><td style="${cell}">${it[1].toLocaleString('th-TH')}</td><td style="${cell}">${x.v > 0 ? x.v.toLocaleString('th-TH') : '-'}</td></tr>`).join('')
-    : `<tr><td colspan="4" style="${cell};color:#555">ไม่มีรายการเรียกเก็บส่วนเกิน</td></tr>`;
-  const qrAmt = pay === 'โอน' ? t : tr, qr = (pay === 'โอน' || (sp && tr > 0)) ? (() => { const dyn = !!payQrPayload(qrAmt); return `<div style="margin-top:8px;display:flex;align-items:center;gap:14px;break-inside:avoid;page-break-inside:avoid">${tqrCard(qrAmt, '40mm', '28mm', '7pt')}<div style="font-size:.9rem;line-height:1.5;color:#000"><div style="font-weight:700">${ic('phone')} สแกนจ่ายผ่านแอปธนาคาร</div><div>${dyn ? 'ยอดเงินขึ้นอัตโนมัติ ไม่ต้องกรอก' : 'กรุณากรอกยอดตามที่ระบุ'}</div><div style="margin-top:6px;padding:4px 10px;border:1.5px solid #0b57d0;border-radius:8px;display:inline-block;font-weight:700;font-size:1.05rem">ยอดชำระ ${money(qrAmt)} บาท</div></div></div>`; })() : '';
-  printArea(`<div style="font-family:Sarabun,sans-serif;width:100%;max-width:13.5cm;margin:0 auto;line-height:1.35;font-size:.95rem"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="flex:1;text-align:center"><h3 style="font-size:1.2rem;font-weight:700;margin:0">ใบรายการจองห้องพักและเรียกเก็บค่าใช้จ่ายส่วนเกิน</h3><h4 style="font-size:1rem;margin:4px 0 0">ผ่าตัดตา รพ.ศุภมิตร-รักษ์สกล</h4></div>${logoQr(F.hn)}</div>
-    <div style="display:flex;gap:8px;margin-bottom:8px"><b>ชื่อผู้ป่วย</b><span style="flex:1;${dot}">${esc(F.name)}</span><b>HN</b><span style="width:100px;${dot}">${esc(F.hn) || '-'}</span></div>
-    <div style="display:flex;align-items:flex-end;gap:6px;margin-bottom:8px;font-size:.85rem"><b>วันที่</b><span style="width:64px;${dot}">${dt}</span><b>ห้องพัก</b><span style="flex:1.2;min-width:0;overflow-wrap:anywhere;${dot}">${esc(dispRoom)}</span><b>สิทธิ์</b><span style="flex:1;min-width:0;overflow-wrap:anywhere;${dot}">${esc(rights) || '-'}</span><b>วิธีชำระเงินส่วนเกิน</b><span style="flex:1;min-width:0;overflow-wrap:anywhere;${dot}">${esc(pay)}</span></div>
-    <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:12px"><b>แพทย์เจ้าของไข้</b><span style="flex:1;min-width:0;overflow-wrap:anywhere;${dot}">${esc(F.doc) || '-'}</span></div>
-    <table style="width:100%;border-collapse:collapse;text-align:center;font-size:.85rem;margin-bottom:12px"><thead><tr style="background:#f8f9fa"><th style="${cell};width:12%">ลำดับ</th><th style="${cell}">รายการ</th><th style="${cell}">ราคา</th><th style="${cell}">ส่วนเกิน (บาท)</th></tr></thead><tbody>${rows}</tbody></table>
-    <div style="display:flex;gap:8px;font-weight:700;margin-bottom:22px"><span>รวม</span><span style="flex:1;${dot}">( ${THB(t)} )</span><span style="width:100px;${dot};text-align:right">${money(t)}</span><span>บาท</span></div>
-    ${sp ? `<div style="font-size:.9rem;font-weight:600;margin:-8px 0 14px">ชำระโดย: โอน ${money(tr)} บาท + เงินสด ${money(cs)} บาท</div>` : ''}<div style="display:flex;justify-content:space-between;font-size:.9rem"><div style="width:48%"><div style="display:flex;gap:6px;margin-bottom:20px"><b>ผู้ชำระเงิน</b><span style="flex:1;border-bottom:1px dotted #000"></span><span>ผู้ป่วย/ญาติ</span></div><div style="border-bottom:1px dotted #000;margin:0 10%;height:1em"></div></div>
-    <div style="width:48%"><div style="display:flex;gap:6px;margin-bottom:8px"><b>ผู้รับเงิน</b><span style="flex:1;border-bottom:1px dotted #000"></span></div><div style="text-align:center;margin-bottom:8px">( <span style="display:inline-block;min-width:130px">${esc(agent)}</span> )</div><div style="display:flex;gap:6px;margin-bottom:8px"><b>วันที่</b><span style="flex:1;${dot}">${dt}</span></div><div style="text-align:center">(เจ้าหน้าที่การเงิน)</div></div></div>${qr}
-    <div style="margin-top:12px;text-align:center;font-size:.8rem;color:#444;border-top:1px dashed #ccc;padding-top:8px">* เอกสารนี้เป็นเพียงใบแสดงหลักฐานการชำระเงิน ส่วนใบเสร็จรับเงินทางโรงพยาบาลจะออกให้ในวันที่ผู้ป่วยออกจากโรงพยาบาล หากท่านยังไม่ได้รับโปรดแจ้งเจ้าหน้าที่</div></div>`, 'A5 portrait');
+  printArea(slipHtmlV2(F), 'A5 portrait');
 }
 </script>
 </body>

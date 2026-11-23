@@ -429,6 +429,7 @@ body{background:var(--lav)!important;color:var(--ink)}
 .diet.on .diet-tx{border-color:#EC5F86;background:#FFF6F9}
 .diet.saving{opacity:.55;pointer-events:none}.diet-pr{display:none}
 @media print{#rep .tbl .mealbox{width:4.6mm;height:4.6mm;border:.9pt solid #1d1640;border-radius:.8mm}#rep .tbl .diet{display:block;min-width:40mm}#rep .tbl .diet-lb,#rep .tbl .diet-tx{display:none!important}#rep .tbl .diet-pr{display:inline}#rep .tbl .dbox{display:inline-block;width:4mm;height:4mm;border:.9pt solid #1d1640;border-radius:.8mm;text-align:center;line-height:3.6mm;font-size:8pt;font-weight:800}#rep .tbl .mh{font-size:7pt}}
+#btnCD.on{background:#22a06b;border-color:#22a06b;color:#fff}
 </style>
 </head>
 <body>
@@ -451,7 +452,8 @@ body{background:var(--lav)!important;color:var(--ink)}
 <div id="main" class="screen container-fluid px-4 pb-4">
   <div class="appbar no-print d-flex justify-content-between align-items-center" style="margin:0 -1.5rem 1.2rem">
     <h5 class="fw-bold mb-0 d-flex align-items-center flex-wrap"><img class="logo appbar-logo" alt="โลโก้ รพ."> ระบบจองห้องพัก <small class="text-secondary fw-normal">รพ.ศุภมิตร-รักษ์สกล</small></h5>
-    <button class="btn btn-sm btn-outline-danger" onclick="logout()"><i data-ic="logout"></i> ออกจากระบบ</button>
+    <div class="d-flex gap-2 flex-wrap justify-content-end"><button class="btn btn-sm btn-outline-primary" id="btnCD" onclick="cdOpen()" style="display:none" title="เปิดหน้าต่างจอลูกค้า ลากไปจอที่ 2 แล้วกด F11 (หรือดับเบิลคลิก) ให้เต็มจอ"><i data-ic="screen"></i> เปิดจอลูกค้า</button>
+    <button class="btn btn-sm btn-outline-danger" onclick="logout()"><i data-ic="logout"></i> ออกจากระบบ</button></div>
   </div>
   <div class="row g-4">
     <div class="col-lg-4 no-print" id="formCol">
@@ -545,12 +547,12 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const today = () => { const d = new Date(); return new Date(d - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); };
 const fd = s => { const d = new Date(s); return isNaN(d) ? s : `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getFullYear()+543).slice(-2)}`; };
 const money = n => (+n || 0).toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2});
-const IC = {download: '<path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/>', chev: '<path d="M6 9l6 6 6-6"/>', hosp: '<path d="M3 21h18M5 21V5h14v16M10 9h4M12 7v4M10 21v-4h4v4"/>', note: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>', building: '<path d="M3 21h18M5 21V5h14v16M9 9h2M13 9h2M9 13h2M13 13h2M10 21v-4h4v4"/>', card: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>', bank: '<path d="M3 10h18L12 4 3 10zM5 10v8M9 10v8M15 10v8M19 10v8M3 21h18"/>', cash: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/>', print: '<path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="7" rx="1"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>', board: '<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>', table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/>', list: '<path d="M8 6h13M8 12h13M8 18h13M4 6h.01M4 12h.01M4 18h.01"/>', money: '<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .9-3 2s1.3 1.7 3 2 3 .9 3 2-1.3 2-3 2c-1.4 0-2.5-.5-3-1.5M12 6v2M12 16v2"/>', dc: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>', cancel: '<circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/>', sign: '<rect x="3" y="4" width="18" height="11" rx="2"/><path d="M12 15v6M8 21h8M7 9h10"/>', badge: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M10 3v3h4V3M9 11h6M9 15h6"/>', doc: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>', back: '<path d="M15 18l-6-6 6-6"/>', logout: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l-5-5 5-5M5 12h12"/>', login: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/>', save: '<path d="M5 12l5 5L20 7"/>', check: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>', search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>', bed: '<path d="M3 18V7M21 18v-5a3 3 0 0 0-3-3h-8v6M3 15h18"/><circle cx="6.5" cy="11.5" r="1.5"/>', clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', layers: '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>', unlock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/>', eye: '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>', upload: '<path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 21h14"/>', trash: '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/>', phone: '<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/>', x: '<path d="M18 6L6 18M6 6l12 12"/>', food: '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2.2 1-3.5 4-3.5 8H17"/>'};
+const IC = {download: '<path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/>', chev: '<path d="M6 9l6 6 6-6"/>', hosp: '<path d="M3 21h18M5 21V5h14v16M10 9h4M12 7v4M10 21v-4h4v4"/>', note: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>', building: '<path d="M3 21h18M5 21V5h14v16M9 9h2M13 9h2M9 13h2M13 13h2M10 21v-4h4v4"/>', card: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>', bank: '<path d="M3 10h18L12 4 3 10zM5 10v8M9 10v8M15 10v8M19 10v8M3 21h18"/>', cash: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/>', print: '<path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="7" rx="1"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>', board: '<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>', table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/>', list: '<path d="M8 6h13M8 12h13M8 18h13M4 6h.01M4 12h.01M4 18h.01"/>', money: '<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .9-3 2s1.3 1.7 3 2 3 .9 3 2-1.3 2-3 2c-1.4 0-2.5-.5-3-1.5M12 6v2M12 16v2"/>', dc: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>', cancel: '<circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/>', sign: '<rect x="3" y="4" width="18" height="11" rx="2"/><path d="M12 15v6M8 21h8M7 9h10"/>', badge: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M10 3v3h4V3M9 11h6M9 15h6"/>', doc: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>', back: '<path d="M15 18l-6-6 6-6"/>', logout: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l-5-5 5-5M5 12h12"/>', login: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/>', save: '<path d="M5 12l5 5L20 7"/>', check: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>', search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>', bed: '<path d="M3 18V7M21 18v-5a3 3 0 0 0-3-3h-8v6M3 15h18"/><circle cx="6.5" cy="11.5" r="1.5"/>', clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', layers: '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>', unlock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/>', eye: '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>', upload: '<path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 21h14"/>', trash: '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/>', phone: '<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/>', x: '<path d="M18 6L6 18M6 6l12 12"/>', food: '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2.2 1-3.5 4-3.5 8H17"/>', screen: '<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/>'};
 const ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true">${IC[n] || ''}</svg>`;
 const FC = ['#2A3C76', '#5d78c0', '#FE696E', '#f4a340'];   // สีประจำแท็บ: ชั้น 2B · ชั้น 2 · ชั้น 3 · รอห้องสำรอง
 const LOGO = 'https://i.postimg.cc/pXHW7T4D/Squre-profile-pink-bg.jpg';
 const QR = "https://i.postimg.cc/Vkz5S5dX/QR-r-ks'-skl.jpg";
-const ROLES = ['ward', 'finance', 'records', 'admission'];
+const PINS = {ward:'1111', finance:'2222', records:'3333', admission:'4444'};
 const SOLO = 'เหมาห้อง/เตียงเดี่ยว', WAIT = 'รอจัดห้อง', RSV = 'รอห้องสำรอง';
 const FLOORS = [['ชั้น 2B', ['201','202','203','204','205','206','207','208','209','210','211','212','213','214']],
   ['ชั้น 2', ['VIP 1201','1202','1203','1204','1205','1206','1207','1208','VIP 1209']], ['ชั้น 3', ['VIP 301','302','303','304','305','306','307','308','VIP 309']]];
@@ -580,27 +582,13 @@ const active = () => DATA.filter(b => !isWait(b) && !isRsv(b) && !isOut(b));
 const maxBeds = r => r === '210' || r === '214' ? 9 : r === '213' ? 4 : 8;
 
 // ---------- Apps Script (Promise + timeout; อ่านซ้ำได้ ส่วนเขียนไม่ซ้ำ) ----------
-// ---------- API ของ Apps Script (หน้าเว็บนี้โฮสต์บน GitHub Pages) ----------
-const API_URL = 'https://script.google.com/macros/s/AKfycbye-Htxn_FNsWcEFWTbza40iKSZMGBYbWWRPFIZEM6LkpmGBSNeZSnnHnCqtrlMaanRnw/exec';   // ← ใส่ URL ของ Web app ที่ deploy แล้ว
-let TOKEN = sessionStorage.getItem('rk_token') || '';
-async function api(action, body = {}) {
-  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 30000);
-  let res;
-  try {
-    const r = await fetch(API_URL, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify({action, token: TOKEN, ...body}), signal: ctl.signal, redirect: 'follow'});
-    res = await r.json();
-  } catch (e) { const err = new Error(e.name === 'AbortError' ? 'หมดเวลาเชื่อมต่อ กรุณาลองใหม่' : 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ตรวจสอบอินเทอร์เน็ต'); err.code = 'NET'; throw err; }
-  finally { clearTimeout(t); }
-  if (!res || !res.ok) { const err = new Error((res && res.error) || 'เกิดข้อผิดพลาด'); err.code = res && res.code; if (err.code === 'AUTH' && action !== 'login') sessionExpired(); throw err; }
-  return res.data;
-}
-const gas = (name, ...args) => api(name, {args});
-function sessionExpired() {
-  const was = !!role; TOKEN = ''; sessionStorage.removeItem('rk_token'); sessionStorage.removeItem('rk_role');
-  if (was) { logout(true); msg('warning', 'หมดเวลาการใช้งาน', 'กรุณาเข้าสู่ระบบใหม่'); }
-}
+const gas = (name, ...a) => new Promise((ok, ko) => {
+  if (!window.google || !google.script) return ko(new Error('ไม่ได้เปิดผ่าน Apps Script'));
+  const t = setTimeout(() => ko(new Error('หมดเวลาเชื่อมต่อ กรุณาลองใหม่')), 30000);
+  google.script.run.withSuccessHandler(r => { clearTimeout(t); ok(r); }).withFailureHandler(e => { clearTimeout(t); ko(e); })[name](...a);
+});
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-const gasRead = async (n, ...a) => { try { return await gas(n, ...a); } catch (e) { if (e.code === 'AUTH') throw e; await sleep(800); return gas(n, ...a); } };
+const gasRead = async (n, ...a) => { try { return await gas(n, ...a); } catch (e) { await sleep(800); return gas(n, ...a); } };
 const msg = (icon, title, text) => Swal.fire({icon, title, text, confirmButtonText:'ตกลง', confirmButtonColor:'#6C3CE1', customClass:{popup:'rounded-4'}});
 const toast = t => Swal.fire({icon:'success', title:'สำเร็จ', text:t, timer:1500, showConfirmButton:false, customClass:{popup:'rounded-4'}});
 const ask = (title, text, ok) => Swal.fire({title, text, icon:'warning', showCancelButton:true, confirmButtonColor:'#EC5F86', cancelButtonColor:'#8E88A6', confirmButtonText:ok, cancelButtonText:'ยกเลิก', customClass:{popup:'rounded-4'}}).then(r => r.isConfirmed);
@@ -622,7 +610,6 @@ document.addEventListener('DOMContentLoaded', () => {
   $('pinEye').innerHTML = EYE;
   $('hn').addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); findHN(); } });
   setPage('auto'); roomOpts();
-  const sr = sessionStorage.getItem('rk_role'); if (TOKEN && ROLES.includes(sr)) enterAs(sr);
 });
 function setPage(v, rep = true) {
   const m = v === 'auto' ? '10mm' : v.includes('mm') ? '0' : '8mm';
@@ -639,29 +626,20 @@ function togglePin() {
   $('pinEye').setAttribute('aria-pressed', show); $('pinEye').setAttribute('aria-label', show ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'); i.focus();
 }
 function hidePin() { $('pin').type = 'password'; $('pinEye').innerHTML = EYE; $('pinEye').setAttribute('aria-pressed', 'false'); $('pinEye').setAttribute('aria-label', 'แสดงรหัสผ่าน'); }
-async function login() {
-  const r = $('role').value, pin = $('pin').value.trim(), btn = document.querySelector('#login .btn-primary');
-  if (!pin) { $('pin').focus(); return; }
-  if (/วาง_DEPLOYMENT_ID/.test(API_URL)) return msg('error', 'ยังไม่ได้ตั้งค่า API_URL', 'ใส่ URL ของ Apps Script Web app ในไฟล์ index.html ก่อน');
-  btn.disabled = true;
-  try { const d = await api('login', {role: r, pin}); TOKEN = d.token; sessionStorage.setItem('rk_token', TOKEN); sessionStorage.setItem('rk_role', r); enterAs(r); }
-  catch (e) { $('pin').value = ''; $('pin').focus(); msg('error', e.code === 'BAD_PIN' ? 'รหัสผ่านไม่ถูกต้อง' : 'เข้าสู่ระบบไม่สำเร็จ', e.code === 'BAD_PIN' ? 'กรุณาลองใหม่อีกครั้ง' : e.message); }
-  finally { btn.disabled = false; }
-}
-function enterAs(r) {
+function login() {
+  const r = $('role').value;
+  if ($('pin').value !== PINS[r]) { $('pin').value = ''; $('pin').focus(); return msg('error', 'รหัสผ่านไม่ถูกต้อง', 'กรุณาลองใหม่อีกครั้ง'); }
   role = r; $('pin').value = ''; hidePin();
   const canBook = r === 'admission' || r === 'records';
   $('agent').disabled = r === 'records';
   $('formCol').style.display = canBook ? '' : 'none'; $('paySec').style.display = r === 'records' ? 'none' : '';
   $('dashCol').className = canBook ? 'col-lg-8' : 'col-lg-12';
   $('btnFin').style.display = r === 'ward' || r === 'records' ? 'none' : '';
+  $('btnCD').style.display = r === 'admission' ? '' : 'none';
   resetForm();
   show('main'); refresh();
 }
-function logout(expired) {
-  if (!expired && TOKEN) api('logout').catch(() => {});
-  TOKEN = ''; sessionStorage.removeItem('rk_token'); sessionStorage.removeItem('rk_role');
-  role = ''; floorTab = 0; hidePin(); $('pin').value = ''; document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); $('login').style.display = 'flex'; }
+function logout() { role = ''; floorTab = 0; hidePin(); $('pin').value = ''; document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); $('login').style.display = 'flex'; }
 
 // ---------- โหลด/ซิงค์ ----------
 function apply(d, force) {
@@ -671,7 +649,7 @@ function apply(d, force) {
 }
 async function refresh() {
   $('spin').style.display = 'block';
-  try { apply(await gasRead('getInitialData'), true); } catch (e) { if (e.code !== 'AUTH') msg('error', 'โหลดข้อมูลไม่สำเร็จ', e.message || String(e)); }
+  try { apply(await gasRead('getInitialData'), true); } catch (e) { msg('error', 'โหลดข้อมูลไม่สำเร็จ', e.message || String(e)); }
   finally { $('spin').style.display = 'none'; }
 }
 let timer;
@@ -766,6 +744,153 @@ async function findHN() {
   $('name').value = p ? p.name : ''; $('age').value = p ? p.age : ''; $('rights').value = p ? (p.rights || '') : '';
 }
 // ---------- ตรวจสอบข้อมูลก่อนบันทึก (ป๊อปอัป) ----------
+// ===== จอลูกค้า (Customer display) จอที่ 2 แนวตั้ง 1080×1920 =====
+// ตอนว่าง = โฆษณาห้องพักวนอัตโนมัติ · ตอนเปิดป๊อปอัปตรวจสอบ = รายการชำระเงิน + QR · กดปิด = ขอบคุณ แล้วกลับไปโฆษณา
+const CD_NAME = 'โรงพยาบาลรักษ์สกล', CD_EN = 'Raksakon Hospital', CD_TEL = '042 712 800', CD_SLIDE_SEC = 9;
+const CD_ROOMS = {   // img/th = ชื่อรูปใน RoomPhotos.html (หรือใส่ลิงก์ https ของรูปแทนได้)
+  vip:  {no:'01', name:'ห้องพักเดี่ยว VIP', bld:'อาคาร 2', en:'PRIVATE SINGLE ROOM VIP', price:'4,500', img:'vip_main', th:['vip_t2','vip_t3','vip_t4'],
+         am:[['wifi','Wi-Fi ฟรี'],['tv','Internet TV'],['fridge','ตู้เย็น'],['closet','ตู้เสื้อผ้า'],['shower','น้ำอุ่น'],['sofa','เตียงญาติ']]},
+  sp:   {no:'02', name:'ห้องพักเดี่ยวพิเศษ', bld:'อาคาร 2', en:'PRIVATE SINGLE ROOM', price:'2,500', img:'sp_main', th:['sp_t1','sp_t2','sp_t3'],
+         am:[['snow','ห้องแอร์'],['tv','Internet TV'],['fridge','ตู้เย็น'],['closet','ตู้เสื้อผ้า'],['shower','น้ำอุ่น'],['sofa','โซฟาญาติ']]},
+  std:  {no:'03', name:'ห้องพิเศษเดี่ยว', bld:'อาคาร 2B', en:'STANDARD SINGLE ROOM', price:'1,500', img:'std', th:[],
+         am:[['snow','ห้องแอร์'],['tv','Internet TV'],['fridge','ตู้เย็น'],['shower','น้ำอุ่น'],['sofa','โซฟาญาติ'],['wifi','Wi-Fi ฟรี']]},
+  ward: {no:'04', name:'ห้องรวม', bld:'อาคาร 2B', en:'SHARED WARD', price:'', img:'ward', th:[],
+         am:[['snow','ห้องแอร์'],['sofa','โซฟาญาติ'],['shower','น้ำอุ่น'],['wifi','Wi-Fi ฟรี'],['nosmoke','ปลอดบุหรี่'],['heart','ไม่ต้องชำระส่วนเกิน']]}
+};
+// ห้องไหนเป็นประเภทไหน: ขึ้นต้น VIP = VIP · ชั้น 2B เหมาห้อง = เดี่ยว 2B, จองรายเตียง = ห้องรวม · นอกนั้น = เดี่ยวพิเศษ
+const cdType = (room, bed) => /^VIP/i.test(room) ? 'vip' : FLOORS[0][1].includes(room) ? (bed === SOLO ? 'std' : 'ward') : FLOORS.some(x => x[1].includes(room)) ? 'sp' : '';
+const CD_IC = {wifi:'<path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1"/>',
+  nosmoke:'<circle cx="12" cy="12" r="9.5"/><path d="M5.3 5.3l13.4 13.4M7 13h7M16 13h1"/>', snow:'<path d="M12 2v20M4 7l16 10M4 17L20 7M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/>',
+  tv:'<rect x="3" y="5" width="18" height="12" rx="1.5"/><path d="M8 21h8M12 17v4"/>', fridge:'<rect x="6" y="2.5" width="12" height="19" rx="2"/><path d="M6 9h12M9 5.5v1.5M9 11.5v3"/>',
+  closet:'<rect x="4" y="3" width="16" height="17" rx="1.5"/><path d="M12 3v17M10 10v2M14 10v2M6 20v1.5M18 20v1.5"/>', shower:'<path d="M5 21V6a3 3 0 0 1 6 0M8 9h6M9 12v1M11 13v1M13 12v1M15 13v1"/>',
+  sofa:'<path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3M3 11h18v6H3zM5 17v2M19 17v2"/>', phone:'<path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/>',
+  heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>', check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  cash:'<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/>', shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>'};
+const cdI = k => `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${CD_IC[k] || ''}</svg>`;
+const CD_CSS = `*{box-sizing:border-box}html,body{margin:0;height:100%;background:#16234A;overflow:hidden;font-family:Prompt,Sarabun,sans-serif;cursor:none}
+#cdStage{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0;background:#fff;color:#16234A;display:flex;flex-direction:column;overflow:hidden}
+.i{width:1em;height:1em;flex:none}
+.hd{display:flex;align-items:center;gap:18px;padding:26px 40px 22px;border-bottom:4px solid #FCE4EF;flex:none}.hd img{width:72px;height:72px;border-radius:18px;object-fit:cover}
+.hd b{display:block;font-size:34px;color:#E2187B;line-height:1.2}.hd span{font-size:19px;color:#5b6282}.hd time{margin-left:auto;font-size:30px;font-weight:700;background:#FCE4EF;padding:8px 22px;border-radius:999px;white-space:nowrap}
+.slides{position:relative;flex:1}.slide{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0}
+.slide.solo{opacity:1}.slide.anim{animation:cdf var(--T) linear infinite;animation-delay:var(--d)}
+.hero{position:relative;margin:26px 34px 0;height:1010px;border-radius:30px;overflow:hidden;box-shadow:0 18px 40px rgba(22,35,74,.18);flex:none;background:linear-gradient(135deg,#FCE4EF,#e7e9f5)}
+.slide.nothumb .hero{height:1248px}.hero img{width:100%;height:100%;object-fit:cover;animation:cdkb 14s ease-in-out infinite alternate}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(22,35,74,.78))}
+.tag{position:absolute;left:30px;right:30px;bottom:28px;z-index:1;display:flex;align-items:center;gap:18px;color:#fff}.tag i{font-style:normal;background:#E2187B;border-radius:18px;font-size:46px;font-weight:800;padding:4px 18px}
+.tag b{display:block;font-size:48px;line-height:1.15;text-shadow:0 3px 14px rgba(0,0,0,.35)}.tag span{font-size:23px;opacity:.95}
+.pr2{margin-left:auto;background:#fff;color:#16234A;border-radius:999px;padding:10px 24px;font-size:22px;font-weight:600;white-space:nowrap}.pr2 b{color:#E2187B;font-size:34px}
+.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:18px 34px 0;flex:none}.thumbs img{width:100%;height:220px;object-fit:cover;border-radius:20px;display:block}
+.info{display:grid;grid-template-columns:1fr 330px;gap:22px;margin:26px 34px 0;flex:none}
+.am{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.am div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#FFF5FA;border-radius:20px;padding:16px 6px;font-size:21px;font-weight:600;text-align:center}
+.am .i{font-size:46px;color:#E2187B}
+.pr{background:linear-gradient(160deg,#FCE4EF,#FFF1F7);border-radius:26px;padding:22px 26px;display:flex;flex-direction:column;justify-content:center}.pr small{font-size:24px;font-weight:600}
+.pr b{font-size:84px;line-height:1;color:#E2187B;margin:6px 0}.pr b.free{font-size:46px;line-height:1.2}.pr span{font-size:26px;font-weight:600}.pr em{font-style:normal;font-size:18px;color:#5b6282;margin-top:8px}
+.dots{position:absolute;left:0;right:0;bottom:22px;display:flex;gap:10px;justify-content:center}.dots i{width:14px;height:14px;border-radius:9px;background:#f3c3da;animation:cdd var(--T) step-end infinite;animation-delay:var(--d)}
+.ft{display:grid;grid-template-columns:1fr 1fr;background:#FCE4EF;padding:26px 40px;gap:20px;flex:none}.ft div{display:flex;gap:16px;align-items:center}.ft .i{font-size:58px;color:#E2187B}
+.ft b{display:block;font-size:24px}.ft span{font-size:20px;color:#5b6282}.ft strong{display:block;font-size:42px;color:#E2187B;line-height:1.1}
+.pay .hero{height:var(--hh,560px)}
+.bill{flex:1;display:flex;flex-direction:column;gap:18px;padding:24px 46px 34px;min-height:0}
+.who{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}.who small{display:block;color:#E2187B;font-weight:700;font-size:22px}.who b{font-size:46px;line-height:1.2}
+.who span{background:#16234A;color:#fff;font-weight:700;border-radius:14px;padding:10px 18px;font-size:27px;white-space:nowrap}
+.meta{display:flex;gap:12px;flex-wrap:wrap}.meta span{background:#F4F5FA;border-radius:12px;padding:8px 16px;font-size:24px;color:#5b6282}.meta b{color:#16234A}
+.list{border-top:2px dashed #f0c2d8;border-bottom:2px dashed #f0c2d8}
+.it{display:flex;justify-content:space-between;gap:18px;padding:13px 0;font-size:28px;align-items:baseline}.it+.it{border-top:1px solid #f6e3ec}.it b{font-weight:600}.it span{font-weight:700;white-space:nowrap}
+.tot{display:flex;align-items:baseline;gap:14px;background:linear-gradient(90deg,#FCE4EF,#FFF1F7);border-radius:24px;padding:18px 28px}.tot span{flex:1;font-size:30px;font-weight:700}
+.tot b{font-size:84px;line-height:1;color:#E2187B}.tot small{font-size:28px;color:#E2187B;font-weight:700}
+.qr{display:flex;gap:34px;align-items:center;margin:auto 0}.steps{display:flex;flex-direction:column;gap:18px;font-size:28px}
+.steps i{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:99px;background:#E2187B;color:#fff;font-style:normal;font-weight:700;margin-right:12px;font-size:23px;vertical-align:middle}
+.ok{padding:14px 18px;border-radius:16px;background:#E9F8F0;color:#17804f;font-weight:700;font-size:24px}
+.split{padding:14px 20px;border-radius:16px;background:#FFF6E5;color:#9a5b00;font-weight:700;font-size:26px}
+.big{margin:auto 0;display:flex;gap:26px;align-items:center;padding:34px 36px;border-radius:28px;background:#F4F5FA;font-size:34px;font-weight:700}.big .i{font-size:96px;color:#E2187B}.big small{display:block;font-size:24px;font-weight:500;color:#5b6282;margin-top:6px}
+.saved{display:flex;align-items:center;gap:14px;background:#17a065;color:#fff;border-radius:18px;padding:14px 22px;font-size:28px;font-weight:700}.saved .i{font-size:40px}
+.thx{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:22px;padding:60px;background:linear-gradient(180deg,#fff,#FFF1F7)}
+.thx .ck{width:220px;height:220px;border-radius:999px;background:#17a065;color:#fff;display:grid;place-items:center;font-size:150px;box-shadow:0 20px 50px rgba(23,160,101,.35);animation:cdpop .5s ease-out}
+.thx h1{font-size:80px;margin:20px 0 0;color:#E2187B}.thx p{font-size:36px;margin:0;color:#16234A}.thx small{font-size:28px;color:#5b6282}
+@keyframes cdkb{from{transform:scale(1.02)}to{transform:scale(1.1)}}@keyframes cdpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}`;
+let CDW = null, CD_PH = null, CD_TIMER = null, CD_THX = null;
+const cdLive = () => CDW && !CDW.closed && CDW.document && CDW.document.getElementById('cdStage');
+const cdSrc = k => !k ? '' : /^https:/.test(k) ? k : (CD_PH && CD_PH[k]) || '';
+const cdImg = (k, cls = '') => cdSrc(k) ? `<img class="${cls}" src="${cdSrc(k)}" alt="">` : '';
+const cdClock = () => { const d = new Date(); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')} น.`; };
+const cdHead = () => `<header class="hd"><img src="${LOGO}" alt=""><div><b>${CD_NAME}</b><span>${CD_EN} · Care with heart, Always by your side</span></div><time id="cdTime">${cdClock()}</time></header>`;
+const cdFoot = () => `<footer class="ft"><div>${cdI('heart')}<span><b>ใส่ใจทุกการดูแล</b>ด้วยทีมพยาบาลมืออาชีพ</span></div><div>${cdI('phone')}<span><b>สอบถามข้อมูลเพิ่มเติม</b><strong>${CD_TEL}</strong></span></div></footer>`;
+function cdFit() {   // ย่อ/ขยายเวที 1080×1920 ให้พอดีหน้าต่าง
+  if (!cdLive()) return;
+  const w = CDW, s = Math.min(w.innerWidth / 1080, w.innerHeight / 1920), st = w.document.getElementById('cdStage');
+  st.style.transform = `translate(${(w.innerWidth - 1080 * s) / 2}px,${(w.innerHeight - 1920 * s) / 2}px) scale(${s})`;
+}
+function cdSet(html, kf = '') {
+  if (!cdLive()) return;
+  const d = CDW.document; d.getElementById('cdKf').textContent = kf; d.getElementById('cdStage').innerHTML = html; cdFit();
+}
+async function cdPhotos() {
+  if (CD_PH) return;
+  try { const c = localStorage.getItem('rkRoomPhotos'); if (c) { CD_PH = JSON.parse(c); return; } } catch (e) {}
+  try {
+    const t = await gas('getRoomPhotos'); CD_PH = typeof t === 'string' ? JSON.parse(t) : (t || {});
+    try { localStorage.setItem('rkRoomPhotos', JSON.stringify(CD_PH)); } catch (e) {}
+  } catch (e) { CD_PH = {}; toast('ยังไม่มีรูปห้องพัก (ไฟล์ RoomPhotos) จอลูกค้าจะแสดงแบบไม่มีรูป'); }
+}
+async function cdOpen() {
+  const w = window.open('', 'rkCustomerDisplay', 'popup=yes,width=540,height=960');
+  if (!w) return msg('warning', 'เปิดจอลูกค้าไม่ได้', 'เบราว์เซอร์บล็อกหน้าต่างป๊อปอัป กรุณากดอนุญาต Pop-up ของเว็บนี้ แล้วกดปุ่มอีกครั้ง');
+  CDW = w;
+  if (!w.document.getElementById('cdStage')) {
+    w.document.open();
+    w.document.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><title>จอลูกค้า · ${CD_NAME}</title><meta name="viewport" content="width=device-width,initial-scale=1">`
+      + `<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">`
+      + `<style>${CD_CSS}</style><style id="cdKf"></style></head><body><div id="cdStage"></div></body></html>`);
+    w.document.close();
+  }
+  w.onresize = cdFit;
+  w.document.ondblclick = () => { const d = w.document; d.fullscreenElement ? d.exitFullscreen() : d.documentElement.requestFullscreen().catch(() => {}); };
+  cdSet(`${cdHead()}<div class="thx"><p>กำลังโหลดรูปห้องพัก...</p></div>`);
+  await cdPhotos(); cdIdle();
+  clearInterval(CD_TIMER); CD_TIMER = setInterval(() => { if (!cdLive()) return clearInterval(CD_TIMER); const t = CDW.document.getElementById('cdTime'); if (t) t.textContent = cdClock(); }, 15000);
+  $('btnCD').classList.add('on'); w.focus();
+}
+function cdIdle() {   // โฆษณาห้องพักวนทีละห้อง (ใช้ CSS animation จึงเลื่อนเองได้แม้หน้าจอผู้จองไม่ได้ทำอะไร)
+  clearTimeout(CD_THX);
+  if (!cdLive()) return;
+  const R = Object.values(CD_ROOMS), n = R.length, T = n * CD_SLIDE_SEC, p = 100 / n, f = Math.min(6, p / 4);
+  const kf = n > 1 ? `#cdStage{--T:${T}s}@keyframes cdf{0%{opacity:0}${f.toFixed(2)}%{opacity:1}${(p - f).toFixed(2)}%{opacity:1}${p.toFixed(2)}%{opacity:0}100%{opacity:0}}`
+    + `@keyframes cdd{0%{width:44px;background:#E2187B}${p.toFixed(2)}%{width:14px;background:#f3c3da}}` : '';
+  const dots = n > 1 ? `<div class="dots">${R.map((_, i) => `<i style="--d:${i * CD_SLIDE_SEC - T}s"></i>`).join('')}</div>` : '';
+  cdSet(`${cdHead()}<div class="slides">${R.map((r, i) => {
+    const th = (r.th || []).filter(cdSrc);
+    return `<section class="slide${n > 1 ? ' anim' : ' solo'}${th.length ? '' : ' nothumb'}" style="--d:${i * CD_SLIDE_SEC - T}s">
+      <div class="hero">${cdImg(r.img)}<div class="tag"><i>${r.no}</i><div><b>${r.name}</b><span>${r.bld} · ${r.en}</span></div></div></div>
+      ${th.length ? `<div class="thumbs">${th.slice(0, 3).map(t => cdImg(t)).join('')}</div>` : ''}
+      <div class="info"><div class="am">${r.am.map(([k, t]) => `<div>${cdI(k)}<span>${t}</span></div>`).join('')}</div>
+        <div class="pr">${r.price ? `<small>ราคา</small><b>${r.price}</b><span>บาท/คืน</span>` : `<b class="free">ไม่ต้องชำระส่วนเกิน</b>`}<em>รวมค่าอาหารและค่าการพยาบาลแล้ว</em></div></div></section>`;
+  }).join('')}${dots}</div>${cdFoot()}`, kf);
+}
+function cdPay(f, items, pp, qrAmt) {
+  if (!cdLive()) return;
+  clearTimeout(CD_THX);
+  const r = CD_ROOMS[cdType(f.room, f.bed)], bed = f.bed && f.bed !== SOLO && f.bed !== '-' ? ` ${esc(f.bed)}` : '';
+  const hh = items.length <= 2 ? 560 : items.length <= 4 ? 400 : 250, free = !(qrAmt > 0) && (pp.m === 'ตามสิทธิ์' || !(+f.amount > 0));   // ตามสิทธิ์ = ไม่แสดงราคา/ยอด
+  const pay = qrAmt > 0
+    ? `${pp.m === SPLIT ? `<div class="split">โอนผ่าน QR ${money(qrAmt)} บาท + ชำระเงินสดที่เคาน์เตอร์ ${money(pp.c)} บาท</div>` : ''}
+       <div class="qr">${tqrCard(qrAmt, '420px', '330px', '19px')}<div class="steps"><div><i>1</i>เปิดแอปธนาคารใดก็ได้</div><div><i>2</i>สแกน QR นี้</div><div><i>3</i>ยอดเงินขึ้นอัตโนมัติ<br>ตรวจสอบแล้วกดยืนยัน</div><div class="ok">แสดงสลิปให้เจ้าหน้าที่<br>เมื่อโอนสำเร็จ</div></div></div>`
+    : free
+      ? `<div class="big">${cdI('shield')}<div>ใช้สิทธิ์การรักษา<small>ไม่มียอดชำระส่วนเกิน · กรุณาตรวจสอบข้อมูลกับเจ้าหน้าที่</small></div></div>`
+      : `<div class="big">${cdI('cash')}<div>ชำระเงินสดที่เคาน์เตอร์<small>ยอด ${money(f.amount)} บาท · รับใบเสร็จจากเจ้าหน้าที่</small></div></div>`;
+  cdSet(`${cdHead()}<div class="slides pay" style="--hh:${hh}px"><div class="slide solo">
+    ${r ? `<div class="hero">${cdImg(r.img)}<div class="tag"><i>${r.no}</i><div><b>${r.name}</b><span>${r.bld} · ห้องที่ท่านจอง</span></div>${r.price && free === false ? `<div class="pr2"><b>${r.price}</b> บาท/คืน</div>` : ''}</div></div>` : ''}
+    <section class="bill"><div id="cdSaved"></div><div class="who"><div><small>รายการชำระเงิน</small><b>${esc(f.patient)}</b></div>${f.hn ? `<span>HN ${esc(f.hn)}</span>` : ''}</div>
+      <div class="meta"><span>ห้อง <b>${esc(f.room)}${bed}</b></span><span>เข้าพัก <b>${fd(f.date)}</b></span>${f.rights ? `<span>สิทธิ์ <b>${esc(f.rights)}</b></span>` : ''}</div>
+      ${items.length ? `<div class="list">${items.map(([n, v]) => `<div class="it"><b>${esc(n)}</b><span>${money(v)}</span></div>`).join('')}</div>` : ''}
+      ${free ? '' : `<div class="tot"><span>ยอดชำระทั้งหมด</span><b>${money(f.amount)}</b><small>บาท</small></div>`}${pay}</section></div></div>`);
+}
+function cdSaved() { if (cdLive()) { const s = CDW.document.getElementById('cdSaved'); if (s) s.outerHTML = `<div class="saved">${cdI('check')} บันทึกการจองเรียบร้อยแล้ว</div>`; } }
+function cdDone(saved) {
+  if (!cdLive()) return;
+  if (!saved) return cdIdle();
+  cdSet(`${cdHead()}<div class="thx"><div class="ck">${cdI('check')}</div><h1>ขอบคุณค่ะ</h1><p>บันทึกการจองห้องพักเรียบร้อยแล้ว</p><small>ขอให้ท่านพักฟื้นอย่างสบาย · ${CD_NAME}</small></div>${cdFoot()}`);
+  CD_THX = setTimeout(cdIdle, 8000);
+}
 function reviewBooking(f, doSave) {
   const rec = role === 'records', pp = parsePay(f), bed = f.bed && f.bed !== SOLO && f.bed !== '-' ? ` (${esc(f.bed)})` : '';
   const row = (k, v, strong) => `<tr class="rv-row${strong ? ' rv-strong' : ''}"><th>${k}</th><td>${v}</td></tr>`;
@@ -789,6 +914,7 @@ function reviewBooking(f, doSave) {
     customClass: {popup: 'rounded-4', actions: 'rv-actions', confirmButton: 'rv-btn rv-save', cancelButton: 'rv-btn rv-close'},
     didOpen: () => {   // ปุ่มพิมพ์ใบจอง ต่อจากปุ่มบันทึก (กดได้หลังบันทึกแล้ว; เวชระเบียนไม่มีใบจอง)
       if (rec) return;
+      cdPay(f, items, pp, qrAmt);   // จอลูกค้า: แสดงรายการชำระเงิน + QR
       pbtn = document.createElement('button'); pbtn.type = 'button'; pbtn.className = 'rv-btn rv-print';
       pbtn.innerHTML = `${ic('print')} พิมพ์ใบจอง`; pbtn.disabled = true; pbtn.title = 'กดบันทึกก่อน จึงพิมพ์ใบจองได้';
       pbtn.onclick = () => printReceipt(bookingSlip(f));
@@ -799,12 +925,12 @@ function reviewBooking(f, doSave) {
       const b = Swal.getConfirmButton(); b.innerHTML = `${ic('clock')} กำลังบันทึก...`;
       try { await doSave(); }
       catch (x) { b.innerHTML = `${ic('save')} บันทึก`; Swal.showValidationMessage('บันทึกไม่สำเร็จ: ' + (x.message || x)); return false; }
-      saved = true; b.innerHTML = `${ic('check')} บันทึกแล้ว`; b.classList.add('done');
+      saved = true; b.innerHTML = `${ic('check')} บันทึกแล้ว`; b.classList.add('done'); cdSaved();
       if (pbtn) { pbtn.disabled = false; pbtn.title = 'พิมพ์ใบจองห้องพัก (A5)'; pbtn.focus(); }
       setTimeout(() => { b.disabled = true; }, 0);
       const st = document.getElementById('rvStatus'); if (st) st.hidden = false;
       return false;   // ค้างป๊อปอัปไว้ ไม่ปิดเอง
-    }}).then(() => saved);
+    }}).then(() => { if (!rec) cdDone(saved); return saved; });
 }
 async function submitForm(e) {
   e.preventDefault(); const room = $('room').value;
@@ -867,7 +993,7 @@ async function dischargeAll() {
   busy++; $('spin').style.display = 'block'; const day = today(), pay = list.map(b => ({...b, room: `D/C|${day}|${b.room}`}));
   let ok = 0, err = '';
   try { await gas('saveBookings', pay); list.forEach((b, i) => b.room = pay[i].room); ok = list.length; }
-  catch (e) { if (e && e.code === 'NO_ACTION') ok = await seq(list, async b => { const room = `D/C|${day}|${b.room}`; await gas('saveBooking', {...b, room}); b.room = room; }); else err = e.message || String(e); }
+  catch (e) { if (e instanceof TypeError) ok = await seq(list, async b => { const room = `D/C|${day}|${b.room}`; await gas('saveBooking', {...b, room}); b.room = room; }); else err = e.message || String(e); }
   busy--; $('spin').style.display = 'none'; if (editing) resetForm(); draw(); roomOpts();
   ok === list.length ? toast('จำหน่ายทั้งหมดเรียบร้อยแล้ว') : msg('warning', 'สำเร็จบางส่วน', `สำเร็จ ${ok}/${list.length} รายการ ${err}`);
 }
@@ -881,7 +1007,7 @@ async function cancelAllQueue() {
   if (!await ask('ยืนยันล้างคิวทั้งหมด?', `ลบคิว ${list.length} คิว`, 'ยืนยันล้างคิว')) return;
   busy++; $('spin').style.display = 'block'; const gone = new Set(); let err = '';
   try { await gas('deleteBookings', list.map(b => b.id)); list.forEach(b => gone.add(b.id)); }
-  catch (e) { if (e && e.code === 'NO_ACTION') await seq(list, async b => { await gas('deleteBooking', b.id); gone.add(b.id); }); else err = e.message || String(e); }
+  catch (e) { if (e instanceof TypeError) await seq(list, async b => { await gas('deleteBooking', b.id); gone.add(b.id); }); else err = e.message || String(e); }
   DATA = DATA.filter(b => !gone.has(b.id)); busy--; $('spin').style.display = 'none'; draw(); roomOpts();
   gone.size === list.length ? toast('ล้างคิวเรียบร้อยแล้ว') : msg('warning', 'สำเร็จบางส่วน', `ลบได้ ${gone.size}/${list.length} คิว ${err}`);
 }
@@ -1039,7 +1165,7 @@ async function importExcel() {
   const done = []; busy++; $('spin').style.display = 'block';
   try {
     try { await gas('saveBookings', list); done.push(...list); }
-    catch (e) { if (!(e && e.code === 'NO_ACTION')) throw e; for (const b of list) { await gas('saveBooking', b); done.push(b); } }   // เซิร์ฟเวอร์เวอร์ชันเก่า
+    catch (e) { if (!(e instanceof TypeError)) throw e; for (const b of list) { await gas('saveBooking', b); done.push(b); } }   // เซิร์ฟเวอร์เวอร์ชันเก่า
     toast(`นำเข้า ${list.length} คิวเรียบร้อย${dup ? ` (ข้ามซ้ำ ${dup})` : ''}`);
   } catch (e) { msg('error', 'นำเข้าไม่สำเร็จ', `${e.message || e}${done.length ? ` (นำเข้าได้ ${done.length}/${list.length})` : ''}`); }
   finally { DATA.push(...done); busy--; $('spin').style.display = 'none'; draw(); }

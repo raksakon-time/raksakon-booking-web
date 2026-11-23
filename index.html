@@ -850,12 +850,8 @@ function cdSet(html, kf = '') {
   const d = CDW.document; d.getElementById('cdKf').textContent = kf; d.getElementById('cdStage').innerHTML = html; cdFit();
 }
 async function cdPhotos() {
-  if (CD_PH) return;
-  try { const c = localStorage.getItem('rkRoomPhotos'); if (c) { CD_PH = JSON.parse(c); return; } } catch (e) {}
-  try {
-    const t = await gas('getRoomPhotos'); CD_PH = typeof t === 'string' ? JSON.parse(t) : (t || {});
-    try { localStorage.setItem('rkRoomPhotos', JSON.stringify(CD_PH)); } catch (e) {}
-  } catch (e) { CD_PH = {}; toast('ยังไม่มีรูปห้องพัก (ไฟล์ RoomPhotos) จอลูกค้าจะแสดงแบบไม่มีรูป'); }
+  if (CD_PH) return;   // โหลดครั้งเดียวต่อการเปิดหน้า (เปลี่ยนรูปใน RoomPhotos แล้วกด Ctrl+F5 ก็เห็นรูปใหม่)
+  try { const t = await gas('getRoomPhotos'); CD_PH = typeof t === 'string' ? JSON.parse(t) : (t || {}); } catch (e) { CD_PH = {}; toast('ยังไม่มีรูปห้องพัก (ไฟล์ RoomPhotos) จอลูกค้าจะแสดงแบบไม่มีรูป'); }
 }
 async function cdOpen() {
   const w = window.open('', 'rkCustomerDisplay', 'popup=yes,width=540,height=960');
@@ -878,13 +874,13 @@ async function cdOpen() {
 function cdIdle() {   // โฆษณาห้องพักวนทีละห้อง (ใช้ CSS animation จึงเลื่อนเองได้แม้หน้าจอผู้จองไม่ได้ทำอะไร)
   clearTimeout(CD_THX);
   if (!cdLive()) return;
-  const R = Object.values(CD_ROOMS), n = R.length, T = n * CD_SLIDE_SEC, p = 100 / n, f = Math.min(6, p / 4);
+  const R = Object.values(CD_ROOMS), n = R.length, T = n * CD_SLIDE_SEC, p = 100 / n, f = Math.min(6, p / 4), o = T + f * T / 100;   // o: เริ่มที่ห้องแรกแบบชัดเต็มทันที
   const kf = n > 1 ? `#cdStage{--T:${T}s}@keyframes cdf{0%{opacity:0}${f.toFixed(2)}%{opacity:1}${(p - f).toFixed(2)}%{opacity:1}${p.toFixed(2)}%{opacity:0}100%{opacity:0}}`
     + `@keyframes cdd{0%{width:44px;background:#E2187B}${p.toFixed(2)}%{width:14px;background:#f3c3da}}` : '';
-  const dots = n > 1 ? `<div class="dots">${R.map((_, i) => `<i style="--d:${i * CD_SLIDE_SEC - T}s"></i>`).join('')}</div>` : '';
+  const dots = n > 1 ? `<div class="dots">${R.map((_, i) => `<i style="--d:${i * CD_SLIDE_SEC - o}s"></i>`).join('')}</div>` : '';
   cdSet(`${cdHead()}<div class="slides">${R.map((r, i) => {
     const th = (r.th || []).filter(cdSrc);
-    return `<section class="slide${n > 1 ? ' anim' : ' solo'}${th.length ? '' : ' nothumb'}" style="--d:${i * CD_SLIDE_SEC - T}s">
+    return `<section class="slide${n > 1 ? ' anim' : ' solo'}${th.length ? '' : ' nothumb'}" style="--d:${i * CD_SLIDE_SEC - o}s">
       <div class="hero">${cdImg(r.img)}<div class="tag"><i>${r.no}</i><div><b>${r.name}</b><span>${r.bld} · ${r.en}</span></div></div></div>
       ${th.length ? `<div class="thumbs">${th.slice(0, 3).map(t => cdImg(t)).join('')}</div>` : ''}
       <div class="info"><div class="am">${r.am.map(([k, t]) => `<div>${cdI(k)}<span>${t}</span></div>`).join('')}</div>

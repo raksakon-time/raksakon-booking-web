@@ -430,6 +430,19 @@ body{background:var(--lav)!important;color:var(--ink)}
 .diet.saving{opacity:.55;pointer-events:none}.diet-pr{display:none}
 @media print{#rep .tbl .mealbox{width:4.6mm;height:4.6mm;border:.9pt solid #1d1640;border-radius:.8mm}#rep .tbl .diet{display:block;min-width:40mm}#rep .tbl .diet-lb,#rep .tbl .diet-tx{display:none!important}#rep .tbl .diet-pr{display:inline}#rep .tbl .dbox{display:inline-block;width:4mm;height:4mm;border:.9pt solid #1d1640;border-radius:.8mm;text-align:center;line-height:3.6mm;font-size:8pt;font-weight:800}#rep .tbl .mh{font-size:7pt}}
 #btnCD.on{background:#22a06b;border-color:#22a06b;color:#fff}
+/* ป๊อปอัปตรวจสอบ (จอเจ้าหน้าที่) กระชับ พอดีจอ 100% · ตัวอักษรใหญ่สำหรับผู้สูงอายุย้ายไปอยู่ที่จอลูกค้าแล้ว */
+.rv-pop.swal2-popup{max-height:calc(100vh - 24px);padding:1rem 1.4rem .9rem}
+.rv-pop .swal2-title{font-size:1.4rem;padding:.15rem 0 .5rem}
+.rv-pop .swal2-html-container{margin:0;padding:2px;max-height:calc(100vh - 175px);overflow:auto}
+.rv-pop .rv-left{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:start}
+.rv-pop .rv-left .rv-sec{margin:0}.rv-pop .rv-left .rv-sec:nth-child(3){grid-column:1/-1}
+.rv-pop .rv-row>th,.rv-pop .rv-row>td{padding:5px 8px}
+.rv-pop .rv-row>th{width:38%;font-size:.95rem}.rv-pop .rv-row>td{font-size:1.08rem}
+.rv-pop .rv-row.rv-strong>td{font-size:1.55rem}
+.rv-pop .rv-sec .rv-h{font-size:1.02rem!important;margin-bottom:2px}
+.rv-pop .rv-status{font-size:1rem;padding:8px 12px;margin-bottom:10px}
+.rv-pop .rv-actions{margin-top:12px}.rv-pop .rv-btn{padding:.7rem 1.7rem}
+@media(max-width:900px){.rv-pop .rv-left{grid-template-columns:1fr}.rv-pop .rv-left .rv-sec:nth-child(3){grid-column:auto}}
 </style>
 </head>
 <body>
@@ -930,9 +943,9 @@ function reviewBooking(f, doSave) {
   let saved = false, pbtn = null;
   return Swal.fire({title: `${ic('doc')} ตรวจสอบข้อมูลก่อนบันทึก`,
     html: `<div id="rvStatus" class="rv-status" hidden>${ic('check')} บันทึกเข้าระบบเรียบร้อยแล้ว${qr ? ' · ลูกค้าสแกนชำระต่อได้ กด "ปิด" เมื่อเสร็จ' : ''}</div><div class="rv-grid${qr ? ' two' : ''} text-start"><div class="rv-left">${html}</div>${pay}</div>`,
-    width: qr ? 960 : 620, showCancelButton: true, allowOutsideClick: false, buttonsStyling: false,
+    width: qr ? 1180 : 940, showCancelButton: true, allowOutsideClick: false, buttonsStyling: false,
     confirmButtonText: `${ic('save')} บันทึก`, cancelButtonText: `${ic('x')} ปิด`,
-    customClass: {popup: 'rounded-4', actions: 'rv-actions', confirmButton: 'rv-btn rv-save', cancelButton: 'rv-btn rv-close'},
+    customClass: {popup: 'rounded-4 rv-pop', actions: 'rv-actions', confirmButton: 'rv-btn rv-save', cancelButton: 'rv-btn rv-close'},
     didOpen: () => {   // ปุ่มพิมพ์ใบจอง ต่อจากปุ่มบันทึก (กดได้หลังบันทึกแล้ว; เวชระเบียนไม่มีใบจอง)
       if (rec) return;
       cdPay(f, items, pp, qrAmt);   // จอลูกค้า: แสดงรายการชำระเงิน + QR

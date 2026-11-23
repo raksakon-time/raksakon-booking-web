@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#6C3CE1">
-<title>ระบบจองห้องพัก รพ.ศุภมิตร-รักษ์สกล</title>
+<title>ระบบจองห้องพัก รพ.รักษ์สกล-ศุภมิตร</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -451,7 +451,7 @@ body{background:var(--lav)!important;color:var(--ink)}
   <div class="card-md">
     <div class="text-center mb-3"><img class="logo" alt="Logo" style="width:72px;height:72px;border-radius:18px;object-fit:cover"></div>
     <h4 class="text-center fw-bold">เข้าสู่ระบบ</h4>
-    <p class="text-center text-secondary">ระบบจองห้องพัก รพ.ศุภมิตร-รักษ์สกล</p>
+    <p class="text-center text-secondary">ระบบจองห้องพัก รพ.รักษ์สกล-ศุภมิตร</p>
     <label class="form-label" for="role">แผนก</label>
     <select id="role" class="form-select mb-3">
       <option value="ward">แผนกผู้ป่วยใน (Ward)</option><option value="finance">แผนกการเงิน (Finance)</option><option value="records">แผนกเวชระเบียน</option><option value="admission">แผนกจอง</option>
@@ -464,7 +464,7 @@ body{background:var(--lav)!important;color:var(--ink)}
 
 <div id="main" class="screen container-fluid px-4 pb-4">
   <div class="appbar no-print d-flex justify-content-between align-items-center" style="margin:0 -1.5rem 1.2rem">
-    <h5 class="fw-bold mb-0 d-flex align-items-center flex-wrap"><img class="logo appbar-logo" alt="โลโก้ รพ."> ระบบจองห้องพัก <small class="text-secondary fw-normal">รพ.ศุภมิตร-รักษ์สกล</small></h5>
+    <h5 class="fw-bold mb-0 d-flex align-items-center flex-wrap"><img class="logo appbar-logo" alt="โลโก้ รพ."> ระบบจองห้องพัก <small class="text-secondary fw-normal">รพ.รักษ์สกล-ศุภมิตร</small></h5>
     <div class="d-flex gap-2 flex-wrap justify-content-end"><button class="btn btn-sm btn-outline-primary" id="btnCD" onclick="cdOpen()" style="display:none" title="เปิดหน้าต่างจอลูกค้า ลากไปจอที่ 2 แล้วกด F11 (หรือดับเบิลคลิก) ให้เต็มจอ"><i data-ic="screen"></i> เปิดจอลูกค้า</button>
     <button class="btn btn-sm btn-outline-danger" onclick="logout()"><i data-ic="logout"></i> ออกจากระบบ</button></div>
   </div>
@@ -530,7 +530,7 @@ body{background:var(--lav)!important;color:var(--ink)}
 <div id="rep" class="screen container-fluid p-4">
   <div class="card-md">
     <div class="ph">
-      <div class="ph-top"><img class="logo" alt="โลโก้ รพ."><div class="ph-org"><div class="ph-name">โรงพยาบาลศุภมิตร-รักษ์สกล</div><div class="ph-sub">งานบริการห้องพักผู้ป่วย · ระบบจองห้องพัก</div></div><div class="ph-conf">เอกสารใช้ภายใน<br><b>ข้อมูลผู้ป่วยเป็นความลับ</b></div></div>
+      <div class="ph-top"><img class="logo" alt="โลโก้ รพ."><div class="ph-org"><div class="ph-name">โรงพยาบาลรักษ์สกล-ศุภมิตร</div><div class="ph-sub">งานบริการห้องพักผู้ป่วย · ระบบจองห้องพัก</div></div><div class="ph-conf">เอกสารใช้ภายใน<br><b>ข้อมูลผู้ป่วยเป็นความลับ</b></div></div>
       <h3 id="rTitle"></h3>
       <div class="ph-meta"><div><span>วันที่ข้อมูล</span><b id="rDateTxt"></b></div><div><span>จำนวนรายการ</span><b id="rCount"></b></div><div><span>ผู้พิมพ์</span><b id="rBy"></b></div><div><span>วันเวลาที่พิมพ์</span><b id="rAt"></b></div></div>
     </div>
@@ -547,7 +547,7 @@ body{background:var(--lav)!important;color:var(--ink)}
     <div class="table-responsive tscroll"><table class="table table-hover align-middle tbl"><thead id="rHead"></thead><tbody id="rBody"></tbody><tfoot id="rFoot"></tfoot></table></div>
     <div class="pf"><div class="pf-sign"><div class="pf-line"></div><div id="pfS1">ผู้จัดทำรายงาน</div><div>(.......................................................)</div><div>วันที่ ........./........./.........</div></div>
       <div class="pf-sign"><div class="pf-line"></div><div id="pfS2">ผู้ตรวจสอบ / หัวหน้าแผนก</div><div>(.......................................................)</div><div>วันที่ ........./........./.........</div></div></div>
-    <div class="pf-note">เอกสารนี้พิมพ์จากระบบจองห้องพัก โรงพยาบาลศุภมิตร-รักษ์สกล · มีข้อมูลส่วนบุคคลของผู้ป่วย ห้ามเผยแพร่หรือทำสำเนาโดยไม่ได้รับอนุญาต</div>
+    <div class="pf-note">เอกสารนี้พิมพ์จากระบบจองห้องพัก โรงพยาบาลรักษ์สกล-ศุภมิตร · มีข้อมูลส่วนบุคคลของผู้ป่วย ห้ามเผยแพร่หรือทำสำเนาโดยไม่ได้รับอนุญาต</div>
   </div>
 </div>
 <div id="pa"></div>
@@ -641,7 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 function setPage(v, rep = true) {
   const m = v === 'auto' ? '10mm' : v.includes('mm') ? '0' : '8mm';
-  $('pg').textContent = rep && !v.includes('mm') ? `@page{size:${v};margin:12mm 10mm 14mm}@page{@bottom-left{content:"โรงพยาบาลศุภมิตร-รักษ์สกล · ระบบจองห้องพัก";font:7.5pt Sarabun,sans-serif;color:#77708f}@bottom-right{content:"หน้า " counter(page) " / " counter(pages);font:7.5pt Sarabun,sans-serif;color:#77708f}}` : `@page{size:${v};margin:${m}}`;
+  $('pg').textContent = rep && !v.includes('mm') ? `@page{size:${v};margin:12mm 10mm 14mm}@page{@bottom-left{content:"โรงพยาบาลรักษ์สกล-ศุภมิตร · ระบบจองห้องพัก";font:7.5pt Sarabun,sans-serif;color:#77708f}@bottom-right{content:"หน้า " counter(page) " / " counter(pages);font:7.5pt Sarabun,sans-serif;color:#77708f}}` : `@page{size:${v};margin:${m}}`;
 }
 window.onafterprint = () => { document.body.classList.remove('pa'); setPage(paper); };
 
@@ -784,7 +784,7 @@ async function findHN() {
 // ---------- ตรวจสอบข้อมูลก่อนบันทึก (ป๊อปอัป) ----------
 // ===== จอลูกค้า (Customer display) จอที่ 2 แนวตั้ง 1080×1920 =====
 // ตอนว่าง = โฆษณาห้องพักวนอัตโนมัติ · ตอนเปิดป๊อปอัปตรวจสอบ = รายการชำระเงิน + QR · กดปิด = ขอบคุณ แล้วกลับไปโฆษณา
-const CD_NAME = 'โรงพยาบาลรักษ์สกล', CD_EN = 'Raksakon Hospital', CD_TEL = '042 712 800', CD_SLIDE_SEC = 9;
+const CD_NAME = 'โรงพยาบาลรักษ์สกล-ศุภมิตร', CD_EN = 'Raksakon Hospital', CD_TEL = '042 712 800', CD_SLIDE_SEC = 9;
 const CD_ROOMS = {   // img/th = ชื่อรูปใน RoomPhotos.html (หรือใส่ลิงก์ https ของรูปแทนได้)
   vip:  {no:'01', name:'ห้องพักเดี่ยว VIP', bld:'อาคาร 2', en:'PRIVATE SINGLE ROOM VIP', price:'4,500', img:'vip_main', th:['vip_t2','vip_t3','vip_t4'],
          am:[['wifi','Wi-Fi ฟรี'],['tv','Internet TV'],['fridge','ตู้เย็น'],['closet','ตู้เสื้อผ้า'],['shower','น้ำอุ่น'],['sofa','เตียงญาติ']]},
@@ -795,6 +795,8 @@ const CD_ROOMS = {   // img/th = ชื่อรูปใน RoomPhotos.html (�
   ward: {no:'04', name:'ห้องรวม', bld:'อาคาร 2B', en:'SHARED WARD', price:'', img:'ward', th:[],
          am:[['snow','ห้องแอร์'],['sofa','โซฟาญาติ'],['shower','น้ำอุ่น'],['wifi','Wi-Fi ฟรี'],['nosmoke','ปลอดบุหรี่'],['heart','ไม่ต้องชำระส่วนเกิน']]}
 };
+// โปสเตอร์โฆษณาเต็มจอ วนรวมกับรูปห้อง (img = ชื่อรูปใน RoomPhotos หรือลิงก์ https) · first: true = แสดงก่อนรูปห้อง
+const CD_ADS = [{img: 'ad_renovate', first: true}];
 // ห้องไหนเป็นประเภทไหน: ขึ้นต้น VIP = VIP · ชั้น 2B เหมาห้อง = เดี่ยว 2B, จองรายเตียง = ห้องรวม · นอกนั้น = เดี่ยวพิเศษ
 const cdType = (room, bed) => /^VIP/i.test(room) ? 'vip' : FLOORS[0][1].includes(room) ? (bed === SOLO ? 'std' : 'ward') : FLOORS.some(x => x[1].includes(room)) ? 'sp' : '';
 const CD_IC = {wifi:'<path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1"/>',
@@ -845,13 +847,15 @@ const CD_CSS = `*{box-sizing:border-box}html,body{margin:0;height:100%;backgroun
 .thx{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:22px;padding:60px;background:linear-gradient(180deg,#fff,#FFF1F7)}
 .thx .ck{width:220px;height:220px;border-radius:999px;background:#17a065;color:#fff;display:grid;place-items:center;font-size:150px;box-shadow:0 20px 50px rgba(23,160,101,.35);animation:cdpop .5s ease-out}
 .thx h1{font-size:80px;margin:20px 0 0;color:#E2187B}.thx p{font-size:36px;margin:0;color:#16234A}.thx small{font-size:28px;color:#5b6282}
+.slides.full{position:absolute;inset:0}.slide>.ft{margin-top:auto}.slides.full .dots{bottom:8px;z-index:2}
+.slide.ad{background:#16234A;overflow:hidden}.adbg{position:absolute;left:-60px;top:-60px;width:1200px;height:2040px;object-fit:cover;filter:blur(36px) brightness(.85)}.adfg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 @keyframes cdkb{from{transform:scale(1.02)}to{transform:scale(1.1)}}@keyframes cdpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}`;
 let CDW = null, CD_PH = null, CD_TIMER = null, CD_THX = null;
 const cdLive = () => CDW && !CDW.closed && CDW.document && CDW.document.getElementById('cdStage');
 const cdSrc = k => !k ? '' : /^https:/.test(k) ? k : (CD_PH && CD_PH[k]) || '';
 const cdImg = (k, cls = '') => cdSrc(k) ? `<img class="${cls}" src="${cdSrc(k)}" alt="">` : '';
 const cdClock = () => { const d = new Date(); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')} น.`; };
-const cdHead = () => `<header class="hd"><img src="${LOGO}" alt=""><div><b>${CD_NAME}</b><span>${CD_EN} · Care with heart, Always by your side</span></div><time id="cdTime">${cdClock()}</time></header>`;
+const cdHead = () => `<header class="hd"><img src="${LOGO}" alt=""><div><b>${CD_NAME}</b><span>${CD_EN} · Care with heart, Always by your side</span></div><time class="cdTime">${cdClock()}</time></header>`;
 const cdFoot = () => `<footer class="ft"><div>${cdI('heart')}<span><b>ใส่ใจทุกการดูแล</b>ด้วยทีมพยาบาลมืออาชีพ</span></div><div>${cdI('phone')}<span><b>สอบถามข้อมูลเพิ่มเติม</b><strong>${CD_TEL}</strong></span></div></footer>`;
 function cdFit() {   // ย่อ/ขยายเวที 1080×1920 ให้พอดีหน้าต่าง
   if (!cdLive()) return;
@@ -881,24 +885,26 @@ async function cdOpen() {
   w.document.ondblclick = () => { const d = w.document; d.fullscreenElement ? d.exitFullscreen() : d.documentElement.requestFullscreen().catch(() => {}); };
   cdSet(`${cdHead()}<div class="thx"><p>กำลังโหลดรูปห้องพัก...</p></div>`);
   await cdPhotos(); cdIdle();
-  clearInterval(CD_TIMER); CD_TIMER = setInterval(() => { if (!cdLive()) return clearInterval(CD_TIMER); const t = CDW.document.getElementById('cdTime'); if (t) t.textContent = cdClock(); }, 15000);
+  clearInterval(CD_TIMER); CD_TIMER = setInterval(() => { if (!cdLive()) return clearInterval(CD_TIMER); CDW.document.querySelectorAll('.cdTime').forEach(t => { t.textContent = cdClock(); }); }, 15000);
   $('btnCD').classList.add('on'); w.focus();
 }
 function cdIdle() {   // โฆษณาห้องพักวนทีละห้อง (ใช้ CSS animation จึงเลื่อนเองได้แม้หน้าจอผู้จองไม่ได้ทำอะไร)
   clearTimeout(CD_THX);
   if (!cdLive()) return;
-  const R = Object.values(CD_ROOMS), n = R.length, T = n * CD_SLIDE_SEC, p = 100 / n, f = Math.min(6, p / 4), o = T + f * T / 100;   // o: เริ่มที่ห้องแรกแบบชัดเต็มทันที
+  const ads = CD_ADS.filter(a => cdSrc(a.img)), R = [...ads.filter(a => a.first), ...Object.values(CD_ROOMS), ...ads.filter(a => !a.first)], n = R.length, T = n * CD_SLIDE_SEC, p = 100 / n, f = Math.min(6, p / 4), o = T + f * T / 100;   // o: เริ่มที่ห้องแรกแบบชัดเต็มทันที
   const kf = n > 1 ? `#cdStage{--T:${T}s}@keyframes cdf{0%{opacity:0}${f.toFixed(2)}%{opacity:1}${(p - f).toFixed(2)}%{opacity:1}${p.toFixed(2)}%{opacity:0}100%{opacity:0}}`
     + `@keyframes cdd{0%{width:44px;background:#E2187B}${p.toFixed(2)}%{width:14px;background:#f3c3da}}` : '';
   const dots = n > 1 ? `<div class="dots">${R.map((_, i) => `<i style="--d:${i * CD_SLIDE_SEC - o}s"></i>`).join('')}</div>` : '';
-  cdSet(`${cdHead()}<div class="slides">${R.map((r, i) => {
+  cdSet(`<div class="slides full">${R.map((r, i) => {
+    const cls = `slide${n > 1 ? ' anim' : ' solo'}`, st = `style="--d:${i * CD_SLIDE_SEC - o}s"`;
+    if (!r.no) return `<section class="${cls} ad" ${st}><img class="adbg" src="${cdSrc(r.img)}" alt=""><img class="adfg" src="${cdSrc(r.img)}" alt="โฆษณาโรงพยาบาล"></section>`;
     const th = (r.th || []).filter(cdSrc);
-    return `<section class="slide${n > 1 ? ' anim' : ' solo'}${th.length ? '' : ' nothumb'}" style="--d:${i * CD_SLIDE_SEC - o}s">
+    return `<section class="${cls}${th.length ? '' : ' nothumb'}" ${st}>${cdHead()}
       <div class="hero">${cdImg(r.img)}<div class="tag"><i>${r.no}</i><div><b>${r.name}</b><span>${r.bld} · ${r.en}</span></div></div></div>
       ${th.length ? `<div class="thumbs">${th.slice(0, 3).map(t => cdImg(t)).join('')}</div>` : ''}
       <div class="info"><div class="am">${r.am.map(([k, t]) => `<div>${cdI(k)}<span>${t}</span></div>`).join('')}</div>
-        <div class="pr">${r.price ? `<small>ราคา</small><b>${r.price}</b><span>บาท/คืน</span>` : `<b class="free">ไม่ต้องชำระส่วนเกิน</b>`}<em>รวมค่าอาหารและค่าการพยาบาลแล้ว</em></div></div></section>`;
-  }).join('')}${dots}</div>${cdFoot()}`, kf);
+        <div class="pr">${r.price ? `<small>ราคา</small><b>${r.price}</b><span>บาท/คืน</span>` : `<b class="free">ไม่ต้องชำระส่วนเกิน</b>`}<em>รวมค่าอาหารและค่าการพยาบาลแล้ว</em></div></div>${cdFoot()}</section>`;
+  }).join('')}${dots}</div>`, kf);
 }
 function cdPay(f, items, pp, qrAmt) {
   if (!cdLive()) return;
@@ -1153,7 +1159,7 @@ function downloadTemplate() {
   for (let r = 2; r <= XL_MAX + 1; r++) ['A', 'B'].forEach(c => { ws[c + r] = {t: 's', v: '', z: '@'}; });   // วันที่/HN เป็นข้อความ เลข 0 นำหน้าไม่หาย
   ws['!ref'] = `A1:E${XL_MAX + 1}`; ws['!cols'] = [{wch: 15}, {wch: 12}, {wch: 34}, {wch: 8}, {wch: 22}]; ws['!autofilter'] = {ref: 'A1:E1'};
   const guide = XLSX.utils.aoa_to_sheet([
-    ['วิธีกรอกเทมเพลตนำเข้าคิวรอจัดห้อง (โรงพยาบาลศุภมิตร-รักษ์สกล)'], [],
+    ['วิธีกรอกเทมเพลตนำเข้าคิวรอจัดห้อง (โรงพยาบาลรักษ์สกล-ศุภมิตร)'], [],
     ['คอลัมน์', 'จำเป็น', 'รูปแบบ', 'ตัวอย่าง'],
     ['วันที่เข้าพัก', 'ใช่', 'วว/ดด/ปปปป (พ.ศ. หรือ ค.ศ.) หรือ ปปปป-ดด-วว', '24/10/2569'],
     ['HN', 'ใช่', 'ตัวเลข (กรอกเป็นข้อความ เลข 0 นำหน้าไม่หาย)', '6904088'],
@@ -2368,7 +2374,7 @@ function docKit(hn) {
   const cell = (k, v, span) => `<div style="padding:1mm 2.5mm;border-left:.3mm solid ${LN};border-top:.3mm solid ${LN};${span ? 'grid-column:span 2;' : ''}min-width:0"><div style="font-size:7pt;color:${MUT};line-height:1.3">${k}</div><div style="font-size:9.5pt;font-weight:700;color:${INK};line-height:1.3;overflow-wrap:anywhere">${v}</div></div>`;
   const head = (title) => `<div style="display:flex;align-items:center;gap:3mm;padding-bottom:2mm;border-bottom:1.2pt solid ${P}">
       <img src="${LOGO}" style="width:11.5mm;height:11.5mm;border-radius:2.5mm;object-fit:cover">
-      <div style="flex:1;min-width:0"><div style="font-family:Prompt,Sarabun,sans-serif;font-size:12.5pt;font-weight:600;color:${INK};line-height:1.25">โรงพยาบาลศุภมิตร-รักษ์สกล</div><div style="font-size:7.8pt;color:${MUT}">งานบริการห้องพักผู้ป่วย · ผ่าตัดตา</div></div>
+      <div style="flex:1;min-width:0"><div style="font-family:Prompt,Sarabun,sans-serif;font-size:12.5pt;font-weight:600;color:${INK};line-height:1.25">โรงพยาบาลรักษ์สกล-ศุภมิตร</div><div style="font-size:7.8pt;color:${MUT}">งานบริการห้องพักผู้ป่วย · ผ่าตัดตา</div></div>
       <div style="text-align:center;flex:none">${qrSvg(hn, '12.5mm')}<div style="font-size:6.5pt;font-weight:700;color:${INK};line-height:1.2">HN</div></div></div>
     <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:3mm;margin:2.5mm 0 2mm"><div style="font-family:Prompt,Sarabun,sans-serif;font-size:12.5pt;font-weight:600;color:${INK};line-height:1.25">${title}</div><div style="font-size:7.3pt;color:${MUT};text-align:right;white-space:nowrap">ออกเอกสาร<br><b style="color:${INK}">${issued}</b></div></div>`;
   const sign = (label, name, role) => `<div style="flex:1;text-align:center;font-size:8.6pt;color:${INK};line-height:1.5"><div style="border-bottom:.3mm dotted ${INK};height:6mm;margin:0 3mm .8mm"></div><div>${label}</div><div>( ${name ? esc(name) : '<span style="display:inline-block;min-width:34mm"></span>'} )</div><div style="color:${MUT};font-size:7.8pt">${role}</div></div>`;

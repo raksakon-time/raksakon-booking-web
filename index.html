@@ -443,6 +443,26 @@ body{background:var(--lav)!important;color:var(--ink)}
 .rv-pop .rv-status{font-size:1rem;padding:8px 12px;margin-bottom:10px}
 .rv-pop .rv-actions{margin-top:12px}.rv-pop .rv-btn{padding:.7rem 1.7rem}
 @media(max-width:900px){.rv-pop .rv-left{grid-template-columns:1fr}.rv-pop .rv-left .rv-sec:nth-child(3){grid-column:auto}}
+/* ===== หน้าจัดการบิลบอร์ด (ผู้ดูแลระบบ) ===== */
+.bb-item{display:flex;align-items:center;gap:14px;background:#fff;border-radius:18px;padding:12px 16px;margin-bottom:10px;box-shadow:0 4px 16px rgba(34,27,58,.06);border:1px solid #eee9fb}
+.bb-item.dim{opacity:.62}.bb-ord{display:flex;flex-direction:column;align-items:center;gap:2px;width:38px}.bb-ord .btn{padding:0 8px;line-height:1.4;font-size:.75rem}
+.bb-thumb{width:150px;height:96px;border-radius:12px;overflow:hidden;background:#f3f0fc;display:grid;place-items:center;flex:none;color:#8E88A6;font-size:.8rem}
+.bb-thumb.poster{width:60px;height:96px}.bb-thumb img{width:100%;height:100%;object-fit:cover}
+.bb-info{flex:1;min-width:0}.bb-info>div:first-child{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.bb-info small{display:block}.bb-kind,.bb-st{white-space:nowrap}.bb-act{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.bb-kind{font-size:.72rem;font-weight:700;border-radius:999px;padding:2px 10px;background:#F3F0FC;color:#6C3CE1}.bb-kind.poster{background:#FFF0F4;color:#D6336C}
+.bb-st{font-size:.72rem;font-weight:700;border-radius:999px;padding:2px 10px}.bb-st.on{background:#E9F8F0;color:#17804f}.bb-st.off{background:#f0eff4;color:#77708f}.bb-st.wait{background:#FFF6E5;color:#9a5b00}.bb-st.warn{background:#FFF0F4;color:#D6336C}
+.bb-empty{background:#fff;border-radius:20px;padding:40px 20px;text-align:center;border:2px dashed #ddd6f3}
+.bb-pop .swal2-html-container{max-height:calc(100vh - 210px);overflow:auto;margin:.6rem .4rem 0}
+.bb-slots{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px}.bb-slots.one{grid-template-columns:200px;justify-content:center}
+.bb-slot{position:relative;height:150px;border:2px dashed #cfc8e6;border-radius:14px;background:#faf9fe;cursor:pointer;overflow:hidden;display:grid;place-items:center;text-align:center;color:#6b6585;font-size:.8rem}
+.bb-slots.one .bb-slot{height:330px}.bb-slot:hover,.bb-slot:focus{border-color:#6C3CE1;outline:none}
+.bb-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}.bb-slots.one .bb-slot img{object-fit:contain;background:#16234A}
+.bb-slot.has img,.bb-slot.up img{display:block}.bb-slot.has .bb-ph{display:none}.bb-slot .ic{width:1.6em;height:1.6em}
+.bb-x{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:99px;border:0;background:rgba(34,27,58,.75);color:#fff;font-size:18px;line-height:1;display:none}.bb-slot.has .bb-x{display:block}
+.bb-busy{display:none;position:absolute;inset:0;background:rgba(255,255,255,.8);place-items:center;font-weight:600;color:#6C3CE1}.bb-slot.up .bb-busy{display:grid}
+.bb-am{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px}
+.bb-am-i{display:flex;align-items:center;gap:8px;background:#faf9fe;border-radius:10px;padding:5px 8px;margin:0}.bb-am-i .i{width:22px;height:22px;color:#E2187B;flex:none}.bb-am-i .form-check-input{margin:0;flex:none}
+@media(max-width:700px){.bb-item{flex-wrap:wrap}.bb-act{width:100%}.bb-slots{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -455,7 +475,7 @@ body{background:var(--lav)!important;color:var(--ink)}
     <label class="form-label" for="role">แผนก</label>
     <select id="role" class="form-select mb-3">
       <option value="ward">แผนกผู้ป่วยใน (Ward)</option><option value="finance">แผนกการเงิน (Finance)</option><option value="records">แผนกเวชระเบียน</option><option value="admission">แผนกจอง</option>
-    </select>
+    <option value="admin">ผู้ดูแลระบบ (บิลบอร์ดจอลูกค้า)</option></select>
     <label class="form-label" for="pin">รหัสผ่าน (PIN)</label>
     <div class="input-group mb-3"><input type="password" id="pin" class="form-control" maxlength="4" inputmode="numeric" autocomplete="off" placeholder="****" style="border-radius:var(--r) 0 0 var(--r)"><button type="button" class="btn btn-outline-primary d-flex align-items-center" id="pinEye" onclick="togglePin()" aria-label="แสดงรหัสผ่าน" aria-pressed="false" title="แสดง/ซ่อนรหัสผ่าน" style="border-radius:0 var(--r) var(--r) 0;border-width:2px;padding:0 .9rem"></button></div>
     <button class="btn btn-primary w-100" onclick="login()"><i data-ic="login"></i> เข้าสู่ระบบ</button>
@@ -527,6 +547,21 @@ body{background:var(--lav)!important;color:var(--ink)}
   </div>
 </div>
 
+<div id="bb" class="screen container-fluid px-4 pb-4">
+  <div class="appbar no-print d-flex justify-content-between align-items-center" style="margin:0 -1.5rem 1.2rem">
+    <h5 class="fw-bold mb-0 d-flex align-items-center flex-wrap"><img class="logo appbar-logo" alt="โลโก้ รพ."> จัดการบิลบอร์ดจอลูกค้า <small class="text-secondary fw-normal">ผู้ดูแลระบบ</small></h5>
+    <div class="d-flex gap-2 flex-wrap justify-content-end"><button class="btn btn-sm btn-outline-primary" onclick="cdOpen()" title="เปิดหน้าต่างจอลูกค้าเพื่อดูผลจริง"><i data-ic="screen"></i> ดูตัวอย่างจอลูกค้า</button>
+    <button class="btn btn-sm btn-outline-danger" onclick="logout()"><i data-ic="logout"></i> ออกจากระบบ</button></div>
+  </div>
+  <div class="d-flex gap-2 flex-wrap align-items-center mb-3">
+    <button class="btn btn-primary" onclick="bbEdit(null,'room')"><i data-ic="bed"></i> เพิ่มห้องพัก</button>
+    <button class="btn btn-outline-primary" onclick="bbEdit(null,'poster')"><i data-ic="screen"></i> เพิ่มโปสเตอร์ / โฆษณา</button>
+    <span id="bbSum" class="ms-auto text-secondary small"></span>
+  </div>
+  <div class="bb-help small text-secondary mb-3">ภาพวนบนจอลูกค้าตามลำดับด้านล่าง (กด ▲▼ เพื่อสลับ) · จอลูกค้าอัปเดตเองภายใน 5 นาที · ห้องพักที่ "ผูก" กับประเภทห้อง จะแสดงเป็นรูปห้องที่ท่านจองตอนชำระเงิน</div>
+  <div id="bbList"></div>
+</div>
+
 <div id="rep" class="screen container-fluid p-4">
   <div class="card-md">
     <div class="ph">
@@ -565,7 +600,7 @@ const ic = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hid
 const FC = ['#2A3C76', '#5d78c0', '#FE696E', '#f4a340'];   // สีประจำแท็บ: ชั้น 2B · ชั้น 2 · ชั้น 3 · รอห้องสำรอง
 const LOGO = 'https://i.postimg.cc/pXHW7T4D/Squre-profile-pink-bg.jpg';
 const QR = "https://i.postimg.cc/Vkz5S5dX/QR-r-ks'-skl.jpg";
-const ROLES = ['ward', 'finance', 'records', 'admission'];
+const ROLES = ['ward', 'finance', 'records', 'admission', 'admin'];
 const SOLO = 'เหมาห้อง/เตียงเดี่ยว', WAIT = 'รอจัดห้อง', RSV = 'รอห้องสำรอง';
 const FLOORS = [['ชั้น 2B', ['201','202','203','204','205','206','207','208','209','210','211','212','213','214']],
   ['ชั้น 2', ['VIP 1201','1202','1203','1204','1205','1206','1207','1208','VIP 1209']], ['ชั้น 3', ['VIP 301','302','303','304','305','306','307','308','VIP 309']]];
@@ -659,11 +694,12 @@ async function login() {
   if (!pin) { $('pin').focus(); return; }
   if (/วาง_DEPLOYMENT_ID/.test(API_URL)) return msg('error', 'ยังไม่ได้ตั้งค่า API_URL', 'ใส่ URL ของ Apps Script Web app ในไฟล์ index.html ก่อน');
   btn.disabled = true;
-  try { const d = await api('login', {role: r, pin}); TOKEN = d.token; sessionStorage.setItem('rk_token', TOKEN); sessionStorage.setItem('rk_role', r); enterAs(r); }
+  try { const d = await api('login', {role: r, pin}); TOKEN = d.token; sessionStorage.setItem('rk_token', TOKEN); sessionStorage.setItem('rk_role', r); if (r === 'admin') ADMIN_PIN = pin; enterAs(r); }
   catch (e) { $('pin').value = ''; $('pin').focus(); msg('error', e.code === 'BAD_PIN' ? 'รหัสผ่านไม่ถูกต้อง' : 'เข้าสู่ระบบไม่สำเร็จ', e.code === 'BAD_PIN' ? 'กรุณาลองใหม่อีกครั้ง' : e.message); }
   finally { btn.disabled = false; }
 }
 function enterAs(r) {
+  if (r === 'admin') return enterAdmin();   // ผู้ดูแลระบบ: หน้าจัดการบิลบอร์ดอย่างเดียว
   role = r; $('pin').value = ''; hidePin();
   const canBook = r === 'admission' || r === 'records';
   $('agent').disabled = r === 'records';
@@ -677,7 +713,7 @@ function enterAs(r) {
 function logout(expired) {
   if (!expired && TOKEN) api('logout').catch(() => {});
   TOKEN = ''; sessionStorage.removeItem('rk_token'); sessionStorage.removeItem('rk_role');
-  role = ''; floorTab = 0; hidePin(); $('pin').value = ''; document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); $('login').style.display = 'flex'; }
+  role = ''; ADMIN_PIN = ''; floorTab = 0; hidePin(); $('pin').value = ''; document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); $('login').style.display = 'flex'; }
 
 // ---------- โหลด/ซิงค์ ----------
 function apply(d, force) {
@@ -692,7 +728,7 @@ async function refresh() {
 }
 let timer;
 async function tick() {
-  if (!document.hidden && role && !busy && editing === null && !$('save').disabled && !(document.activeElement && document.activeElement.classList.contains('diet-tx'))) { try { apply(await gas('getInitialData')); } catch (e) { console.warn(e); } }
+  if (!document.hidden && role && role !== 'admin' && !busy && editing === null && !$('save').disabled && !(document.activeElement && document.activeElement.classList.contains('diet-tx'))) { try { apply(await gas('getInitialData')); } catch (e) { console.warn(e); } }
   timer = setTimeout(tick, 30000);
 }
 timer = setTimeout(tick, 30000);
@@ -700,9 +736,9 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden && ro
 
 function show(v) {
   cur = v; document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
-  if (v === 'main') { $('main').style.display = 'block'; draw(); } else { $('rep').style.display = 'block'; renderReport(); }
+  if (v === 'main') { $('main').style.display = 'block'; draw(); } else if (v === 'bb') $('bb').style.display = 'block'; else { $('rep').style.display = 'block'; renderReport(); }
 }
-const draw = () => cur === 'main' ? dashboard() : renderReport();
+const draw = () => cur === 'main' ? dashboard() : cur === 'bb' ? 0 : renderReport();
 
 // ---------- ห้อง / เตียง ----------
 function used(room, date) { return active().filter(b => b.room === room && b.date === date && b.id !== editing); }
@@ -799,7 +835,7 @@ const CD_ROOMS = {   // img/th = ชื่อรูปใน RoomPhotos.html (�
 const CD_ADS = [{img: 'ad_renovate', first: true}];
 // ห้องไหนเป็นประเภทไหน: ขึ้นต้น VIP = VIP · ชั้น 2B เหมาห้อง = เดี่ยว 2B, จองรายเตียง = ห้องรวม · นอกนั้น = เดี่ยวพิเศษ
 const cdType = (room, bed) => /^VIP/i.test(room) ? 'vip' : FLOORS[0][1].includes(room) ? (bed === SOLO ? 'std' : 'ward') : FLOORS.some(x => x[1].includes(room)) ? 'sp' : '';
-const CD_IC = {wifi:'<path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1"/>',
+const CD_IC = {bed:'<path d="M3 18V7M3 14h18v4M21 18v-4a3 3 0 0 0-3-3h-8v3"/><circle cx="6.5" cy="11.5" r="1.6"/>', food:'<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2.2 1-3.5 4-3.5 8H17"/>', gift:'<rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8c-1.5-3-5-3.5-5-1.2C7 8 9.5 8 12 8zm0 0c1.5-3 5-3.5 5-1.2C17 8 14.5 8 12 8z"/>', wifi:'<path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1"/>',
   nosmoke:'<circle cx="12" cy="12" r="9.5"/><path d="M5.3 5.3l13.4 13.4M7 13h7M16 13h1"/>', snow:'<path d="M12 2v20M4 7l16 10M4 17L20 7M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/>',
   tv:'<rect x="3" y="5" width="18" height="12" rx="1.5"/><path d="M8 21h8M12 17v4"/>', fridge:'<rect x="6" y="2.5" width="12" height="19" rx="2"/><path d="M6 9h12M9 5.5v1.5M9 11.5v3"/>',
   closet:'<rect x="4" y="3" width="16" height="17" rx="1.5"/><path d="M12 3v17M10 10v2M14 10v2M6 20v1.5M18 20v1.5"/>', shower:'<path d="M5 21V6a3 3 0 0 1 6 0M8 9h6M9 12v1M11 13v1M13 12v1M15 13v1"/>',
@@ -813,7 +849,7 @@ const CD_CSS = `*{box-sizing:border-box}html,body{margin:0;height:100%;backgroun
 .hd{display:flex;align-items:center;gap:18px;padding:26px 40px 22px;border-bottom:4px solid #FCE4EF;flex:none}.hd img{width:72px;height:72px;border-radius:18px;object-fit:cover}
 .hd b{display:block;font-size:34px;color:#E2187B;line-height:1.2}.hd span{font-size:19px;color:#5b6282}.hd time{margin-left:auto;font-size:30px;font-weight:700;background:#FCE4EF;padding:8px 22px;border-radius:999px;white-space:nowrap}
 .slides{position:relative;flex:1}.slide{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0}
-.slide.solo{opacity:1}.slide.anim{animation:cdf var(--T) linear infinite;animation-delay:var(--d)}
+.slide.solo{opacity:1}
 .hero{position:relative;margin:26px 34px 0;height:1010px;border-radius:30px;overflow:hidden;box-shadow:0 18px 40px rgba(22,35,74,.18);flex:none;background:linear-gradient(135deg,#FCE4EF,#e7e9f5)}
 .slide.nothumb .hero{height:1248px}.hero img{width:100%;height:100%;object-fit:cover;animation:cdkb 14s ease-in-out infinite alternate}
 .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(22,35,74,.78))}
@@ -826,7 +862,7 @@ const CD_CSS = `*{box-sizing:border-box}html,body{margin:0;height:100%;backgroun
 .am .i{font-size:46px;color:#E2187B}
 .pr{background:linear-gradient(160deg,#FCE4EF,#FFF1F7);border-radius:26px;padding:22px 26px;display:flex;flex-direction:column;justify-content:center}.pr small{font-size:24px;font-weight:600}
 .pr b{font-size:84px;line-height:1;color:#E2187B;margin:6px 0}.pr b.free{font-size:46px;line-height:1.2}.pr span{font-size:26px;font-weight:600}.pr em{font-style:normal;font-size:18px;color:#5b6282;margin-top:8px}
-.dots{position:absolute;left:0;right:0;bottom:22px;display:flex;gap:10px;justify-content:center}.dots i{width:14px;height:14px;border-radius:9px;background:#f3c3da;animation:cdd var(--T) step-end infinite;animation-delay:var(--d)}
+.dots{position:absolute;left:0;right:0;bottom:22px;display:flex;gap:10px;justify-content:center}.dots i{width:14px;height:14px;border-radius:9px;background:#f3c3da}
 .ft{display:grid;grid-template-columns:1fr 1fr;background:#FCE4EF;padding:26px 40px;gap:20px;flex:none}.ft div{display:flex;gap:16px;align-items:center}.ft .i{font-size:58px;color:#E2187B}
 .ft b{display:block;font-size:24px}.ft span{font-size:20px;color:#5b6282}.ft strong{display:block;font-size:42px;color:#E2187B;line-height:1.1}
 .pay .hero{height:var(--hh,560px)}
@@ -850,9 +886,15 @@ const CD_CSS = `*{box-sizing:border-box}html,body{margin:0;height:100%;backgroun
 .slides.full{position:absolute;inset:0}.slide>.ft{margin-top:auto}.slides.full .dots{bottom:8px;z-index:2}
 .slide.ad{background:#16234A;overflow:hidden}.adbg{position:absolute;left:-60px;top:-60px;width:1200px;height:2040px;object-fit:cover;filter:blur(36px) brightness(.85)}.adfg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 @keyframes cdkb{from{transform:scale(1.02)}to{transform:scale(1.1)}}@keyframes cdpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}`;
-let CDW = null, CD_PH = null, CD_TIMER = null, CD_THX = null;
+let CDW = null, CD_PH = null, CD_TIMER = null, CD_THX = null, CD_POLL = null, CD_STATE = '', CD_LIST = null, CD_DAY = '';
+const BB_SRC = {}, BB_REQ = {};   // รูปบิลบอร์ดจาก Drive: fileId → dataURI (ใช้ร่วมกันทั้งจอลูกค้าและหน้าจัดการ)
+function bbImg(id) {
+  if (!id) return Promise.resolve('');
+  if (BB_SRC[id]) return Promise.resolve(BB_SRC[id]);
+  return BB_REQ[id] || (BB_REQ[id] = gasRead('getBBImage', id).then(s => (BB_SRC[id] = s)).catch(e => { delete BB_REQ[id]; console.warn(e); return ''; }));
+}
 const cdLive = () => CDW && !CDW.closed && CDW.document && CDW.document.getElementById('cdStage');
-const cdSrc = k => !k ? '' : /^https:/.test(k) ? k : (CD_PH && CD_PH[k]) || '';
+const cdSrc = k => !k ? '' : /^https:/.test(k) ? k : /^bb:/.test(k) ? BB_SRC[k.slice(3)] || '' : (CD_PH && CD_PH[k]) || '';
 const cdImg = (k, cls = '') => cdSrc(k) ? `<img class="${cls}" src="${cdSrc(k)}" alt="">` : '';
 const cdClock = () => { const d = new Date(); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')} น.`; };
 const cdHead = () => `<header class="hd"><img src="${LOGO}" alt=""><div><b>${CD_NAME}</b><span>${CD_EN} · Care with heart, Always by your side</span></div><time class="cdTime">${cdClock()}</time></header>`;
@@ -866,9 +908,34 @@ function cdSet(html, kf = '') {
   if (!cdLive()) return;
   const d = CDW.document; d.getElementById('cdKf').textContent = kf; d.getElementById('cdStage').innerHTML = html; cdFit();
 }
+// ----- รายการบิลบอร์ด (จากหน้าจัดการของผู้ดูแลระบบ) -----
+const bbToday = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+const bbShowing = (b, t = bbToday()) => b.active && (b.images || []).length && (!b.start || b.start <= t) && (!b.end || b.end >= t);
+const bbSlide = b => b.kind === 'poster' ? {poster: true, img: 'bb:' + b.images[0], sec: b.sec}
+  : {no: b.no || '', name: b.title, bld: b.bld, en: b.en, price: b.price, priceNote: b.priceNote, img: 'bb:' + b.images[0], th: b.images.slice(1).map(x => 'bb:' + x), am: b.am || [], sec: b.sec, roomType: b.roomType};
+async function cdLoadList() {   // โหลดรายการ + รูปที่ต้องใช้ · คืนค่า true ถ้ามีการเปลี่ยนแปลง
+  let L; try { L = await gasRead('getBillboard'); } catch (e) { console.warn(e); return false; }
+  L = Array.isArray(L) ? L : [];
+  const changed = JSON.stringify(L) !== JSON.stringify(CD_LIST); CD_LIST = L;
+  const need = CD_LIST.filter(b => bbShowing(b) || (b.kind === 'room' && b.roomType)).flatMap(b => b.images || []);
+  await Promise.all(need.map(bbImg));
+  if (!CD_LIST.some(b => bbShowing(b))) await cdPhotos();   // ยังไม่มีบิลบอร์ด = ใช้รูปชุดเดิม (RoomPhotos)
+  return changed;
+}
+function cdSlides() {
+  const L = (CD_LIST || []).filter(b => bbShowing(b));
+  if (L.length) return L.map(bbSlide);
+  const ads = CD_ADS.filter(a => cdSrc(a.img)).map(a => ({...a, poster: true}));
+  return [...ads.filter(a => a.first), ...Object.values(CD_ROOMS), ...ads.filter(a => !a.first)];
+}
+function cdRoomFor(type) {   // ห้องที่ผู้ป่วยจอง → รายการห้องพักในบิลบอร์ดที่ผูกประเภทเดียวกัน (ไม่มี = ข้อมูลชุดเดิม)
+  const L = (CD_LIST || []).filter(b => b.kind === 'room' && b.roomType === type && (b.images || []).length);
+  const b = L.find(x => bbShowing(x)) || L[0];
+  return b ? bbSlide(b) : CD_ROOMS[type];
+}
 async function cdPhotos() {
-  if (CD_PH) return;   // โหลดครั้งเดียวต่อการเปิดหน้า (เปลี่ยนรูปใน RoomPhotos แล้วกด Ctrl+F5 ก็เห็นรูปใหม่)
-  try { const t = await gas('getRoomPhotos'); CD_PH = typeof t === 'string' ? JSON.parse(t) : (t || {}); } catch (e) { CD_PH = {}; toast('ยังไม่มีรูปห้องพัก (ไฟล์ RoomPhotos) จอลูกค้าจะแสดงแบบไม่มีรูป'); }
+  if (CD_PH) return;   // รูปชุดเดิม (ไฟล์ RoomPhotos) ใช้เฉพาะตอนยังไม่มีบิลบอร์ด
+  try { const t = await gas('getRoomPhotos'); CD_PH = typeof t === 'string' ? JSON.parse(t) : (t || {}); } catch (e) { CD_PH = {}; }
 }
 async function cdOpen() {
   const w = window.open('', 'rkCustomerDisplay', 'popup=yes,width=540,height=960');
@@ -883,33 +950,49 @@ async function cdOpen() {
   }
   w.onresize = cdFit;
   w.document.ondblclick = () => { const d = w.document; d.fullscreenElement ? d.exitFullscreen() : d.documentElement.requestFullscreen().catch(() => {}); };
-  cdSet(`${cdHead()}<div class="thx"><p>กำลังโหลดรูปห้องพัก...</p></div>`);
-  await cdPhotos(); cdIdle();
+  cdSet(`${cdHead()}<div class="thx"><p>กำลังโหลดบิลบอร์ด...</p></div>`);
+  await cdLoadList(); cdIdle();
   clearInterval(CD_TIMER); CD_TIMER = setInterval(() => { if (!cdLive()) return clearInterval(CD_TIMER); CDW.document.querySelectorAll('.cdTime').forEach(t => { t.textContent = cdClock(); }); }, 15000);
+  clearInterval(CD_POLL); CD_POLL = setInterval(async () => {   // ผู้ดูแลระบบเพิ่ม/แก้บิลบอร์ด → จอลูกค้าอัปเดตเองภายใน 5 นาที (และตอนข้ามวัน)
+    if (!cdLive()) return clearInterval(CD_POLL);
+    const day = bbToday(), ch = await cdLoadList();
+    if ((ch || day !== CD_DAY) && CD_STATE === 'idle') cdIdle();
+    CD_DAY = day;
+  }, 300000); CD_DAY = bbToday();
   $('btnCD').classList.add('on'); w.focus();
 }
-function cdIdle() {   // โฆษณาห้องพักวนทีละห้อง (ใช้ CSS animation จึงเลื่อนเองได้แม้หน้าจอผู้จองไม่ได้ทำอะไร)
+function cdIdle() {   // โฆษณาวนทีละภาพ (CSS animation จึงเลื่อนเองได้แม้หน้าจอผู้จองไม่ได้ทำอะไร) · แต่ละภาพตั้งเวลาแสดงเองได้
   clearTimeout(CD_THX);
   if (!cdLive()) return;
-  const ads = CD_ADS.filter(a => cdSrc(a.img)), R = [...ads.filter(a => a.first), ...Object.values(CD_ROOMS), ...ads.filter(a => !a.first)], n = R.length, T = n * CD_SLIDE_SEC, p = 100 / n, f = Math.min(6, p / 4), o = T + f * T / 100;   // o: เริ่มที่ห้องแรกแบบชัดเต็มทันที
-  const kf = n > 1 ? `#cdStage{--T:${T}s}@keyframes cdf{0%{opacity:0}${f.toFixed(2)}%{opacity:1}${(p - f).toFixed(2)}%{opacity:1}${p.toFixed(2)}%{opacity:0}100%{opacity:0}}`
-    + `@keyframes cdd{0%{width:44px;background:#E2187B}${p.toFixed(2)}%{width:14px;background:#f3c3da}}` : '';
-  const dots = n > 1 ? `<div class="dots">${R.map((_, i) => `<i style="--d:${i * CD_SLIDE_SEC - o}s"></i>`).join('')}</div>` : '';
+  CD_STATE = 'idle';
+  const R = cdSlides(), n = R.length, D = R.map(r => Math.max(4, +r.sec || CD_SLIDE_SEC)), T = D.reduce((a, b) => a + b, 0), F = 1.2;
+  const pc = x => (x / T * 100).toFixed(3) + '%';
+  let s = 0, kf = '';
+  R.forEach((_, i) => {   // ค่อยๆ เปลี่ยนภาพ F วินาที · ภาพสุดท้ายจางออกตอนวนกลับภาพแรก
+    const a = s, b = s + D[i]; s = b;
+    kf += i === n - 1 && n > 1
+      ? `@keyframes cdf${i}{0%{opacity:1}${pc(F)}{opacity:0}${pc(a)}{opacity:0}${pc(a + F)}{opacity:1}100%{opacity:1}}`
+      : `@keyframes cdf${i}{0%{opacity:0}${pc(a)}{opacity:0}${pc(a + F)}{opacity:1}${pc(b)}{opacity:1}${pc(Math.min(T, b + F))}{opacity:0}100%{opacity:0}}`;
+    kf += `@keyframes cdd${i}{0%{width:14px;background:#f3c3da}${pc(a)}{width:44px;background:#E2187B}${pc(b)}{width:14px;background:#f3c3da}100%{width:14px;background:#f3c3da}}`;
+  });
+  const an = (k, i, t) => n > 1 ? ` style="animation:${k}${i} ${T}s ${t} infinite;animation-delay:-${F}s"` : '';
+  const dots = n > 1 ? `<div class="dots">${R.map((_, i) => `<i${an('cdd', i, 'step-end')}></i>`).join('')}</div>` : '';
   cdSet(`<div class="slides full">${R.map((r, i) => {
-    const cls = `slide${n > 1 ? ' anim' : ' solo'}`, st = `style="--d:${i * CD_SLIDE_SEC - o}s"`;
-    if (!r.no) return `<section class="${cls} ad" ${st}><img class="adbg" src="${cdSrc(r.img)}" alt=""><img class="adfg" src="${cdSrc(r.img)}" alt="โฆษณาโรงพยาบาล"></section>`;
+    const cls = `slide${n > 1 ? '' : ' solo'}`, st = an('cdf', i, 'linear');
+    if (r.poster) return `<section class="${cls} ad"${st}><img class="adbg" src="${cdSrc(r.img)}" alt=""><img class="adfg" src="${cdSrc(r.img)}" alt="โฆษณาโรงพยาบาล"></section>`;
     const th = (r.th || []).filter(cdSrc);
-    return `<section class="${cls}${th.length ? '' : ' nothumb'}" ${st}>${cdHead()}
-      <div class="hero">${cdImg(r.img)}<div class="tag"><i>${r.no}</i><div><b>${r.name}</b><span>${r.bld} · ${r.en}</span></div></div></div>
+    return `<section class="${cls}${th.length ? '' : ' nothumb'}"${st}>${cdHead()}
+      <div class="hero">${cdImg(r.img)}<div class="tag">${r.no ? `<i>${esc(r.no)}</i>` : ''}<div><b>${esc(r.name)}</b><span>${esc([r.bld, r.en].filter(Boolean).join(' · '))}</span></div></div></div>
       ${th.length ? `<div class="thumbs">${th.slice(0, 3).map(t => cdImg(t)).join('')}</div>` : ''}
-      <div class="info"><div class="am">${r.am.map(([k, t]) => `<div>${cdI(k)}<span>${t}</span></div>`).join('')}</div>
-        <div class="pr">${r.price ? `<small>ราคา</small><b>${r.price}</b><span>บาท/คืน</span>` : `<b class="free">ไม่ต้องชำระส่วนเกิน</b>`}<em>รวมค่าอาหารและค่าการพยาบาลแล้ว</em></div></div>${cdFoot()}</section>`;
-  }).join('')}${dots}</div>`, kf);
+      <div class="info"><div class="am">${(r.am || []).map(([k, t]) => `<div>${cdI(k)}<span>${esc(t)}</span></div>`).join('')}</div>
+        <div class="pr">${r.price ? `<small>ราคา</small><b>${esc(r.price)}</b><span>บาท/คืน</span>` : `<b class="free">ไม่ต้องชำระส่วนเกิน</b>`}<em>${esc(r.priceNote ?? 'รวมค่าอาหารและค่าการพยาบาลแล้ว')}</em></div></div>${cdFoot()}</section>`;
+  }).join('')}${dots}</div>`, n > 1 ? kf : '');
 }
 function cdPay(f, items, pp, qrAmt) {
   if (!cdLive()) return;
   clearTimeout(CD_THX);
-  const r = CD_ROOMS[cdType(f.room, f.bed)], bed = f.bed && f.bed !== SOLO && f.bed !== '-' ? ` ${esc(f.bed)}` : '';
+  CD_STATE = 'pay';
+  const r = cdRoomFor(cdType(f.room, f.bed)), bed = f.bed && f.bed !== SOLO && f.bed !== '-' ? ` ${esc(f.bed)}` : '';
   const hh = items.length <= 2 ? 560 : items.length <= 4 ? 400 : 250, free = !(qrAmt > 0) && (pp.m === 'ตามสิทธิ์' || !(+f.amount > 0));   // ตามสิทธิ์ = ไม่แสดงราคา/ยอด
   const pay = qrAmt > 0
     ? `${pp.m === SPLIT ? `<div class="split">โอนผ่าน QR ${money(qrAmt)} บาท + ชำระเงินสดที่เคาน์เตอร์ ${money(pp.c)} บาท</div>` : ''}
@@ -918,7 +1001,7 @@ function cdPay(f, items, pp, qrAmt) {
       ? `<div class="big">${cdI('shield')}<div>ใช้สิทธิ์การรักษา<small>ไม่มียอดชำระส่วนเกิน · กรุณาตรวจสอบข้อมูลกับเจ้าหน้าที่</small></div></div>`
       : `<div class="big">${cdI('cash')}<div>ชำระเงินสดที่เคาน์เตอร์<small>ยอด ${money(f.amount)} บาท · รับใบเสร็จจากเจ้าหน้าที่</small></div></div>`;
   cdSet(`${cdHead()}<div class="slides pay" style="--hh:${hh}px"><div class="slide solo">
-    ${r ? `<div class="hero">${cdImg(r.img)}<div class="tag"><i>${r.no}</i><div><b>${r.name}</b><span>${r.bld} · ห้องที่ท่านจอง</span></div>${r.price && free === false ? `<div class="pr2"><b>${r.price}</b> บาท/คืน</div>` : ''}</div></div>` : ''}
+    ${r ? `<div class="hero">${cdImg(r.img)}<div class="tag">${r.no ? `<i>${esc(r.no)}</i>` : ''}<div><b>${esc(r.name)}</b><span>${esc(r.bld || '')} · ห้องที่ท่านจอง</span></div>${r.price && free === false ? `<div class="pr2"><b>${esc(r.price)}</b> บาท/คืน</div>` : ''}</div></div>` : ''}
     <section class="bill"><div id="cdSaved"></div><div class="who"><div><small>รายการชำระเงิน</small><b>${esc(f.patient)}</b></div>${f.hn ? `<span>HN ${esc(f.hn)}</span>` : ''}</div>
       <div class="meta"><span>ห้อง <b>${esc(f.room)}${bed}</b></span><span>เข้าพัก <b>${fd(f.date)}</b></span>${f.rights ? `<span>สิทธิ์ <b>${esc(f.rights)}</b></span>` : ''}</div>
       ${items.length ? `<div class="list">${items.map(([n, v]) => `<div class="it"><b>${esc(n)}</b><span>${money(v)}</span></div>`).join('')}</div>` : ''}
@@ -928,8 +1011,178 @@ function cdSaved() { if (cdLive()) { const s = CDW.document.getElementById('cdSa
 function cdDone(saved) {
   if (!cdLive()) return;
   if (!saved) return cdIdle();
+  CD_STATE = 'thx';
   cdSet(`${cdHead()}<div class="thx"><div class="ck">${cdI('check')}</div><h1>ขอบคุณค่ะ</h1><p>บันทึกการจองห้องพักเรียบร้อยแล้ว</p><small>ขอให้ท่านพักฟื้นอย่างสบาย · ${CD_NAME}</small></div>${cdFoot()}`);
   CD_THX = setTimeout(cdIdle, 8000);
+}
+// ===== ผู้ดูแลระบบ: จัดการบิลบอร์ดจอลูกค้า (ห้องพัก + โปสเตอร์/โฆษณา) =====
+let BB = [], ADMIN_PIN = '';
+const BB_AM = [['wifi', 'Wi-Fi ฟรี'], ['tv', 'Internet TV'], ['fridge', 'ตู้เย็น'], ['closet', 'ตู้เสื้อผ้า'], ['shower', 'น้ำอุ่น'], ['sofa', 'โซฟา/เตียงญาติ'],
+  ['snow', 'ห้องแอร์'], ['bed', 'เตียงไฟฟ้า'], ['food', 'อาหาร 3 มื้อ'], ['gift', 'ชุดของใช้'], ['nosmoke', 'ปลอดบุหรี่'], ['heart', 'ดูแลด้วยใจ']];
+const BB_TYPES = [['', 'ไม่ผูก (โฆษณาอย่างเดียว)'], ['vip', 'ห้อง VIP (VIP 1201, 1209, 301, 309)'], ['sp', 'ห้องพักเดี่ยวพิเศษ (12xx, 30x)'], ['std', 'ชั้น 2B เหมาห้อง'], ['ward', 'ชั้น 2B จองรายเตียง (ห้องรวม)']];
+const bbThaiDate = d => d ? fd(d) : '';
+function bbStatus(b) {
+  const t = bbToday();
+  if (!b.active) return ['off', 'ปิดอยู่'];
+  if (!(b.images || []).length) return ['warn', 'ยังไม่มีภาพ'];
+  if (b.start && b.start > t) return ['wait', `เริ่ม ${bbThaiDate(b.start)}`];
+  if (b.end && b.end < t) return ['off', 'หมดเวลาแสดง'];
+  return ['on', 'กำลังแสดง'];
+}
+function enterAdmin(pin) {
+  role = 'admin'; ADMIN_PIN = pin || ADMIN_PIN; $('pin').value = ''; hidePin();
+  show('bb'); bbLoad();
+}
+async function bbLoad() {
+  $('bbList').innerHTML = `<div class="text-center text-secondary py-5">${ic('clock')} กำลังโหลด...</div>`;
+  try { const L = await gasRead('getBillboard'); BB = Array.isArray(L) ? L : []; bbRender(); }
+  catch (e) { $('bbList').innerHTML = ''; msg('error', 'โหลดบิลบอร์ดไม่สำเร็จ', e.message || String(e)); }
+}
+function bbRender() {
+  const L = $('bbList'), live = BB.filter(b => bbShowing(b)).length;
+  $('bbSum').textContent = BB.length ? `ทั้งหมด ${BB.length} รายการ · กำลังแสดงบนจอ ${live} รายการ` : '';
+  if (!BB.length) {
+    L.innerHTML = `<div class="bb-empty"><div class="fs-5 fw-semibold mb-1">ยังไม่มีบิลบอร์ด</div><div class="text-secondary mb-3">ตอนนี้จอลูกค้าใช้รูปห้องพักชุดเดิม (ไฟล์ RoomPhotos) · นำเข้ามาแก้ไขต่อได้ หรือเพิ่มใหม่ทั้งหมด</div>
+      <button class="btn btn-primary" onclick="bbImport()">${ic('download')} นำเข้าห้องพักชุดเดิม 4 ห้อง</button></div>`;
+    return;
+  }
+  L.innerHTML = BB.map((b, i) => {
+    const [st, stTxt] = bbStatus(b), room = b.kind === 'room';
+    const meta = [room ? (b.price ? `${esc(b.price)} บาท/คืน` : 'ไม่ต้องชำระส่วนเกิน') : '', `แสดง ${b.sec} วินาที`,
+      b.start || b.end ? `${bbThaiDate(b.start) || 'ตอนนี้'} – ${bbThaiDate(b.end) || 'ไม่กำหนด'}` : 'แสดงทุกวัน',
+      room && b.roomType ? `ผูกกับ: ${esc((BB_TYPES.find(x => x[0] === b.roomType) || ['', ''])[1].replace(/ \(.*/, ''))}` : ''].filter(Boolean).join(' · ');
+    return `<div class="bb-item${st === 'on' ? '' : ' dim'}">
+      <div class="bb-ord"><button class="btn btn-sm btn-light" onclick="bbMove(${i},-1)" ${i ? '' : 'disabled'} aria-label="เลื่อนขึ้น">▲</button><b>${i + 1}</b><button class="btn btn-sm btn-light" onclick="bbMove(${i},1)" ${i < BB.length - 1 ? '' : 'disabled'} aria-label="เลื่อนลง">▼</button></div>
+      <div class="bb-thumb${room ? '' : ' poster'}">${b.images && b.images[0] ? `<img data-fid="${esc(b.images[0])}" alt="">` : `<span>ไม่มีภาพ</span>`}</div>
+      <div class="bb-info"><div class="d-flex align-items-center gap-2 flex-wrap"><span class="bb-kind ${b.kind}">${room ? 'ห้องพัก' : 'โปสเตอร์ / โฆษณา'}</span><b class="fs-6">${room && b.no ? esc(b.no) + ' · ' : ''}${esc(b.title) || '(ไม่มีชื่อ)'}</b><span class="bb-st ${st}">${stTxt}</span></div>
+        <small class="text-secondary d-block mt-1">${meta}</small>${room ? `<small class="text-secondary d-block">${(b.images || []).length} ภาพ · ${(b.am || []).map(a => esc(a[1])).join(', ')}</small>` : ''}</div>
+      <div class="bb-act"><div class="form-check form-switch m-0" title="เปิด/ปิดการแสดง"><input class="form-check-input" type="checkbox" role="switch" ${b.active ? 'checked' : ''} onchange="bbToggle(${i},this)" aria-label="แสดงบนจอลูกค้า"></div>
+        <button class="btn btn-sm btn-outline-primary" onclick="bbEdit(${i})">${ic('edit')} แก้ไข</button><button class="btn btn-sm btn-outline-danger" onclick="bbDel(${i})">${ic('trash')} ลบ</button></div></div>`;
+  }).join('');
+  L.querySelectorAll('img[data-fid]').forEach(im => bbImg(im.dataset.fid).then(s => { if (s) im.src = s; }));
+}
+async function bbCall(fn, ...a) {   // เรียกฟังก์ชันผู้ดูแลระบบ + อัปเดตรายการ
+  busy++;
+  try { const r = await gas(fn, ADMIN_PIN, ...a); if (Array.isArray(r)) { BB = r; bbRender(); } return r; }
+  catch (e) { msg('error', 'ทำรายการไม่สำเร็จ', e.message || String(e)); throw e; }
+  finally { busy--; }
+}
+async function bbMove(i, d) {
+  const ids = BB.map(b => b.id), j = i + d; if (j < 0 || j >= ids.length) return;
+  [ids[i], ids[j]] = [ids[j], ids[i]];
+  try { await bbCall('bbOrder', ids); } catch (e) {}
+}
+async function bbToggle(i, el) {
+  try { await bbCall('bbSave', {...BB[i], active: el.checked}); toast(el.checked ? 'เปิดแสดงแล้ว' : 'ปิดการแสดงแล้ว'); } catch (e) { el.checked = !el.checked; }
+}
+async function bbDel(i) {
+  if (!await ask('ลบบิลบอร์ดนี้?', `"${BB[i].title || 'ไม่มีชื่อ'}" จะถูกลบออกจากจอลูกค้า ภาพจะย้ายไปถังขยะ Google Drive (กู้คืนได้ใน 30 วัน)`, 'ลบ')) return;
+  try { await bbCall('bbDelete', BB[i].id); toast('ลบเรียบร้อยแล้ว'); } catch (e) {}
+}
+function bbResize(file, maxW, maxH) {   // ย่อภาพก่อนอัปโหลด (JPG) ไฟล์เล็ก โหลดเร็ว
+  return new Promise((ok, ko) => {
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return ko(new Error('รองรับเฉพาะไฟล์ภาพ JPG / PNG / WebP (ถ้าทำใน Canva ให้ดาวน์โหลดเป็น PNG หรือ JPG)'));
+    if (file.size > 25 * 1024 * 1024) return ko(new Error('ไฟล์ใหญ่เกิน 25 MB'));
+    const rd = new FileReader();
+    rd.onerror = () => ko(new Error('อ่านไฟล์ไม่ได้'));
+    rd.onload = () => {
+      const im = new Image();
+      im.onerror = () => ko(new Error('เปิดไฟล์ภาพไม่ได้'));
+      im.onload = () => {
+        const s = Math.min(1, maxW / im.width, maxH / im.height), c = document.createElement('canvas');
+        c.width = Math.round(im.width * s); c.height = Math.round(im.height * s);
+        const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(im, 0, 0, c.width, c.height);
+        ok(c.toDataURL('image/jpeg', 0.86));
+      };
+      im.src = rd.result;
+    };
+    rd.readAsDataURL(file);
+  });
+}
+function bbEdit(i, kind) {
+  const old = i == null ? null : BB[i], k = old ? old.kind : kind, room = k === 'room';
+  const b = old ? {...old} : {kind: k, active: true, sec: room ? 9 : 12, title: '', no: '', bld: '', en: '', price: '', priceNote: room ? 'รวมค่าอาหารและค่าการพยาบาลแล้ว' : '', am: room ? BB_AM.slice(0, 6) : [], images: [], roomType: '', start: '', end: ''};
+  const fresh = new Set(), slots = room ? ['รูปหลัก (ภาพใหญ่)', 'รูปย่อ 1', 'รูปย่อ 2', 'รูปย่อ 3'] : ['ภาพโปสเตอร์ (แนวตั้ง 1080×1920 พอดีจอที่สุด)'];
+  const amOn = new Map((b.am || []).map(a => [a[0], a[1]]));
+  const f = (id, label, input, cls = 'col-sm-6') => `<div class="${cls}"><label class="form-label small fw-semibold mb-1" for="${id}">${label}</label>${input}</div>`;
+  const html = `<div class="bb-form text-start">
+    <div class="bb-slots${room ? '' : ' one'}">${slots.map((t, s) => `<div class="bb-slot${s ? '' : ' main'}" data-s="${s}" data-fid="${esc(b.images[s] || '')}" tabindex="0" role="button" aria-label="${t}">
+      <img alt=""><span class="bb-ph">${ic('upload')}<br>${t}</span><span class="bb-busy">${ic('clock')} กำลังอัปโหลด...</span>
+      <button type="button" class="bb-x" aria-label="ลบภาพนี้">×</button><input type="file" accept="image/jpeg,image/png,image/webp" hidden></div>`).join('')}</div>
+    <div class="small text-secondary mt-1 mb-3">กดที่ช่องเพื่อเลือกภาพ · ระบบย่อภาพให้อัตโนมัติ${room ? ' · รูปหลักจำเป็น รูปย่อไม่บังคับ' : ''}</div>
+    <div class="row g-2">
+      ${room ? f('bbNo', 'เลขลำดับ', `<input id="bbNo" class="form-control" maxlength="4" value="${esc(b.no)}" placeholder="01">`, 'col-3 col-sm-2') + f('bbTitle', 'ชื่อห้อง *', `<input id="bbTitle" class="form-control" maxlength="60" value="${esc(b.title)}" placeholder="ห้องพักเดี่ยว VIP">`, 'col-9 col-sm-5') + f('bbBld', 'อาคาร', `<input id="bbBld" class="form-control" maxlength="40" value="${esc(b.bld)}" placeholder="อาคาร 2">`, 'col-sm-5')
+        + f('bbEn', 'ชื่อภาษาอังกฤษ', `<input id="bbEn" class="form-control" maxlength="60" value="${esc(b.en)}" placeholder="PRIVATE SINGLE ROOM VIP">`) + f('bbPrice', 'ราคา (บาท/คืน) · ว่าง = ไม่ต้องชำระส่วนเกิน', `<input id="bbPrice" class="form-control" maxlength="20" value="${esc(b.price)}" placeholder="4,500">`)
+        + f('bbNote', 'ข้อความใต้ราคา', `<input id="bbNote" class="form-control" maxlength="80" value="${esc(b.priceNote)}">`) + f('bbType', 'แสดงรูปนี้ตอนชำระเงิน เมื่อผู้ป่วยจองห้อง', `<select id="bbType" class="form-select">${BB_TYPES.map(([v, t]) => `<option value="${v}" ${b.roomType === v ? 'selected' : ''}>${t}</option>`).join('')}</select>`)
+        + `<div class="col-12"><label class="form-label small fw-semibold mb-1">สิ่งอำนวยความสะดวก (เลือกได้สูงสุด 6 · แก้ข้อความได้)</label><div class="bb-am">${BB_AM.map(([key, t]) => `<label class="bb-am-i"><input type="checkbox" class="form-check-input" value="${key}" ${amOn.has(key) ? 'checked' : ''}> ${cdI(key)}<input type="text" class="form-control form-control-sm" maxlength="40" value="${esc(amOn.get(key) || t)}"></label>`).join('')}</div></div>`
+        : f('bbTitle', 'ชื่อเรียก (ไว้ดูในรายการ ไม่แสดงบนจอ) *', `<input id="bbTitle" class="form-control" maxlength="60" value="${esc(b.title)}" placeholder="เช่น โปรตรวจสุขภาพ ธ.ค.">`, 'col-12')}
+      ${f('bbSec', 'แสดงนาน (วินาที)', `<input id="bbSec" type="number" min="4" max="60" class="form-control" value="${b.sec}">`, 'col-4')}
+      ${f('bbStart', 'เริ่มแสดง (ว่าง = ทันที)', `<input id="bbStart" type="date" class="form-control" value="${esc(b.start)}">`, 'col-4')}
+      ${f('bbEnd', 'สิ้นสุด (ว่าง = ไม่กำหนด)', `<input id="bbEnd" type="date" class="form-control" value="${esc(b.end)}">`, 'col-4')}
+      <div class="col-12"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="bbActive" ${b.active ? 'checked' : ''}><label class="form-check-label" for="bbActive">แสดงบนจอลูกค้า</label></div></div>
+    </div></div>`;
+  const ups = new Set();
+  Swal.fire({title: `${room ? ic('bed') : ic('screen')} ${old ? 'แก้ไข' : 'เพิ่ม'}${room ? 'ห้องพัก' : 'โปสเตอร์ / โฆษณา'}`, html, width: 860, showCancelButton: true, allowOutsideClick: false,
+    confirmButtonText: `${ic('save')} บันทึก`, cancelButtonText: 'ยกเลิก', confirmButtonColor: '#6C3CE1', cancelButtonColor: '#8E88A6', customClass: {popup: 'rounded-4 bb-pop'},
+    didOpen: pop => {
+      pop.querySelectorAll('.bb-slot').forEach(sl => {
+        const im = sl.querySelector('img'), inp = sl.querySelector('input[type=file]'), paint = () => { sl.classList.toggle('has', !!sl.dataset.fid); };
+        if (sl.dataset.fid) bbImg(sl.dataset.fid).then(s => { if (s) im.src = s; });
+        paint();
+        sl.onclick = e => { if (!e.target.closest('.bb-x') && !sl.classList.contains('up')) inp.click(); };
+        sl.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inp.click(); } };
+        sl.querySelector('.bb-x').onclick = e => { e.stopPropagation(); sl.dataset.fid = ''; im.removeAttribute('src'); paint(); };
+        inp.onchange = async () => {
+          const file = inp.files[0]; inp.value = ''; if (!file) return;
+          sl.classList.add('up'); let p;
+          try {
+            const uri = await bbResize(file, room ? 1600 : 1080, room ? 1600 : 1920);
+            im.src = uri;
+            p = gas('bbUpload', ADMIN_PIN, uri, (pop.querySelector('#bbTitle').value || 'billboard').slice(0, 40)); ups.add(p);
+            const id = await p; BB_SRC[id] = uri; fresh.add(id); sl.dataset.fid = id;
+          } catch (e) { im.removeAttribute('src'); if (sl.dataset.fid) bbImg(sl.dataset.fid).then(s => { if (s) im.src = s; }); Swal.showValidationMessage('อัปโหลดไม่สำเร็จ: ' + (e.message || e)); }
+          finally { ups.delete(p); sl.classList.remove('up'); paint(); }
+        };
+      });
+      pop.querySelectorAll('.bb-am-i input[type=checkbox]').forEach(c => c.onchange = () => {
+        if (pop.querySelectorAll('.bb-am-i input[type=checkbox]:checked').length > 6) { c.checked = false; Swal.showValidationMessage('เลือกสิ่งอำนวยความสะดวกได้สูงสุด 6 อย่าง'); }
+        else Swal.resetValidationMessage();
+      });
+    },
+    preConfirm: async () => {
+      const pop = Swal.getPopup(), v = id => (pop.querySelector('#' + id) || {}).value || '';
+      if (ups.size) { Swal.showValidationMessage('รออัปโหลดภาพให้เสร็จก่อน'); return false; }
+      const images = [...pop.querySelectorAll('.bb-slot')].map(s => s.dataset.fid).filter(Boolean);
+      const it = {...b, title: v('bbTitle').trim(), sec: +v('bbSec') || 9, start: v('bbStart'), end: v('bbEnd'), active: pop.querySelector('#bbActive').checked, images};
+      if (room) Object.assign(it, {no: v('bbNo').trim(), bld: v('bbBld').trim(), en: v('bbEn').trim(), price: v('bbPrice').trim(), priceNote: v('bbNote').trim(), roomType: v('bbType'),
+        am: [...pop.querySelectorAll('.bb-am-i')].filter(l => l.querySelector('input[type=checkbox]').checked).map(l => [l.querySelector('input[type=checkbox]').value, l.querySelector('input[type=text]').value.trim()])});
+      if (!it.title) { Swal.showValidationMessage(room ? 'กรุณากรอกชื่อห้อง' : 'กรุณาตั้งชื่อเรียกโปสเตอร์'); return false; }
+      if (!images.length || !pop.querySelector('.bb-slot.main').dataset.fid) { Swal.showValidationMessage(room ? 'กรุณาเลือกรูปหลัก' : 'กรุณาเลือกภาพโปสเตอร์'); return false; }
+      if (it.start && it.end && it.end < it.start) { Swal.showValidationMessage('วันสิ้นสุดต้องไม่ก่อนวันเริ่มแสดง'); return false; }
+      if (it.sec < 4 || it.sec > 60) { Swal.showValidationMessage('เวลาแสดง 4–60 วินาที'); return false; }
+      try { BB = await gas('bbSave', ADMIN_PIN, it); images.forEach(x => fresh.delete(x)); return true; }
+      catch (e) { Swal.showValidationMessage('บันทึกไม่สำเร็จ: ' + (e.message || e)); return false; }
+    }}).then(r => {
+      if (fresh.size) gas('bbTrash', ADMIN_PIN, [...fresh]).catch(() => {});   // ภาพที่อัปโหลดแต่ไม่ได้ใช้
+      if (r.isConfirmed) { bbRender(); toast('บันทึกบิลบอร์ดแล้ว · จอลูกค้าอัปเดตภายใน 5 นาที'); }
+    });
+}
+async function bbImport() {   // ย้ายห้องพักชุดเดิม (ในโค้ด + ไฟล์ RoomPhotos) เข้าระบบบิลบอร์ด
+  if (!await ask('นำเข้าห้องพักชุดเดิม?', 'สร้างรายการห้องพัก 4 ห้องจากข้อมูลเดิม พร้อมรูปในไฟล์ RoomPhotos (ถ้ามี) แล้วแก้ไขต่อได้', 'นำเข้า')) return;
+  busy++;
+  Swal.fire({title: 'กำลังนำเข้า...', html: '<div id="bbProg">เตรียมรูปภาพ</div>', allowOutsideClick: false, showConfirmButton: false, customClass: {popup: 'rounded-4'}});
+  try {
+    let ph = {}; try { const t = await gas('getRoomPhotos'); ph = typeof t === 'string' ? JSON.parse(t) : (t || {}); } catch (e) {}
+    const E = Object.entries(CD_ROOMS); let n = 0;
+    for (const [type, r] of E) {
+      const pg = document.getElementById('bbProg'); if (pg) pg.textContent = `ห้อง ${++n}/${E.length} : ${r.name}`;
+      const ids = [];
+      for (const k of [r.img, ...(r.th || [])]) if (k && ph[k]) { const id = await gas('bbUpload', ADMIN_PIN, ph[k], k); BB_SRC[id] = ph[k]; ids.push(id); }
+      BB = await gas('bbSave', ADMIN_PIN, {kind: 'room', active: true, sec: CD_SLIDE_SEC, title: r.name, no: r.no, bld: r.bld, en: r.en, price: r.price, priceNote: 'รวมค่าอาหารและค่าการพยาบาลแล้ว', am: r.am, images: ids, roomType: type, start: '', end: ''});
+    }
+    Swal.close(); bbRender(); toast('นำเข้าห้องพักเรียบร้อยแล้ว');
+  } catch (e) { bbLoad(); msg('error', 'นำเข้าไม่สำเร็จ', e.message || String(e)); }
+  finally { busy--; }
 }
 function reviewBooking(f, doSave) {
   const rec = role === 'records', pp = parsePay(f), bed = f.bed && f.bed !== SOLO && f.bed !== '-' ? ` (${esc(f.bed)})` : '';
@@ -2279,7 +2532,7 @@ function roomName(r) {
   const c = String(r || '').replace('VIP', '').trim();
   return ['1201','1209','301','309'].includes(c) ? 'VIP ' + c : (/^(20[1-9]|120[2-8]|30[2-8])$/.test(c) ? 'พิเศษ ' + c : r || '-');
 }
-const ROLE_TH = {ward: 'แผนกผู้ป่วยใน (Ward)', finance: 'แผนกการเงิน', records: 'แผนกเวชระเบียน', admission: 'แผนกจอง'};
+const ROLE_TH = {admin: 'ผู้ดูแลระบบ', ward: 'แผนกผู้ป่วยใน (Ward)', finance: 'แผนกการเงิน', records: 'แผนกเวชระเบียน', admission: 'แผนกจอง'};
 function thDate(s) { const d = new Date(s); return isNaN(d) ? (s || '-') : `${d.getDate()} ${['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'][d.getMonth()]} ${d.getFullYear() + 543}`; }
 const hasBed = b => !!b.bed && b.bed !== SOLO && b.bed !== '-';   // มีเลขเตียงจริง (ไม่ใช่เหมาห้อง)
 const bedLabel = b => b.bed && b.bed !== SOLO && b.bed !== '-' ? b.bed : (b.bed === SOLO ? 'เหมาห้อง' : '-');

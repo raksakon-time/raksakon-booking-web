@@ -430,6 +430,32 @@ body{background:var(--lav)!important;color:var(--ink)}
 .diet.saving{opacity:.55;pointer-events:none}.diet-pr{display:none}
 @media print{#rep .tbl .mealbox{width:4.6mm;height:4.6mm;border:.9pt solid #1d1640;border-radius:.8mm}#rep .tbl .diet{display:block;min-width:40mm}#rep .tbl .diet-lb,#rep .tbl .diet-tx{display:none!important}#rep .tbl .diet-pr{display:inline}#rep .tbl .dbox{display:inline-block;width:4mm;height:4mm;border:.9pt solid #1d1640;border-radius:.8mm;text-align:center;line-height:3.6mm;font-size:8pt;font-weight:800}#rep .tbl .mh{font-size:7pt}}
 #btnCD.on{background:#22a06b;border-color:#22a06b;color:#fff}
+/* ===== จัดห้องจากคิว (สีส้ม แยกจากโหมดแก้ไขสีม่วง) ===== */
+#formBox.assign{border:2px solid #F59A6C!important;background:linear-gradient(180deg,#FFF4EC,#fff 160px)!important;box-shadow:0 0 0 4px rgba(245,154,108,.18),0 10px 30px rgba(236,95,134,.12)!important}
+.asg-bar{display:flex;align-items:center;gap:12px;margin:-4px -4px 14px;padding:12px 14px;border-radius:16px;background:linear-gradient(90deg,#F59A6C,#EC5F86);color:#fff;box-shadow:0 8px 20px rgba(236,95,134,.28)}
+.asg-bar[hidden]{display:none}.asg-bar.pop{animation:asgPop .45s cubic-bezier(.2,1.4,.4,1)}
+.asg-ic{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.22);display:grid;place-items:center;flex:none}.asg-ic .ic{width:24px;height:24px}
+.asg-tx{flex:1;min-width:0;line-height:1.25}.asg-tx small{display:block;font-size:.75rem;opacity:.92;font-weight:600;letter-spacing:.02em}.asg-tx b{font-size:1.12rem}.asg-tx b span{font-weight:500;font-size:.9rem}
+.asg-meta{display:flex;flex-wrap:wrap;gap:4px 6px;margin-top:4px}.asg-meta span{background:rgba(255,255,255,.2);border-radius:999px;padding:1px 9px;font-size:.75rem}
+.asg-x{width:34px;height:34px;border-radius:999px;border:0;background:rgba(255,255,255,.25);color:#fff;display:grid;place-items:center;flex:none}.asg-x:hover{background:rgba(255,255,255,.4)}
+.asg-flash{animation:asgFlash 2.4s ease-out}
+.asg-next{position:relative}.asg-next .form-select{border:2px solid #F59A6C;animation:asgRing 1.6s ease-in-out infinite}
+.asg-next:after{content:"👉 เลือกห้อง";position:absolute;right:6px;top:-2px;background:#EC5F86;color:#fff;font-size:.7rem;font-weight:700;border-radius:999px;padding:1px 9px;animation:asgBob 1.2s ease-in-out infinite}
+tr.qrow.asg>td{background:#FFF1E8!important}tr.qrow.asg>td:first-child{box-shadow:inset 4px 0 0 #F59A6C;color:#EC5F86!important}
+.asg-tag{display:inline-block;background:linear-gradient(90deg,#F59A6C,#EC5F86);color:#fff;font-size:.7rem;font-weight:700;border-radius:999px;padding:1px 9px;margin-left:4px;vertical-align:middle;white-space:nowrap}
+@keyframes asgPop{from{transform:translateY(-8px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+@keyframes asgFlash{0%,35%{background-color:#FFE7A8;box-shadow:0 0 0 3px rgba(245,154,108,.35)}100%{background-color:#fff;box-shadow:none}}
+@keyframes asgRing{0%,100%{box-shadow:0 0 0 0 rgba(245,154,108,.55)}50%{box-shadow:0 0 0 6px rgba(245,154,108,0)}}
+@keyframes asgBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+/* แก้ไขการจองเดิม (ม่วง) */
+#formBox.editing{border:2px solid #6C3CE1!important;background:linear-gradient(180deg,#F3F0FC,#fff 160px)!important;box-shadow:0 0 0 4px rgba(108,60,225,.15),0 10px 30px rgba(108,60,225,.12)!important}
+.asg-bar.ed{background:linear-gradient(90deg,#6C3CE1,#9B6BFF);box-shadow:0 8px 20px rgba(108,60,225,.28)}
+.asg-tag.ed{background:linear-gradient(90deg,#6C3CE1,#9B6BFF)}
+tr.qrow.edf>td{background:#F3F0FC!important}tr.qrow.edf>td:first-child{box-shadow:inset 4px 0 0 #6C3CE1;color:#6C3CE1!important}
+.room.editing{outline:3px solid #6C3CE1;outline-offset:2px;box-shadow:0 0 0 7px rgba(108,60,225,.14)!important;position:relative}
+.room.assigning{outline:3px solid #F59A6C;outline-offset:2px;position:relative}
+.room-tag{position:absolute;top:-10px;left:12px;margin:0;z-index:2;box-shadow:0 3px 8px rgba(108,60,225,.3)}
+@media (prefers-reduced-motion:reduce){.asg-bar.pop,.asg-flash,.asg-next .form-select,.asg-next:after{animation:none}}
 /* ป๊อปอัปตรวจสอบ (จอเจ้าหน้าที่) กระชับ พอดีจอ 100% · ตัวอักษรใหญ่สำหรับผู้สูงอายุย้ายไปอยู่ที่จอลูกค้าแล้ว */
 .rv-pop.swal2-popup{max-height:calc(100vh - 24px);padding:1rem 1.4rem .9rem}
 .rv-pop .swal2-title{font-size:1.4rem;padding:.15rem 0 .5rem}
@@ -491,6 +517,7 @@ body{background:var(--lav)!important;color:var(--ink)}
   <div class="row g-4">
     <div class="col-lg-4 no-print" id="formCol">
       <div class="card-md" id="formBox">
+        <div id="asgBar" class="asg-bar" role="status" aria-live="polite" hidden></div>
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3"><h5 class="fw-bold mb-0" id="formTitle"><i data-ic="note"></i> ลงข้อมูลการจองห้องพัก</h5><div class="input-group hn-group"><span class="input-group-text">HN</span><input class="form-control" id="hn" form="f" required placeholder="ระบุ HN" autocomplete="off" style="min-width:0"><button class="btn btn-primary px-2 text-nowrap" type="button" onclick="findHN()" style="border-radius:0 var(--r) var(--r) 0;font-size:.85rem"><i data-ic="search"></i> ค้นหา/เพิ่ม</button></div></div>
         <form id="f" onsubmit="submitForm(event)">
           <div class="sec"><h6><i data-ic="user"></i> ข้อมูลผู้ป่วย</h6>
@@ -501,7 +528,7 @@ body{background:var(--lav)!important;color:var(--ink)}
             <div><label class="form-label" for="rights">สิทธิ์ผู้ป่วย</label><input class="form-control" id="rights" list="rightsList" placeholder="เช่น บัตรทอง / ประกันสังคม" autocomplete="off"><datalist id="rightsList"><option value="ชำระเงินเอง"><option value="บัตรทอง (UC)"><option value="ประกันสังคม"><option value="ข้าราชการ"><option value="ประกันสุขภาพ"><option value="ต่างด้าว"></datalist></div></div>
           <div class="sec"><h6><i data-ic="building"></i> ข้อมูลการเข้าพัก</h6>
             <label class="form-label" for="date">วันที่เข้าพัก</label><input type="date" class="form-control mb-3" id="date" required onchange="roomOpts()">
-            <div class="row g-2 mb-3" id="roomRow"><div class="col-6"><label class="form-label" for="room">ห้อง</label><select class="form-select" id="room" required onchange="bedOpts()"></select></div>
+            <div class="row g-2 mb-3" id="roomRow"><div class="col-6"><label class="form-label" for="room">ห้อง</label><select class="form-select" id="room" required onchange="bedOpts(); if (this.value && this.value !== WAIT && this.value !== RSV) this.parentElement.classList.remove('asg-next')"></select></div>
             <div class="col-6"><label class="form-label" for="bed">เตียง</label><select class="form-select" id="bed"></select></div></div>
             <div class="row g-2"><div class="col-6"><label class="form-label" for="doc">แพทย์เจ้าของไข้</label><select class="form-select" id="doc" required></select></div>
             <div class="col-6"><label class="form-label" for="agent">ผู้รับจอง</label><select class="form-select" id="agent" required></select></div></div></div>
@@ -613,7 +640,7 @@ const ITEMS = [['ค่าผ่าตัดต้อกระจก(Monofocal)'
 const PAPERS = [['auto','ตามเครื่องพิมพ์'],['A4 portrait','A4 แนวตั้ง'],['A4 landscape','A4 แนวนอน'],['A5 portrait','A5 แนวตั้ง'],['A5 landscape','A5 แนวนอน'],
   ['A3 portrait','A3 แนวตั้ง'],['A3 landscape','A3 แนวนอน'],['letter portrait','Letter'],['legal portrait','Legal']];
 
-let DATA = [], LOCKED = [], editing = null, baseAmt = 0, role = '', busy = 0, paper = 'auto', cur = 'main', floorTab = 0;
+let ASSIGN = null, EDITF = null, DATA = [], LOCKED = [], editing = null, baseAmt = 0, role = '', busy = 0, paper = 'auto', cur = 'main', floorTab = 0;
 const isWait = b => b.room === WAIT, isRsv = b => b.room === RSV, isDC = b => (b.room || '').startsWith('D/C|'), isCX = b => (b.room || '').startsWith('CX|'), isOut = b => isDC(b) || isCX(b);
 const cxDate = b => isCX(b) ? b.room.split('|')[1] : '';
 const cxList = d => DATA.filter(b => isCX(b) && (!d || cxDate(b) === d)).sort((a, b) => cxDate(b).localeCompare(cxDate(a)));
@@ -775,7 +802,35 @@ function THB(n) {
   const [b, s] = n.toFixed(2).split('.'); return rd(b) + 'บาท' + (s === '00' ? 'ถ้วน' : rd(s) + 'สตางค์');
 }
 function typeChange() { $('roomRow').style.display = role === 'records' ? 'none' : ''; roomOpts(); }
-function assignRoom(id) { editBooking(id); $('room').value = ''; bedOpts(); $('room').focus(); }
+function assignRoom(id) {   // จัดห้องจากคิว: แถบสีส้ม + ไฮไลต์ช่องที่เติมแล้ว + ชี้ช่องห้องที่ต้องเลือกต่อ
+  editBooking(id); const b = DATA.find(x => x.id === id); if (!b) return;
+  $('room').value = ''; bedOpts();
+  $('formTitle').innerHTML = `${ic('bed')} จัดห้องให้ผู้ป่วยจากคิว`; $('save').innerHTML = `${ic('save')} บันทึกการจัดห้อง`;
+  asgShow(b, 'assign');
+}
+// แถบบอกว่ากำลังทำรายการของใคร · assign = จัดห้องจากคิว (ส้ม) · edit = แก้ไขการจองเดิม (ม่วง)
+function asgShow(b, mode) {
+  const A = mode === 'assign', w = isWait(b), bar = $('asgBar'), fb = $('formBox');
+  ASSIGN = A ? b.id : null; EDITF = A ? null : b.id;
+  fb.classList.toggle('assign', A); fb.classList.toggle('editing', !A); if (A) fb.classList.remove('edit');
+  const bed = b.bed && b.bed !== SOLO && b.bed !== '-' ? ` ${esc(b.bed)}` : '';
+  const chips = A ? [b.hn && `HN ${esc(b.hn)}`, `คิววันที่ ${fd(b.date)}`, b.rights && esc(b.rights), b.surgeon && b.surgeon !== '-' && esc(b.surgeon)]
+    : [b.hn && `HN ${esc(b.hn)}`, w ? esc(b.room) : `ห้อง ${esc(b.room)}${bed}`, `เข้าพัก ${fd(b.date)}`, b.rights && esc(b.rights)];
+  bar.hidden = false; bar.classList.toggle('ed', !A);
+  bar.innerHTML = `<div class="asg-ic">${ic(A ? 'clock' : 'edit')}</div><div class="asg-tx"><small>${A ? 'กำลังจัดห้องจากคิวรอจัดห้อง' : 'กำลังแก้ไขการจอง'}</small><b>${esc(b.patient)}${b.age ? ` <span>(${esc(b.age)} ปี)</span>` : ''}</b>
+    <div class="asg-meta">${chips.filter(Boolean).map(c => `<span>${c}</span>`).join('')}</div></div>
+    <button type="button" class="asg-x" onclick="resetForm()" title="${A ? 'ยกเลิกการจัดห้อง' : 'ยกเลิกการแก้ไข'}" aria-label="${A ? 'ยกเลิกการจัดห้อง' : 'ยกเลิกการแก้ไข'}">${ic('x')}</button>`;
+  bar.classList.remove('pop'); void bar.offsetWidth; bar.classList.add('pop');
+  const F = A ? ['hn', 'name', 'age', 'rights', 'date'] : ['hn', 'name', 'age', 'rights', 'date', 'room', 'bed', 'doc', 'agent', 'pay'];
+  F.forEach(k => { const e = $(k); if (!e) return; e.classList.remove('asg-flash'); void e.offsetWidth; e.classList.add('asg-flash'); });
+  $('room').parentElement.classList.toggle('asg-next', A);
+  if (A) setTimeout(() => $('room').focus({preventScroll: true}), 400);
+  draw();
+}
+function asgClear() {
+  ASSIGN = EDITF = null; $('asgBar').hidden = true; $('formBox').classList.remove('assign', 'editing');
+  $('room').parentElement.classList.remove('asg-next');
+}
 function payChange() {
   const on = $('pay').value === SPLIT; $('splitBox').classList.toggle('d-none', !on);
   if (on && anyItem() && !$('pT').value && !$('pC').value) { $('pT').value = total(); $('pC').value = 0; } calc();
@@ -1247,6 +1302,7 @@ async function submitForm(e) {
 }
 function editBooking(id) {
   const b = DATA.find(x => x.id === id); if (!b) return;
+  if (ASSIGN || EDITF) asgClear();
   editing = id; baseAmt = +b.amount || 0;
   $('hn').value = b.hn || ''; $('name').value = b.patient; $('age').value = b.age || ''; $('rights').value = b.rights || ''; $('date').value = b.date;
   typeChange(); $('room').value = b.room; bedOpts(); $('bed').value = b.bed || SOLO;
@@ -1256,14 +1312,17 @@ function editBooking(id) {
   { const pp = parsePay(b); $('pT').value = pp.m === SPLIT ? pp.t : ''; $('pC').value = pp.m === SPLIT ? pp.c : ''; payChange(); }
   $('formBox').classList.add('edit'); $('formTitle').innerHTML = `${ic('edit')} แก้ไข / จัดสรรห้อง`;
   $('save').innerHTML = `${ic('save')} บันทึกการแก้ไข`; $('cancel').classList.remove('d-none'); scrollTo({top:0, behavior:'smooth'});
+  asgShow(b, 'edit');
 }
 function resetForm() {
+  const wasAsg = !!(ASSIGN || EDITF); asgClear();
   editing = null; baseAmt = 0; $('f').reset(); $('date').value = today();
   ITEMS.forEach((_, i) => { $('a' + i).disabled = true; });
   $('formBox').classList.remove('edit'); $('formTitle').innerHTML = `${ic('note')} ลงข้อมูลการจองห้องพัก`;
   $('save').innerHTML = `${ic('save')} บันทึกการจอง`; $('cancel').classList.add('d-none');
   if (role === 'records') $('agent').value = REC_AGENT;
   typeChange(); payChange(); calc();
+  if (wasAsg) draw();
 }
 
 // ---------- D/C / คิว / ล็อก ----------
@@ -1335,13 +1394,16 @@ function dashboard() {
       });
       if (L.length > 1) h += '</div>';
     }
-    return `<div class="col"><div class="room ${cls} ${r.includes('VIP') ? 'vip' : ''}">${lb}<div class="rh"><b>${e}</b>${L.length === 1 && !lk ? `<span class="acts btn4">${btnsOf(L[0])}</span>` : ''}</div>${h}</div></div>`;
+    const edc = L.some(b => b.id === EDITF);
+    return `<div class="col"><div class="room ${cls} ${r.includes('VIP') ? 'vip' : ''}${edc ? ' editing' : ''}">${lb}${edc ? '<span class="asg-tag ed room-tag">กำลังแก้ไข</span>' : ''}<div class="rh"><b>${e}</b>${L.length === 1 && !lk ? `<span class="acts btn4">${btnsOf(L[0])}</span>` : ''}</div>${h}</div></div>`;
   };
   const qs = wait.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).map((p, i) => { const id = esc(p.id);
-    return `<tr class="qrow" data-s="${esc((p.hn + ' ' + p.patient).toLowerCase())}"><td class="text-center text-muted">${i + 1}</td><td class="text-center text-nowrap fw-bold text-primary">${fd(p.date)}</td><td class="text-center text-nowrap">${esc(p.hn) || '-'}</td><td class="c-name">${esc(p.patient)}${p.age ? ` <small class="text-muted">(${esc(p.age)} ปี)</small>` : ''}</td><td class="c-rt"><small>${esc(p.rights) || '-'}</small></td><td class="c-doc"><small>${esc(p.surgeon) || '-'}</small></td>${adm ? `<td><div class="acts justify-content-end flex-nowrap">${rec ? '' : `<button class="sm" style="background:#fde047;color:#000" onclick="assignRoom('${id}')">${ic('bed')} จัดห้อง</button>`}<button class="sm" onclick="editBooking('${id}')" aria-label="แก้ไข" title="แก้ไข">${ic('edit')}</button>${rec ? '' : `<button class="sm pr" onclick="printMenu('${id}')" aria-label="พิมพ์" title="พิมพ์">${ic('print')}</button>`}<button class="sm dc" onclick="cancelQueue('${id}')">${ic('cancel')} ยกเลิก</button></div></td>` : ''}</tr>`; }).join('');
+    const on = p.id === ASSIGN, ed = p.id === EDITF;
+    return `<tr class="qrow${on ? ' asg' : ed ? ' edf' : ''}" data-s="${esc((p.hn + ' ' + p.patient).toLowerCase())}"><td class="text-center text-muted">${on ? ic('bed') : ed ? ic('edit') : i + 1}</td><td class="text-center text-nowrap fw-bold text-primary">${fd(p.date)}</td><td class="text-center text-nowrap">${esc(p.hn) || '-'}</td><td class="c-name">${esc(p.patient)}${p.age ? ` <small class="text-muted">(${esc(p.age)} ปี)</small>` : ''}${on ? ' <span class="asg-tag">กำลังจัดห้อง</span>' : ed ? ' <span class="asg-tag ed">กำลังแก้ไข</span>' : ''}</td><td class="c-rt"><small>${esc(p.rights) || '-'}</small></td><td class="c-doc"><small>${esc(p.surgeon) || '-'}</small></td>${adm ? `<td><div class="acts justify-content-end flex-nowrap">${rec ? '' : `<button class="sm" style="background:#fde047;color:#000" onclick="assignRoom('${id}')">${ic('bed')} จัดห้อง</button>`}<button class="sm" onclick="editBooking('${id}')" aria-label="แก้ไข" title="แก้ไข">${ic('edit')}</button>${rec ? '' : `<button class="sm pr" onclick="printMenu('${id}')" aria-label="พิมพ์" title="พิมพ์">${ic('print')}</button>`}<button class="sm dc" onclick="cancelQueue('${id}')">${ic('cancel')} ยกเลิก</button></div></td>` : ''}</tr>`; }).join('');
   const qTable = wait.length ? `<div class="table-responsive tscroll"><table class="table table-sm table-hover align-middle qt mb-0"><thead><tr><th class="text-center c-min">#</th><th class="text-center c-min">วันที่</th><th class="text-center c-min">HN</th><th class="c-name">ชื่อ-สกุล (อายุ)</th><th class="c-rt">สิทธิ์</th><th class="c-doc">แพทย์เจ้าของไข้</th>${adm ? '<th class="text-end c-min">จัดการ</th>' : ''}</tr></thead><tbody>${qs}</tbody></table></div>` : '<p class="text-muted text-center py-5">' + ic('check') + ' ไม่มีคิวรอจัดห้องในขณะนี้</p>';
   const waitCard = p => { const id = esc(p.id);
-    return `<div class="col-xl-3 col-lg-4 col-md-6 col-12"><div class="room rsv"><h6>${ic('clock')} รอห้องสำรอง</h6>${adm ? `<div class="acts mb-2"><button class="sm" onclick="assignRoom('${id}')">${ic('bed')} จัดห้อง</button><button class="sm" onclick="editBooking('${id}')">${ic('edit')} แก้ไข</button><button class="sm cx" onclick="cancelSurgery('${id}')">${ic('cancel')} ยกเลิกผ่า</button>${rec ? '' : `<button class="sm pr" onclick="printMenu('${id}')">${ic('print')} พิมพ์</button>`}</div>` : ''}<div style="word-break:break-word">${p.hn ? `<small class="text-secondary fw-bold">HN: ${esc(p.hn)}</small><br>` : ''}<small class="fw-bold text-primary">${fd(p.date)}</small> | ${esc(p.patient)}${p.age ? ` (${esc(p.age)} ปี)` : ''}<br><small class="text-muted">${esc(p.surgeon) || '-'}</small></div></div></div>`; };
+    const mk = p.id === ASSIGN ? '<span class="asg-tag">กำลังจัดห้อง</span>' : p.id === EDITF ? '<span class="asg-tag ed">กำลังแก้ไข</span>' : '';
+    return `<div class="col-xl-3 col-lg-4 col-md-6 col-12"><div class="room rsv${mk ? (p.id === ASSIGN ? ' assigning' : ' editing') : ''}"><h6>${ic('clock')} รอห้องสำรอง ${mk}</h6>${adm ? `<div class="acts mb-2"><button class="sm" onclick="assignRoom('${id}')">${ic('bed')} จัดห้อง</button><button class="sm" onclick="editBooking('${id}')">${ic('edit')} แก้ไข</button><button class="sm cx" onclick="cancelSurgery('${id}')">${ic('cancel')} ยกเลิกผ่า</button>${rec ? '' : `<button class="sm pr" onclick="printMenu('${id}')">${ic('print')} พิมพ์</button>`}</div>` : ''}<div style="word-break:break-word">${p.hn ? `<small class="text-secondary fw-bold">HN: ${esc(p.hn)}</small><br>` : ''}<small class="fw-bold text-primary">${fd(p.date)}</small> | ${esc(p.patient)}${p.age ? ` (${esc(p.age)} ปี)` : ''}<br><small class="text-muted">${esc(p.surgeon) || '-'}</small></div></div></div>`; };
   const waitHtml = rsv.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).map(waitCard).join('') || '<div class="col-12 text-muted">ไม่มีผู้ป่วยรอห้องสำรอง</div>';
   const occ = rs => rs.filter(r => (by[r] || []).length).length, ft = (i, label, cnt) => `<button type="button" role="tab" aria-selected="${floorTab === i}" class="ftab${floorTab === i ? ' on' : ''}" style="--fc:${FC[i]}" onclick="floorTabSet(${i})">${label} <span class="fcnt">${cnt}</span></button>`;
   const fbar = `<div class="ftabs no-print" role="tablist">${FLOORS.map(([fl, rs], i) => ft(i, `${ic('layers')} ${fl}`, `${occ(rs)}/${rs.length}`)).join('')}${ft(3, `${ic('clock')} รอห้องสำรอง`, rsv.length)}</div>`;

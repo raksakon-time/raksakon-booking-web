@@ -430,6 +430,7 @@ body{background:var(--lav)!important;color:var(--ink)}
 .diet.saving{opacity:.55;pointer-events:none}.diet-pr{display:none}
 @media print{#rep .tbl .mealbox{width:4.6mm;height:4.6mm;border:.9pt solid #1d1640;border-radius:.8mm}#rep .tbl .diet{display:block;min-width:40mm}#rep .tbl .diet-lb,#rep .tbl .diet-tx{display:none!important}#rep .tbl .diet-pr{display:inline}#rep .tbl .dbox{display:inline-block;width:4mm;height:4mm;border:.9pt solid #1d1640;border-radius:.8mm;text-align:center;line-height:3.6mm;font-size:8pt;font-weight:800}#rep .tbl .mh{font-size:7pt}}
 #btnCD.on{background:#22a06b;border-color:#22a06b;color:#fff}
+.rate-hint{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#17804f;background:#E9F8F0;border-radius:8px;padding:3px 10px;margin-top:-2px}.rate-hint[hidden]{display:none}.rate-hint .ic{width:14px;height:14px;flex:none}
 /* ===== จัดห้องจากคิว (สีส้ม แยกจากโหมดแก้ไขสีม่วง) ===== */
 #formBox.assign{border:2px solid #F59A6C!important;background:linear-gradient(180deg,#FFF4EC,#fff 160px)!important;box-shadow:0 0 0 4px rgba(245,154,108,.18),0 10px 30px rgba(236,95,134,.12)!important}
 .asg-bar{display:flex;align-items:center;gap:12px;margin:-4px -4px 14px;padding:12px 14px;border-radius:16px;background:linear-gradient(90deg,#F59A6C,#EC5F86);color:#fff;box-shadow:0 8px 20px rgba(236,95,134,.28)}
@@ -528,8 +529,8 @@ tr.qrow.edf>td{background:#F3F0FC!important}tr.qrow.edf>td:first-child{box-shado
             <div><label class="form-label" for="rights">สิทธิ์ผู้ป่วย</label><input class="form-control" id="rights" list="rightsList" placeholder="เช่น บัตรทอง / ประกันสังคม" autocomplete="off"><datalist id="rightsList"><option value="ชำระเงินเอง"><option value="บัตรทอง (UC)"><option value="ประกันสังคม"><option value="ข้าราชการ"><option value="ประกันสุขภาพ"><option value="ต่างด้าว"></datalist></div></div>
           <div class="sec"><h6><i data-ic="building"></i> ข้อมูลการเข้าพัก</h6>
             <label class="form-label" for="date">วันที่เข้าพัก</label><input type="date" class="form-control mb-3" id="date" required onchange="roomOpts()">
-            <div class="row g-2 mb-3" id="roomRow"><div class="col-6"><label class="form-label" for="room">ห้อง</label><select class="form-select" id="room" required onchange="bedOpts(); if (this.value && this.value !== WAIT && this.value !== RSV) this.parentElement.classList.remove('asg-next')"></select></div>
-            <div class="col-6"><label class="form-label" for="bed">เตียง</label><select class="form-select" id="bed"></select></div></div>
+            <div class="row g-2 mb-3" id="roomRow"><div class="col-6"><label class="form-label" for="room">ห้อง</label><select class="form-select" id="room" required onfocus="if (RATE === null) loadRates()" onchange="bedOpts(); autoRoomPrice(); if (this.value && this.value !== WAIT && this.value !== RSV) this.parentElement.classList.remove('asg-next')"></select></div>
+            <div class="col-6"><label class="form-label" for="bed">เตียง</label><select class="form-select" id="bed" onchange="autoRoomPrice()"></select></div></div>
             <div class="row g-2"><div class="col-6"><label class="form-label" for="doc">แพทย์เจ้าของไข้</label><select class="form-select" id="doc" required></select></div>
             <div class="col-6"><label class="form-label" for="agent">ผู้รับจอง</label><select class="form-select" id="agent" required></select></div></div></div>
           <div class="sec" id="paySec" style="border:2px solid var(--p)"><h6><i data-ic="card"></i> ข้อมูลการชำระเงิน</h6>
@@ -637,6 +638,7 @@ const REC_AGENT = 'แผนกเวชระเบียน';
 const PAYS = ['โอน','รูดบัตร','เงินสด','โอน+เงินสด','ค้างชำระ','ตามสิทธิ์','เบิกประกัน','-'];
 const ITEMS = [['ค่าผ่าตัดต้อกระจก(Monofocal)',20000,''],['ค่า LENS Monofocal Clareon',35000,17000],['ค่าผ่าตัด Excision Pterigium',8000,''],
   ['ค่าผ่าตัด Excision Pterigium c Graft',12000,''],['ค่าห้องพิเศษ',1500,1500],['ญาติ (คนละ 200)',200,200]];
+const ROOM_I = ITEMS.findIndex(x => x[0].includes('ห้องพิเศษ'));   // รายการค่าห้อง (ใส่ราคาอัตโนมัติตามประเภทห้อง)
 const PAPERS = [['auto','ตามเครื่องพิมพ์'],['A4 portrait','A4 แนวตั้ง'],['A4 landscape','A4 แนวนอน'],['A5 portrait','A5 แนวตั้ง'],['A5 landscape','A5 แนวนอน'],
   ['A3 portrait','A3 แนวตั้ง'],['A3 landscape','A3 แนวนอน'],['letter portrait','Letter'],['legal portrait','Legal']];
 
@@ -693,7 +695,7 @@ document.addEventListener('DOMContentLoaded', () => {
   opts('pay', PAYS);
   $('paper').innerHTML = PAPERS.map(p => `<option value="${p[0]}">${p[1]}</option>`).join('');
   $('bill').innerHTML = '<label class="form-label text-secondary">เลือกรายการเรียกเก็บ (พิมพ์ใบแจ้ง)</label>' + ITEMS.map((it, i) =>
-    `<div class="row g-2 mb-2 align-items-center"><div class="col-8"><div class="form-check"><input class="form-check-input" type="checkbox" id="c${i}" onchange="billToggle(${i})"><label class="form-check-label" for="c${i}" style="font-size:.9rem">${i+1}. ${it[0]}</label></div></div><div class="col-4"><input type="number" class="form-control form-control-sm" id="a${i}" placeholder="ส่วนเกิน" disabled oninput="calc()"></div></div>`).join('');
+    `<div class="row g-2 mb-2 align-items-center"><div class="col-8"><div class="form-check"><input class="form-check-input" type="checkbox" id="c${i}" onchange="billToggle(${i})"><label class="form-check-label" for="c${i}" style="font-size:.9rem">${i+1}. ${it[0]}</label></div></div><div class="col-4"><input type="number" class="form-control form-control-sm" id="a${i}" placeholder="ส่วนเกิน" disabled oninput="calc()"></div>${i === ROOM_I ? '<div class="col-12"><div id="rateHint" class="rate-hint" hidden></div></div>' : ''}</div>`).join('');
   $('date').value = $('rDate').value = today();
   $('pin').addEventListener('keypress', e => { if (e.key === 'Enter') login(); });
   $('pinEye').innerHTML = EYE;
@@ -843,6 +845,34 @@ function splitInfo() {
   const sum = (+$('pT').value || 0) + (+$('pC').value || 0), t = total();
   $('splitInfo').innerHTML = !anyItem() ? `<span class="text-primary">ยอดรวม = โอน + สด = ${money(sum)}</span>`
     : Math.abs(sum - t) < 0.01 ? `<span class="text-success">${ic('check')} โอน + สด = ${money(sum)}</span>` : `<span class="text-danger">โอน + สด = ${money(sum)} (ต้องเท่ากับยอดรวม ${money(t)})</span>`;
+}
+// ราคาห้องอัตโนมัติ: เลือกห้อง/เตียง → ติ๊ก "ค่าห้องพิเศษ" และใส่ราคาตามประเภทห้อง
+// ราคาใช้จากหน้าบิลบอร์ดของผู้ดูแลระบบ (ห้องที่ผูกประเภทไว้) ถ้ายังไม่มีใช้ราคาเริ่มต้นใน CD_ROOMS · ห้องรวม (จองรายเตียง) = ไม่ต้องชำระส่วนเกิน
+const RATE_NAME = {vip: 'ห้อง VIP', sp: 'ห้องพักเดี่ยวพิเศษ', std: 'ห้องพิเศษเดี่ยว 2B (เหมาห้อง)', ward: 'ห้องรวม (จองรายเตียง)'};
+let RATE = null, RATE_REQ = null;
+function loadRates() {
+  return RATE_REQ || (RATE_REQ = gasRead('getBillboard').then(L => {
+    RATE = {};
+    if (Array.isArray(L)) L.filter(b => b.kind === 'room' && b.roomType).sort((a, b) => (b.active - a.active) || (a.order - b.order))
+      .forEach(b => { if (!(b.roomType in RATE)) RATE[b.roomType] = b.price; });
+  }).catch(() => { RATE = {}; }).finally(() => { RATE_REQ = null; }));
+}
+function roomRate(room, bed) {
+  const t = cdType(room, bed); if (!t) return null;
+  const p = RATE && t in RATE ? RATE[t] : (CD_ROOMS[t] || {}).price;
+  return {t, n: +String(p || '').replace(/[^\d.]/g, '') || 0};
+}
+async function autoRoomPrice() {
+  if (ROOM_I < 0 || role === 'records') return;
+  const room = $('room').value; if (!room || room === WAIT || room === RSV) return;
+  if (RATE === null) await loadRates();
+  if ($('room').value !== room) return;   // เปลี่ยนห้องระหว่างรอโหลดราคา
+  const r = roomRate(room, $('bed').value); if (!r) return;
+  const c = $('c' + ROOM_I), a = $('a' + ROOM_I), h = $('rateHint');
+  if (r.n > 0) { c.checked = true; a.disabled = false; a.value = r.n; } else { c.checked = false; a.disabled = true; a.value = ''; }
+  calc();
+  a.classList.remove('asg-flash'); void a.offsetWidth; a.classList.add('asg-flash');
+  if (h) { h.hidden = false; h.innerHTML = `${ic('check')} ราคาอัตโนมัติ: ${RATE_NAME[r.t]} ${r.n > 0 ? `<b>${money(r.n)}</b> บาท/คืน` : '<b>ไม่ต้องชำระส่วนเกิน</b>'} · แก้ตัวเลขเองได้`; }
 }
 function billToggle(i) {
   const c = $('c' + i), a = $('a' + i); a.disabled = !c.checked;
@@ -1305,7 +1335,7 @@ async function submitForm(e) {
 function editBooking(id) {
   const b = DATA.find(x => x.id === id); if (!b) return;
   if (ASSIGN || EDITF) asgClear();
-  editing = id; baseAmt = +b.amount || 0;
+  editing = id; baseAmt = +b.amount || 0; if ($('rateHint')) $('rateHint').hidden = true;
   $('hn').value = b.hn || ''; $('name').value = b.patient; $('age').value = b.age || ''; $('rights').value = b.rights || ''; $('date').value = b.date;
   typeChange(); $('room').value = b.room; bedOpts(); $('bed').value = b.bed || SOLO;
   $('doc').value = b.surgeon || '-'; $('agent').value = role === 'records' ? REC_AGENT : (b.agent || AGENTS[0]); $('pay').value = parsePay(b).m;
@@ -1319,7 +1349,7 @@ function editBooking(id) {
 function resetForm() {
   const wasAsg = !!(ASSIGN || EDITF); asgClear();
   editing = null; baseAmt = 0; $('f').reset(); $('date').value = today();
-  ITEMS.forEach((_, i) => { $('a' + i).disabled = true; });
+  ITEMS.forEach((_, i) => { $('a' + i).disabled = true; }); if ($('rateHint')) $('rateHint').hidden = true;
   $('formBox').classList.remove('edit'); $('formTitle').innerHTML = `${ic('note')} ลงข้อมูลการจองห้องพัก`;
   $('save').innerHTML = `${ic('save')} บันทึกการจอง`; $('cancel').classList.add('d-none');
   if (role === 'records') $('agent').value = REC_AGENT;

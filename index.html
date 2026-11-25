@@ -939,7 +939,7 @@ const CD_CSS = `*{box-sizing:border-box}html,body{margin:0;height:100%;backgroun
 .thx .ck{width:220px;height:220px;border-radius:999px;background:#17a065;color:#fff;display:grid;place-items:center;font-size:150px;box-shadow:0 20px 50px rgba(23,160,101,.35);animation:cdpop .5s ease-out}
 .thx h1{font-size:80px;margin:20px 0 0;color:#E2187B}.thx p{font-size:36px;margin:0;color:#16234A}.thx small{font-size:28px;color:#5b6282}
 .slides.full{position:absolute;inset:0}.slide.am9 .hero{height:940px}.slide.nothumb.am9 .hero{height:1178px}.slide>.ft{margin-top:auto}.slides.full .dots{bottom:8px;z-index:2}
-.slide.ad{background:#16234A;overflow:hidden}.adbg{position:absolute;left:-60px;top:-60px;width:1200px;height:2040px;object-fit:cover;filter:blur(36px) brightness(.85)}.adfg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.slide.ad{background:#16234A;overflow:hidden}.adbg{position:absolute;left:-60px;top:-60px;width:calc(100% + 120px);height:calc(100% + 120px);object-fit:cover;filter:blur(36px) brightness(.85)}.adfg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 @keyframes cdkb{from{transform:scale(1.02)}to{transform:scale(1.1)}}@keyframes cdpop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}`;
 let CDW = null, CD_PH = null, CD_TIMER = null, CD_THX = null, CD_POLL = null, CD_STATE = '', CD_LIST = null, CD_DAY = '';
 const BB_SRC = {}, BB_REQ = {};   // รูปบิลบอร์ดจาก Drive: fileId → dataURI (ใช้ร่วมกันทั้งจอลูกค้าและหน้าจัดการ)
@@ -954,10 +954,12 @@ const cdImg = (k, cls = '') => cdSrc(k) ? `<img class="${cls}" src="${cdSrc(k)}"
 const cdClock = () => { const d = new Date(); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')} น.`; };
 const cdHead = () => `<header class="hd"><img src="${LOGO}" alt=""><div><b>${CD_NAME}</b><span>${CD_EN} · Care with heart, Always by your side</span></div><time class="cdTime">${cdClock()}</time></header>`;
 const cdFoot = () => `<footer class="ft"><div>${cdI('heart')}<span><b>ใส่ใจทุกการดูแล</b>ด้วยทีมพยาบาลมืออาชีพ</span></div><div>${cdI('phone')}<span><b>สอบถามข้อมูลเพิ่มเติม</b><strong>${CD_TEL}</strong></span></div></footer>`;
-function cdFit() {   // ย่อ/ขยายเวที 1080×1920 ให้พอดีหน้าต่าง
+function cdFit() {   // ปรับเวทีให้เต็มจอแนวตั้งทุกขนาด: สูง 1920 คงที่ · กว้างตามสัดส่วนจอ (9:16 ถึง 3:4 เช่น 1080×1920, 1200×1920 จอ 24")
   if (!cdLive()) return;
-  const w = CDW, s = Math.min(w.innerWidth / 1080, w.innerHeight / 1920), st = w.document.getElementById('cdStage');
-  st.style.transform = `translate(${(w.innerWidth - 1080 * s) / 2}px,${(w.innerHeight - 1920 * s) / 2}px) scale(${s})`;
+  const w = CDW, iw = w.innerWidth, ih = w.innerHeight, st = w.document.getElementById('cdStage');
+  const W = Math.max(1080, Math.min(1440, Math.round(1920 * iw / ih))), s = Math.min(iw / W, ih / 1920);
+  st.style.width = W + 'px';
+  st.style.transform = `translate(${(iw - W * s) / 2}px,${(ih - 1920 * s) / 2}px) scale(${s})`;
 }
 function cdSet(html, kf = '') {
   if (!cdLive()) return;

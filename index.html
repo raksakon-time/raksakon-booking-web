@@ -952,8 +952,8 @@ const CD_CSS = `*{box-sizing:border-box}html,body{margin:0;height:100%;backgroun
 .ft b{display:block;font-size:24px}.ft span{font-size:20px;color:#5b6282}.ft strong{display:block;font-size:42px;color:#E2187B;line-height:1.1}
 .pay .hero{height:var(--hh,560px)}
 .bill{flex:1;display:flex;flex-direction:column;gap:18px;padding:24px 46px 34px;min-height:0}
-.who{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}.who small{display:block;color:#E2187B;font-weight:700;font-size:22px}.who b{font-size:46px;line-height:1.2}
-.who span{background:#16234A;color:#fff;font-weight:700;border-radius:14px;padding:10px 18px;font-size:27px;white-space:nowrap}
+.who{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}.who small{display:block;color:#E2187B;font-weight:700;font-size:22px}.who b{display:block;font-size:70px;line-height:1.25;overflow-wrap:anywhere}.who b.l2{font-size:58px}.who b.l3{font-size:48px}.who small{font-size:24px}
+.who span{background:#16234A;color:#fff;font-weight:700;border-radius:14px;padding:10px 18px;font-size:30px;white-space:nowrap;margin-top:6px}
 .meta{display:flex;gap:12px;flex-wrap:wrap}.meta span{background:#F4F5FA;border-radius:12px;padding:8px 16px;font-size:24px;color:#5b6282}.meta b{color:#16234A}
 .list{border-top:2px dashed #f0c2d8;border-bottom:2px dashed #f0c2d8}
 .it{display:flex;justify-content:space-between;gap:18px;padding:13px 0;font-size:28px;align-items:baseline}.it+.it{border-top:1px solid #f6e3ec}.it b{font-weight:600}.it span{font-weight:700;white-space:nowrap}
@@ -1089,7 +1089,7 @@ function cdPay(f, items, pp, qrAmt) {
       : `<div class="big">${cdI('cash')}<div>ชำระเงินสดที่เคาน์เตอร์<small>ยอด ${money(f.amount)} บาท · รับใบเสร็จจากเจ้าหน้าที่</small></div></div>`;
   cdSet(`${cdHead()}<div class="slides pay" style="--hh:${hh}px"><div class="slide solo">
     ${r ? `<div class="hero">${cdImg(r.img)}<div class="tag">${r.no ? `<i>${esc(r.no)}</i>` : ''}<div><b>${esc(r.name)}</b><span>${esc(r.bld || '')} · ห้องที่ท่านจอง</span></div>${r.price && free === false ? `<div class="pr2"><b>${esc(r.price)}</b> บาท/คืน</div>` : ''}</div></div>` : ''}
-    <section class="bill"><div id="cdSaved"></div><div class="who"><div><small>รายการชำระเงิน</small><b>${esc(f.patient)}</b></div>${f.hn ? `<span>HN ${esc(f.hn)}</span>` : ''}</div>
+    <section class="bill"><div id="cdSaved"></div><div class="who"><div><small>รายการชำระเงิน</small><b class="${String(f.patient || '').length > 30 ? 'l3' : String(f.patient || '').length > 22 ? 'l2' : ''}">${esc(f.patient)}</b></div>${f.hn ? `<span>HN ${esc(f.hn)}</span>` : ''}</div>
       <div class="meta"><span>ห้อง <b>${esc(f.room)}${bed}</b></span><span>เข้าพัก <b>${fd(f.date)}</b></span>${f.rights ? `<span>สิทธิ์ <b>${esc(f.rights)}</b></span>` : ''}</div>
       ${items.length ? `<div class="list">${items.map(([n, v]) => `<div class="it"><b>${esc(n)}</b><span>${money(v)}</span></div>`).join('')}</div>` : ''}
       ${free ? '' : `<div class="tot"><span>ยอดชำระทั้งหมด</span><b>${money(f.amount)}</b><small>บาท</small></div>`}${pay}</section></div></div>`);

@@ -660,7 +660,7 @@ const maxBeds = r => r === '210' || r === '214' ? 9 : r === '213' ? 4 : 8;
 
 // ---------- Apps Script (Promise + timeout; อ่านซ้ำได้ ส่วนเขียนไม่ซ้ำ) ----------
 // ---------- API ของ Apps Script (หน้าเว็บนี้โฮสต์บน GitHub Pages) ----------
-const API_URL = 'https://script.google.com/macros/s/AKfycbye-Htxn_FNsWcEFWTbza40iKSZMGBYbWWRPFIZEM6LkpmGBSNeZSnnHnCqtrlMaanRnw/exec';   // ← ใส่ URL ของ Web app ที่ deploy แล้ว
+const API_URL = 'https://script.google.com/macros/s/AKfycbx9OpRmLsVy7FE6byyezOjyZHoSwGbT2SMuPpp1zwC-zDxUURLPyPMzTsyzHfa0Qa3sbg/exec';   // ← ใส่ URL ของ Web app ที่ deploy แล้ว
 let TOKEN = sessionStorage.getItem('rk_token') || '';
 async function api(action, body = {}) {
   const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 30000);
@@ -1479,15 +1479,25 @@ function xlDate(v) {                                   // รองรับ ser
   if (m < 1 || m > 12 || d < 1 || d > 31) return '';
   return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 }
+// อายุ (ปีเต็ม) จากวันเกิด ณ วันที่เข้าพัก · รับ yyyy-mm-dd
+const ageAt = (bd, ref) => { if (!bd) return ''; const [y, m, d] = bd.split('-').map(Number), [Y, M, D] = (ref || today()).split('-').map(Number); const a = Y - y - (M < m || (M === m && D < d) ? 1 : 0); return a >= 0 && a < 130 ? String(a) : ''; };
+// จับคู่ชื่อแพทย์ในไฟล์กับรายชื่อในระบบ (พิมพ์แค่ชื่อ เช่น "ปวีณ" หรือ "พญ.อโนชา" ก็เจอ) · ไม่เจอ = ใช้ข้อความตามไฟล์
+function xlDoc(t) {
+  t = String(t || '').trim(); if (!t || t === '-') return '-';
+  const core = s => s.replace(/^(นายแพทย์|แพทย์หญิง|นพ\.?|พญ\.?|ดร\.?|Dr\.?)\s*/i, '').replace(/\s*ว\.?\s*\d+.*$/, '').replace(/\s+/g, '');
+  const c = core(t); if (!c) return t;
+  return DOCS.find(d => d === t) || DOCS.find(d => core(d).includes(c) || c.includes(core(d))) || t;
+}
 function xlParse(rows) {
   const norm = v => String(v == null ? '' : v).replace(/\s+/g, '').toLowerCase(), cell = (r, j) => j >= 0 && r[j] != null ? String(r[j]).trim() : '';
   let hi = -1, col = null;
   for (let i = 0; i < Math.min(rows.length, 10) && !col; i++) {          // หาแถวหัวตาราง
     const hs = (rows[i] || []).map(norm), hn = hs.findIndex(h => h.includes('hn'));
     const nm = hs.map((h, j) => /ชื่อ|สกุล|name/.test(h) && !/แพทย์|doctor|สิทธ|hn/.test(h) ? j : -1).filter(j => j >= 0);
-    if (hn >= 0 && nm.length) { hi = i; col = {hn, nm, age: hs.findIndex(h => /อายุ|^age/.test(h)), rt: hs.findIndex(h => /สิทธ|right/.test(h)), dt: hs.findIndex(h => /วันที่|date/.test(h))}; }
+    if (hn >= 0 && nm.length) { hi = i; col = {hn, nm, age: hs.findIndex(h => /อายุ|^age/.test(h)), rt: hs.findIndex(h => /สิทธ|right/.test(h)),
+      dt: hs.findIndex(h => /วันที่|date/.test(h) && !/เกิด|birth/.test(h)), doc: hs.findIndex(h => /แพทย์|doctor|surgeon/.test(h)), bd: hs.findIndex(h => /เกิด|birth|dob/.test(h))}; }
   }
-  if (!col) { if (rows.length && /^\d+$/.test(cell(rows[0], 0))) col = {hn: 0, nm: [1], age: 2, rt: 3, dt: 4}; else return null; }   // ไม่มีหัวตาราง: A=HN B=ชื่อ C=อายุ D=สิทธิ์ E=วันที่
+  if (!col) { if (rows.length && /^\d+$/.test(cell(rows[0], 0))) col = {hn: 0, nm: [1], age: 2, rt: 3, dt: 4, doc: -1, bd: -1}; else return null; }   // ไม่มีหัวตาราง: A=HN B=ชื่อ C=อายุ D=สิทธิ์ E=วันที่
   if (col.dt < 0) return {err: 'ไม่พบคอลัมน์ "วันที่" (วันที่เข้าพัก) ในไฟล์'};
   const out = [], seen = new Set(); let skip = 0, badDate = 0;
   for (const r of rows.slice(hi + 1)) {
@@ -1496,29 +1506,41 @@ function xlParse(rows) {
     const date = xlDate(r[col.dt]);
     if (!hn || !name || !date) { skip++; if (hn && name && !date) badDate++; continue; }
     if (seen.has(hn + '|' + date)) { skip++; continue; }
-    seen.add(hn + '|' + date); out.push({hn, name, date, age: (cell(r, col.age).match(/\d+/) || [''])[0], rights: cell(r, col.rt)});
+    const bd = col.bd >= 0 ? xlDate(r[col.bd]) : '';
+    const age = ageAt(bd, date) || (cell(r, col.age).match(/\d+/) || [''])[0];   // มีวันเกิด = คำนวณอายุ ณ วันเข้าพัก
+    seen.add(hn + '|' + date); out.push({hn, name, date, age, rights: cell(r, col.rt), doc: col.doc >= 0 ? xlDoc(cell(r, col.doc)) : '-'});
   }
   return {out, skip, badDate};
 }
-// เทมเพลตไฟล์นำเข้า: ชีตแรก = กรอกข้อมูล (หัวคอลัมน์ตรงกับตัวอ่าน), ชีตที่สอง = วิธีกรอก + ตัวอย่าง
+// เทมเพลตไฟล์นำเข้า: ชีตแรก = กรอกข้อมูล (หัวคอลัมน์ตรงกับตัวอ่าน), ชีตที่สอง = วิธีกรอก + รายชื่อแพทย์
+// อายุ (D) = สูตรคำนวณจากวันเดือนปีเกิด (G) อัตโนมัติ · G เป็นข้อความ วว/ดด/ปปปป รองรับทั้ง พ.ศ. และ ค.ศ.
+const xlAgeF = r => { const g = 'G' + r, f1 = `FIND("/",${g})`, f2 = `FIND("/",${g},${f1}+1)`, yy = `--MID(${g},${f2}+1,4)`;
+  return `IF(${g}="","",IFERROR(DATEDIF(IF(ISNUMBER(${g}),IF(YEAR(${g})>2400,DATE(YEAR(${g})-543,MONTH(${g}),DAY(${g})),${g}),DATE(${yy}-IF(${yy}>2400,543,0),--MID(${g},${f1}+1,${f2}-${f1}-1),--LEFT(${g},${f1}-1))),TODAY(),"Y"),""))`; };
 function downloadTemplate() {
   if (!window.XLSX) return msg('error', 'สร้างไฟล์ไม่สำเร็จ', 'โหลดตัวสร้าง Excel ไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วรีเฟรชหน้า');
-  const head = ['วันที่เข้าพัก', 'HN', 'ชื่อ-สกุล', 'อายุ', 'สิทธิ์'], ws = XLSX.utils.aoa_to_sheet([head]);
-  for (let r = 2; r <= XL_MAX + 1; r++) ['A', 'B'].forEach(c => { ws[c + r] = {t: 's', v: '', z: '@'}; });   // วันที่/HN เป็นข้อความ เลข 0 นำหน้าไม่หาย
-  ws['!ref'] = `A1:E${XL_MAX + 1}`; ws['!cols'] = [{wch: 15}, {wch: 12}, {wch: 34}, {wch: 8}, {wch: 22}]; ws['!autofilter'] = {ref: 'A1:E1'};
+  const head = ['วันที่เข้าพัก', 'HN', 'ชื่อ-สกุล', 'อายุ', 'สิทธิ์', 'แพทย์เจ้าของไข้', 'วันเดือนปีเกิด'], ws = XLSX.utils.aoa_to_sheet([head]);
+  for (let r = 2; r <= XL_MAX + 1; r++) {
+    ['A', 'B', 'G'].forEach(c => { ws[c + r] = {t: 's', v: '', z: '@'}; });   // วันที่/HN/วันเกิด เป็นข้อความ (เลข 0 นำหน้าไม่หาย · พ.ศ. ไม่เพี้ยน)
+    ws['D' + r] = {t: 's', v: '', f: xlAgeF(r)};                              // อายุคำนวณจากวันเกิด
+  }
+  ws['!ref'] = `A1:G${XL_MAX + 1}`; ws['!cols'] = [{wch: 15}, {wch: 12}, {wch: 34}, {wch: 8}, {wch: 22}, {wch: 34}, {wch: 16}]; ws['!autofilter'] = {ref: 'A1:G1'};
   const guide = XLSX.utils.aoa_to_sheet([
     ['วิธีกรอกเทมเพลตนำเข้าคิวรอจัดห้อง (โรงพยาบาลรักษ์สกล-ศุภมิตร)'], [],
     ['คอลัมน์', 'จำเป็น', 'รูปแบบ', 'ตัวอย่าง'],
-    ['วันที่เข้าพัก', 'ใช่', 'วว/ดด/ปปปป (พ.ศ. หรือ ค.ศ.) หรือ ปปปป-ดด-วว', '24/10/2569'],
-    ['HN', 'ใช่', 'ตัวเลข (กรอกเป็นข้อความ เลข 0 นำหน้าไม่หาย)', '6904088'],
-    ['ชื่อ-สกุล', 'ใช่', 'คำนำหน้า ชื่อ นามสกุล', 'นาย สมชาย ใจดี'],
-    ['อายุ', '', 'ตัวเลข (หน่วยปี)', '72'],
-    ['สิทธิ์', '', 'สิทธิ์การรักษา', 'บัตรทอง (UC)'], [],
+    ['A วันที่เข้าพัก', 'ใช่', 'วว/ดด/ปปปป (พ.ศ. หรือ ค.ศ.) หรือ ปปปป-ดด-วว', '24/10/2569'],
+    ['B HN', 'ใช่', 'ตัวเลข (กรอกเป็นข้อความ เลข 0 นำหน้าไม่หาย)', '6904088'],
+    ['C ชื่อ-สกุล', 'ใช่', 'คำนำหน้า ชื่อ นามสกุล', 'นาย สมชาย ใจดี'],
+    ['D อายุ', 'อัตโนมัติ', 'คำนวณจากวันเดือนปีเกิด (ไม่ต้องกรอก) · ไม่มีวันเกิด พิมพ์อายุทับได้', '72'],
+    ['E สิทธิ์', '', 'สิทธิ์การรักษา', 'บัตรทอง (UC)'],
+    ['F แพทย์เจ้าของไข้', '', 'ชื่อตามรายชื่อด้านล่าง (พิมพ์แค่ชื่อก็ได้ ระบบจับคู่ให้) · ว่างได้', 'ปวีณ'],
+    ['G วันเดือนปีเกิด', '', 'วว/ดด/ปปปป (พ.ศ. หรือ ค.ศ.)', '15/03/2497'], [],
     ['ข้อควรทราบ'],
-    [`• กรอกในชีต "นำเข้าคิว" เท่านั้น ไม่เกิน ${XL_MAX} แถวต่อไฟล์ ห้ามแก้ชื่อหัวคอลัมน์`],
+    [`• กรอกในชีต "นำเข้าคิว" เท่านั้น ไม่เกิน ${XL_MAX} แถวต่อไฟล์ ห้ามแก้ชื่อหัวคอลัมน์ ห้ามลบสูตรในคอลัมน์ D`],
     ['• แถวที่ไม่มี HN, ชื่อ หรือวันที่ ระบบจะข้าม · HN + วันที่ที่อยู่ในคิวแล้วจะไม่ถูกนำเข้าซ้ำ'],
-    ['• ผู้ป่วยทุกคนเข้า "คิวรอจัดห้อง" แพทย์เจ้าของไข้เลือกภายหลังได้ที่ปุ่มแก้ไข']]);
-  guide['!cols'] = [{wch: 16}, {wch: 8}, {wch: 46}, {wch: 18}];
+    ['• ตอนนำเข้า ระบบคำนวณอายุจากวันเกิด ณ วันที่เข้าพักให้อีกครั้ง'],
+    ['• ผู้ป่วยทุกคนเข้า "คิวรอจัดห้อง" แก้แพทย์หรือข้อมูลอื่นภายหลังได้ที่ปุ่มแก้ไข'], [],
+    ['รายชื่อแพทย์เจ้าของไข้ในระบบ'], ...DOCS.map(d => ['', '', d])]);
+  guide['!cols'] = [{wch: 18}, {wch: 9}, {wch: 58}, {wch: 18}];
   const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'นำเข้าคิว'); XLSX.utils.book_append_sheet(wb, guide, 'วิธีกรอก');
   XLSX.writeFile(wb, `เทมเพลตนำเข้าคิว_${today()}.xlsx`);
 }
@@ -1526,9 +1548,9 @@ async function importExcel() {
   if (!window.XLSX) return msg('error', 'โหลดตัวอ่าน Excel ไม่สำเร็จ', 'ตรวจสอบอินเทอร์เน็ตแล้วรีเฟรชหน้าอีกครั้ง');
   XL = [];
   const r = await Swal.fire({
-    title: `${ic('upload')} นำเข้าคิวจาก Excel`, width: 660, showCancelButton: true, confirmButtonText: 'นำเข้า', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#6C3CE1', customClass: {popup: 'rounded-4'},
+    title: `${ic('upload')} นำเข้าคิวจาก Excel`, width: 780, showCancelButton: true, confirmButtonText: 'นำเข้า', cancelButtonText: 'ยกเลิก', confirmButtonColor: '#6C3CE1', customClass: {popup: 'rounded-4'},
     html: `<div class="text-start"><label class="form-label">ไฟล์ .xlsx / .xls / .csv (ไม่เกิน ${XL_MAX} แถว)</label><input type="file" id="xlFile" accept=".xlsx,.xls,.csv" class="form-control mb-2">
-      <div class="small text-muted">ยังไม่มีไฟล์? <a href="#" onclick="downloadTemplate();return false">ดาวน์โหลดเทมเพลต Excel</a><br>คอลัมน์ที่ใช้: <b>HN, ชื่อ-สกุล, อายุ, สิทธิ์, วันที่เข้าพัก</b> (หัวตารางภาษาไทยหรืออังกฤษ)<br>ผู้ป่วยทุกคนเข้า "คิวรอจัดห้อง" · แพทย์เจ้าของไข้เลือกภายหลังได้ที่ปุ่ม ${ic('edit')} แก้ไข / จัดห้อง</div><div id="xlPrev" class="mt-2" style="max-height:250px;overflow:auto"></div></div>`,
+      <div class="small text-muted">ยังไม่มีไฟล์? <a href="#" onclick="downloadTemplate();return false">ดาวน์โหลดเทมเพลต Excel</a><br>คอลัมน์ที่ใช้: <b>วันที่เข้าพัก, HN, ชื่อ-สกุล, อายุ, สิทธิ์, แพทย์เจ้าของไข้, วันเดือนปีเกิด</b> (หัวตารางภาษาไทยหรืออังกฤษ)<br>มีวันเกิด = ระบบคำนวณอายุ ณ วันเข้าพักให้ · ผู้ป่วยทุกคนเข้า "คิวรอจัดห้อง" แก้ไขภายหลังได้ที่ปุ่ม ${ic('edit')} แก้ไข / จัดห้อง</div><div id="xlPrev" class="mt-2" style="max-height:250px;overflow:auto"></div></div>`,
     didOpen: () => $('xlFile').addEventListener('change', async e => {
       const f = e.target.files[0], pv = $('xlPrev'); XL = []; pv.innerHTML = ''; if (!f) return;
       try {
@@ -1537,7 +1559,7 @@ async function importExcel() {
         if (res.err) { pv.innerHTML = `<div class="text-danger">${esc(res.err)}</div>`; return; }
         XL = res.out; const over = XL.length > XL_MAX;
         pv.innerHTML = `<div class="small mb-1 fw-bold ${over ? 'text-danger' : 'text-success'}">พบ ${XL.length} แถวที่ใช้ได้${res.skip ? ` (ข้าม ${res.skip} แถว${res.badDate ? ` — วันที่ไม่ถูกต้อง ${res.badDate}` : ''}: ข้อมูลว่าง/ซ้ำ)` : ''}${over ? ` — เกิน ${XL_MAX} แถว กรุณาแบ่งไฟล์` : ''}</div>
-          <table class="table table-sm small mb-0"><thead><tr><th>วันที่</th><th>HN</th><th>ชื่อ-สกุล</th><th>อายุ</th><th>สิทธิ์</th></tr></thead><tbody>${XL.slice(0, 8).map(x => `<tr><td>${fd(x.date)}</td><td>${esc(x.hn)}</td><td>${esc(x.name)}</td><td>${esc(x.age)}</td><td>${esc(x.rights)}</td></tr>`).join('')}</tbody></table>${XL.length > 8 ? `<div class="small text-muted">…และอีก ${XL.length - 8} แถว</div>` : ''}`;
+          <table class="table table-sm small mb-0"><thead><tr><th>วันที่</th><th>HN</th><th>ชื่อ-สกุล</th><th>อายุ</th><th>สิทธิ์</th><th>แพทย์</th></tr></thead><tbody>${XL.slice(0, 8).map(x => `<tr><td>${fd(x.date)}</td><td>${esc(x.hn)}</td><td>${esc(x.name)}</td><td>${esc(x.age)}</td><td>${esc(x.rights)}</td><td>${esc(x.doc === '-' ? '' : x.doc)}</td></tr>`).join('')}</tbody></table>${XL.length > 8 ? `<div class="small text-muted">…และอีก ${XL.length - 8} แถว</div>` : ''}`;
       } catch (x) { pv.innerHTML = `<div class="text-danger">อ่านไฟล์ไม่สำเร็จ: ${esc(x.message || x)}</div>`; }
     }),
     preConfirm: () => {
@@ -1549,7 +1571,7 @@ async function importExcel() {
   if (!r.isConfirmed) return;
   const have = new Set(DATA.filter(isWait).map(b => b.hn + '|' + b.date)), rows = XL.filter(x => !have.has(x.hn + '|' + x.date)), dup = XL.length - rows.length;
   if (!rows.length) return msg('info', 'ไม่มีรายการใหม่', 'ทุกรายการอยู่ในคิวรอจัดห้องแล้ว (HN และวันที่ซ้ำ)');
-  const t = Date.now(), list = rows.map((x, i) => ({id: 'b' + (t + i), room: WAIT, bed: '-', date: x.date, hn: x.hn, patient: x.name, age: x.age, rights: x.rights, surgeon: '-', agent: REC_AGENT, payment: '-', amount: 0, items: ''}));
+  const t = Date.now(), list = rows.map((x, i) => ({id: 'b' + (t + i), room: WAIT, bed: '-', date: x.date, hn: x.hn, patient: x.name, age: x.age, rights: x.rights, surgeon: x.doc || '-', agent: REC_AGENT, payment: '-', amount: 0, items: ''}));
   const done = []; busy++; $('spin').style.display = 'block';
   try {
     try { await gas('saveBookings', list); done.push(...list); }

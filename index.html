@@ -430,6 +430,20 @@ body{background:var(--lav)!important;color:var(--ink)}
 .diet.saving{opacity:.55;pointer-events:none}.diet-pr{display:none}
 @media print{#rep .tbl .mealbox{width:4.6mm;height:4.6mm;border:.9pt solid #1d1640;border-radius:.8mm}#rep .tbl .diet{display:block;min-width:40mm}#rep .tbl .diet-lb,#rep .tbl .diet-tx{display:none!important}#rep .tbl .diet-pr{display:inline}#rep .tbl .dbox{display:inline-block;width:4mm;height:4mm;border:.9pt solid #1d1640;border-radius:.8mm;text-align:center;line-height:3.6mm;font-size:8pt;font-weight:800}#rep .tbl .mh{font-size:7pt}}
 #btnCD.on{background:#22a06b;border-color:#22a06b;color:#fff}
+/* ===== แถบลงข้อมูลการจอง ย่อ/กาง ===== */
+#formCol{position:relative}.form-rail{display:none}
+#formCol.min #formBox,#formCol.min .form-fold{display:none}
+#formCol.min .form-rail{display:flex;flex-direction:column;align-items:center;gap:14px;width:64px;min-height:340px;position:sticky;top:16px;border:0;border-radius:22px;padding:16px 0;
+  background:linear-gradient(180deg,#F59A6C,#EC5F86);color:#fff;box-shadow:0 10px 28px rgba(236,95,134,.3);cursor:pointer;transition:transform .15s,box-shadow .15s}
+#formCol.min .form-rail:hover,#formCol.min .form-rail:focus-visible{transform:translateX(3px);box-shadow:0 14px 32px rgba(236,95,134,.42);outline:none}
+.rail-plus{width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,.25);display:grid;place-items:center}
+.rail-tx{writing-mode:vertical-rl;font-family:Prompt,Sarabun,sans-serif;font-weight:600;font-size:1rem;letter-spacing:.03em}
+.rail-arrow{margin-top:auto;font-size:1.6rem;line-height:1;opacity:.9}
+.form-fold{position:absolute;top:22px;right:-7px;z-index:5;width:28px;height:44px;border:0;border-radius:0 12px 12px 0;background:#6C3CE1;color:#fff;font-size:1.3rem;line-height:1;box-shadow:0 4px 12px rgba(108,60,225,.3);cursor:pointer}
+.form-fold:hover{background:#5527c9}
+#formBox.fb-in{animation:fbIn .22s ease-out}@keyframes fbIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+@media(max-width:991.98px){#formCol.min .form-rail{flex-direction:row;width:100%;min-height:0;position:static;padding:12px 18px}.rail-tx{writing-mode:horizontal-tb}.rail-arrow{margin:0 0 0 auto;transform:rotate(90deg)}.form-fold{display:none}}
+@media (prefers-reduced-motion:reduce){#formBox.fb-in{animation:none}}
 .rate-hint{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#17804f;background:#E9F8F0;border-radius:8px;padding:3px 10px;margin-top:-2px}.rate-hint[hidden]{display:none}.rate-hint .ic{width:14px;height:14px;flex:none}
 /* ===== จัดห้องจากคิว (สีส้ม แยกจากโหมดแก้ไขสีม่วง) ===== */
 #formBox.assign{border:2px solid #F59A6C!important;background:linear-gradient(180deg,#FFF4EC,#fff 160px)!important;box-shadow:0 0 0 4px rgba(245,154,108,.18),0 10px 30px rgba(236,95,134,.12)!important}
@@ -517,6 +531,8 @@ tr.qrow.edf>td{background:#F3F0FC!important}tr.qrow.edf>td:first-child{box-shado
   </div>
   <div class="row g-4">
     <div class="col-lg-4 no-print" id="formCol">
+      <button type="button" id="formRail" class="form-rail" onclick="formOpen(true)" title="เปิดแถบลงข้อมูลการจองห้องพัก" aria-label="เปิดแถบลงข้อมูลการจองห้องพัก" aria-controls="formBox" aria-expanded="false"><span class="rail-plus"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><span class="rail-tx">ลงข้อมูลการจองห้องพัก</span><span class="rail-arrow">›</span></button>
+      <button type="button" id="formFold" class="form-fold" onclick="formClose()" title="ย่อแถบลงข้อมูล" aria-label="ย่อแถบลงข้อมูล">‹</button>
       <div class="card-md" id="formBox">
         <div id="asgBar" class="asg-bar" role="status" aria-live="polite" hidden></div>
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3"><h5 class="fw-bold mb-0" id="formTitle"><i data-ic="note"></i> ลงข้อมูลการจองห้องพัก</h5><div class="input-group hn-group"><span class="input-group-text">HN</span><input class="form-control" id="hn" form="f" required placeholder="ระบุ HN" autocomplete="off" style="min-width:0"><button class="btn btn-primary px-2 text-nowrap" type="button" onclick="findHN()" style="border-radius:0 var(--r) var(--r) 0;font-size:.85rem"><i data-ic="search"></i> ค้นหา/เพิ่ม</button></div></div>
@@ -534,7 +550,8 @@ tr.qrow.edf>td{background:#F3F0FC!important}tr.qrow.edf>td:first-child{box-shado
             <div class="row g-2"><div class="col-6"><label class="form-label" for="doc">แพทย์เจ้าของไข้</label><select class="form-select" id="doc" required></select></div>
             <div class="col-6"><label class="form-label" for="agent">ผู้รับจอง</label><select class="form-select" id="agent" required></select></div></div></div>
           <div class="sec" id="paySec" style="border:2px solid var(--p)"><h6><i data-ic="card"></i> ข้อมูลการชำระเงิน</h6>
-            <label class="form-label" for="pay">รูปแบบการชำระเงิน</label><select class="form-select mb-3" id="pay" onchange="payChange()"></select>
+            <div class="row g-2 mb-3"><div class="col-6"><label class="form-label" for="pay">รูปแบบการชำระเงิน</label><select class="form-select" id="pay" onchange="payChange()"></select></div>
+            <div class="col-6"><label class="form-label" for="cashier">ผู้รับชำระเงิน</label><select class="form-select" id="cashier"></select></div></div>
             <div id="bill"></div><hr>
             <div class="d-flex justify-content-between align-items-center"><div class="fw-bold">ยอดรวมสุทธิ:<br><small class="fw-normal text-secondary" id="totTxt">ศูนย์บาทถ้วน</small></div><div class="fs-3 fw-bold text-danger" id="tot">0.00</div></div>
             <div id="splitBox" class="d-none mt-3 p-3 rounded-4 split-box">
@@ -546,7 +563,7 @@ tr.qrow.edf>td{background:#F3F0FC!important}tr.qrow.edf>td:first-child{box-shado
               <div class="small mt-2 fw-bold" id="splitInfo"></div></div></div>
           <div class="d-flex gap-2">
             <button type="submit" class="btn btn-primary flex-grow-1" id="save"><i data-ic="save"></i> บันทึกการจอง</button>
-            <button type="button" class="btn btn-outline-secondary d-none" id="cancel" onclick="resetForm()"><i data-ic="x"></i> ยกเลิก</button>
+            <button type="button" class="btn btn-outline-secondary d-none" id="cancel" onclick="resetForm(); formClose()"><i data-ic="x"></i> ยกเลิก</button>
           </div>
         </form>
       </div>
@@ -692,6 +709,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const opts = (id, arr, first) => $(id).innerHTML = (first || '') + arr.map(v => `<option>${esc(v)}</option>`).join('');
   opts('doc', DOCS, '<option value="" disabled selected>เลือกแพทย์...</option>');
   opts('agent', AGENTS, '<option value="" disabled selected>เลือกเจ้าหน้าที่...</option>');
+  opts('cashier', AGENTS, '<option value="" selected>เลือกผู้รับเงิน...</option>');   // ใช้รายชื่อเดียวกับผู้รับจอง
   opts('pay', PAYS);
   $('paper').innerHTML = PAPERS.map(p => `<option value="${p[0]}">${p[1]}</option>`).join('');
   $('bill').innerHTML = '<label class="form-label text-secondary">เลือกรายการเรียกเก็บ (พิมพ์ใบแจ้ง)</label>' + ITEMS.map((it, i) =>
@@ -734,6 +752,7 @@ function enterAs(r) {
   $('agent').disabled = r === 'records';
   $('formCol').style.display = canBook ? '' : 'none'; $('paySec').style.display = r === 'records' ? 'none' : '';
   $('dashCol').className = canBook ? 'col-lg-8' : 'col-lg-12';
+  if (canBook) formClose();   // แถบลงข้อมูลยุบไว้ก่อน กางเมื่อเพิ่มจอง/แก้ไข
   $('btnFin').style.display = r === 'ward' || r === 'records' ? 'none' : '';
   $('btnCD').style.display = r === 'admission' ? '' : 'none';
   resetForm();
@@ -821,7 +840,7 @@ function asgShow(b, mode) {
   bar.hidden = false; bar.classList.toggle('ed', !A);
   bar.innerHTML = `<div class="asg-ic">${ic(A ? 'clock' : 'edit')}</div><div class="asg-tx"><small>${A ? 'กำลังจัดห้องจากคิวรอจัดห้อง' : 'กำลังแก้ไขการจอง'}</small><b>${esc(b.patient)}${b.age ? ` <span>(${esc(b.age)} ปี)</span>` : ''}</b>
     <div class="asg-meta">${chips.filter(Boolean).map(c => `<span>${c}</span>`).join('')}</div></div>
-    <button type="button" class="asg-x" onclick="resetForm()" title="${A ? 'ยกเลิกการจัดห้อง' : 'ยกเลิกการแก้ไข'}" aria-label="${A ? 'ยกเลิกการจัดห้อง' : 'ยกเลิกการแก้ไข'}">${ic('x')}</button>`;
+    <button type="button" class="asg-x" onclick="resetForm(); formClose()" title="${A ? 'ยกเลิกการจัดห้อง' : 'ยกเลิกการแก้ไข'}" aria-label="${A ? 'ยกเลิกการจัดห้อง' : 'ยกเลิกการแก้ไข'}">${ic('x')}</button>`;
   bar.classList.remove('pop'); void bar.offsetWidth; bar.classList.add('pop');
   const F = A ? ['hn', 'name', 'age', 'rights', 'date'] : ['hn', 'name', 'age', 'rights', 'date', 'room', 'bed', 'doc', 'agent', 'pay'];
   F.forEach(k => { const e = $(k); if (!e) return; e.classList.remove('asg-flash'); void e.offsetWidth; e.classList.add('asg-flash'); });
@@ -834,6 +853,7 @@ function asgClear() {
   $('room').parentElement.classList.remove('asg-next');
 }
 function payChange() {
+  $('cashier').required = role !== 'records' && $('pay').value !== 'ตามสิทธิ์';   // ชำระเงิน = ต้องระบุผู้รับเงิน
   const on = $('pay').value === SPLIT; $('splitBox').classList.toggle('d-none', !on);
   if (on && anyItem() && !$('pT').value && !$('pC').value) { $('pT').value = total(); $('pC').value = 0; } calc();
 }
@@ -1280,7 +1300,7 @@ function reviewBooking(f, doSave) {
   const qrAmt = pp.m === 'โอน' ? +f.amount || 0 : pp.m === SPLIT ? pp.t : 0;
   let html = sec('user', 'ข้อมูลผู้ป่วย', row('HN', esc(f.hn) || '-') + row('ชื่อ-นามสกุล', esc(f.patient)) + row('อายุ', `${esc(f.age)} ปี`) + row('สิทธิ์', esc(f.rights) || '-'))
     + sec('building', 'ข้อมูลการจอง', row('วันที่เข้าพัก', fd(f.date)) + row('ห้อง / เตียง', esc(f.room) + bed) + row('แพทย์เจ้าของไข้', esc(f.surgeon) || '-') + row('ผู้รับจอง', esc(f.agent) || '-'));
-  if (!rec) html += sec('card', 'ข้อมูลการชำระเงิน', row('รูปแบบการชำระ', esc(pp.m))
+  if (!rec) html += sec('card', 'ข้อมูลการชำระเงิน', row('รูปแบบการชำระ', esc(pp.m)) + (f.cashier ? row('ผู้รับชำระเงิน', esc(f.cashier)) : '')
       + (items.length ? items.map(([n, v]) => row(esc(n), `${money(v)} บาท`)).join('') : row('รายการเรียกเก็บ', '-'))
       + (pp.m === SPLIT ? row('แบ่งชำระ', `โอน ${money(pp.t)} + เงินสด ${money(pp.c)}`) : '') + row('ยอดชำระ', `${money(f.amount)} บาท`, true));
   const qr = !rec && qrAmt > 0;
@@ -1322,7 +1342,7 @@ async function submitForm(e) {
     if (anyItem() && Math.abs(tr + cs - total()) > 0.009) return msg('error', 'ยอดไม่ตรง', 'ยอดโอน + เงินสด ต้องเท่ากับยอดรวมสุทธิ');
   }
   const f = {id: editing || 'b' + Date.now(), room, bed: $('bed').value, date: $('date').value, hn: $('hn').value.trim(), patient: $('name').value.trim(),
-    age: $('age').value, rights: $('rights').value.trim(), surgeon: $('doc').value, agent: $('agent').value, payment: mkPay($('pay').value, tr, cs), amount: total(),
+    age: $('age').value, rights: $('rights').value.trim(), surgeon: $('doc').value, agent: $('agent').value, cashier: role === 'records' ? '' : $('cashier').value, payment: mkPay($('pay').value, tr, cs), amount: total(),
     items: ITEMS.map((_, i) => $('c' + i).checked ? `${i}=${+$('a' + i).value || 0}` : '').filter(Boolean).join(';')};
   if (role === 'records') { const o = editing ? DATA.find(b => b.id === editing) : null; Object.assign(f, {room: o ? o.room : WAIT, bed: o ? o.bed : '-', agent: REC_AGENT, payment: o ? o.payment : '-', amount: o ? (+o.amount || 0) : 0, items: o ? (o.items || '') : ''}); }
   const wasEdit = !!editing; let saved = false;
@@ -1330,21 +1350,37 @@ async function submitForm(e) {
   busy++; $('save').disabled = true;
   try { saved = await reviewBooking(f, doSave); } finally { busy--; $('save').disabled = false; }
   if (!saved) return;   // ปิดโดยยังไม่บันทึก: ข้อมูลในฟอร์มยังอยู่
-  toast(wasEdit ? 'แก้ไขข้อมูลเรียบร้อยแล้ว' : 'บันทึกการจองเรียบร้อยแล้ว'); resetForm(); draw();
+  toast(wasEdit ? 'แก้ไขข้อมูลเรียบร้อยแล้ว' : 'บันทึกการจองเรียบร้อยแล้ว'); resetForm(); formClose(); draw();
 }
 function editBooking(id) {
   const b = DATA.find(x => x.id === id); if (!b) return;
+  formOpen();
   if (ASSIGN || EDITF) asgClear();
   editing = id; baseAmt = +b.amount || 0; if ($('rateHint')) $('rateHint').hidden = true;
   $('hn').value = b.hn || ''; $('name').value = b.patient; $('age').value = b.age || ''; $('rights').value = b.rights || ''; $('date').value = b.date;
   typeChange(); $('room').value = b.room; bedOpts(); $('bed').value = b.bed || SOLO;
-  $('doc').value = b.surgeon || '-'; $('agent').value = role === 'records' ? REC_AGENT : (b.agent || AGENTS[0]); $('pay').value = parsePay(b).m;
+  $('doc').value = b.surgeon || '-'; $('agent').value = role === 'records' ? REC_AGENT : (b.agent || AGENTS[0]); $('pay').value = parsePay(b).m; $('cashier').value = b.cashier || '';
   const saved = {}; String(b.items || '').split(';').forEach(t => { const [k, v] = t.split('='); if (v !== undefined && ITEMS[+k]) saved[+k] = +v; });   // คืนค่ารายการที่ติ๊กไว้
   ITEMS.forEach((_, i) => { const on = i in saved; $('c' + i).checked = on; $('a' + i).value = on ? saved[i] : ''; $('a' + i).disabled = !on; }); calc();
   { const pp = parsePay(b); $('pT').value = pp.m === SPLIT ? pp.t : ''; $('pC').value = pp.m === SPLIT ? pp.c : ''; payChange(); }
   $('formBox').classList.add('edit'); $('formTitle').innerHTML = `${ic('edit')} แก้ไข / จัดสรรห้อง`;
   $('save').innerHTML = `${ic('save')} บันทึกการแก้ไข`; $('cancel').classList.remove('d-none'); scrollTo({top:0, behavior:'smooth'});
   asgShow(b, 'edit');
+}
+// ===== แถบลงข้อมูลการจอง (ด้านซ้าย) ย่อ/กางได้ · ยุบไว้เป็นค่าเริ่มต้น กางอัตโนมัติเมื่อจอง/แก้ไข/จัดห้อง =====
+function formOpen(focus) {
+  const fc = $('formCol');
+  if (fc.classList.contains('min')) {
+    fc.className = 'col-lg-4 no-print'; $('dashCol').className = 'col-lg-8';
+    $('formRail').setAttribute('aria-expanded', 'true');
+    const fb = $('formBox'); fb.classList.remove('fb-in'); void fb.offsetWidth; fb.classList.add('fb-in');
+  }
+  if (focus) setTimeout(() => $('hn').focus(), 200);
+}
+function formClose() {
+  if (!$('formCol') || $('formCol').style.display === 'none') return;
+  $('formCol').className = 'col-12 col-lg-auto no-print min'; $('dashCol').className = 'col-12 col-lg';
+  $('formRail').setAttribute('aria-expanded', 'false');
 }
 function resetForm() {
   const wasAsg = !!(ASSIGN || EDITF); asgClear();
@@ -2746,7 +2782,7 @@ function bookingSlip(b) {            // แปลงรายการจอง�
   const pp = parsePay(b), saved = {};
   String(b.items || '').split(';').forEach(t => { const [k, v] = t.split('='); if (v !== undefined && ITEMS[+k]) saved[+k] = +v; });
   return {name: b.patient || '', hn: b.hn || '', room: realRoom(b), bed: b.bed || '', pay: pp.m, rights: b.rights || '', tr: pp.t, cs: pp.c,
-    agent: b.agent || '', date: b.date, doc: b.surgeon || '', items: ITEMS.map((_, i) => ({on: i in saved, v: saved[i] || 0})), total: +b.amount || 0};
+    agent: b.agent || '', cashier: b.cashier || '', date: b.date, doc: b.surgeon || '', items: ITEMS.map((_, i) => ({on: i in saved, v: saved[i] || 0})), total: +b.amount || 0};
 }
 function printBookingOf(id) { const b = DATA.find(x => x.id === id); if (b) printReceipt(bookingSlip(b)); }
 function printMenu(id) {
@@ -2808,7 +2844,7 @@ function slipHtmlV2(F) {
   const total = `<div style="display:flex;align-items:center;gap:3mm;margin:2mm 0 0;padding:1.6mm 3mm;border:.3mm solid ${LN};border-left:1.2mm solid ${P};border-radius:1.5mm;background:#F6F4FB">
       <div style="flex:1;min-width:0"><div style="font-size:7.3pt;color:${MUT}">รวมเป็นเงิน (ตัวอักษร)</div><div style="font-size:9.3pt;font-weight:700">${THB(F.total)}</div></div>
       <div style="text-align:right"><div style="font-size:7.3pt;color:${MUT}">ยอดชำระสุทธิ</div><div style="font-family:Prompt,Sarabun,sans-serif;font-size:15pt;font-weight:600;line-height:1.15">${money(F.total)} <span style="font-size:9pt">บาท</span></div>${sp ? `<div style="font-size:7.8pt">โอน <b>${money(F.tr)}</b> + เงินสด <b>${money(F.cs)}</b></div>` : ''}</div></div>`;
-  const signs = `<div style="display:flex;gap:3mm">${sign('ผู้ชำระเงิน', '', 'ผู้ป่วย / ญาติ')}${sign('ผู้รับเงิน', agent, `เจ้าหน้าที่การเงิน · ${fd(F.date)}`)}</div>`;
+  const signs = `<div style="display:flex;gap:3mm">${sign('ผู้ชำระเงิน', '', 'ผู้ป่วย / ญาติ')}${sign('ผู้รับเงิน', F.cashier || agent, `เจ้าหน้าที่การเงิน · ${fd(F.date)}`)}</div>`;
   const bottom = showQr ? `<div style="display:flex;gap:4mm;margin-top:2.5mm;break-inside:avoid">${tqrCard(qrAmt, '35mm', '24mm', '6.3pt')}
       <div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between"><div style="padding:1.5mm 3mm;border:.3mm solid ${LN};border-radius:1.5mm;font-size:8.4pt;line-height:1.45"><div style="font-weight:700;font-size:9.5pt">สแกนชำระผ่านแอปธนาคาร</div><div>ยอดเงินขึ้นอัตโนมัติ ไม่ต้องกรอก</div><div style="margin-top:1.2mm;display:inline-block;padding:.8mm 3mm;border:.4mm solid ${P};border-radius:1.5mm;font-weight:700;font-size:10pt">ยอดโอน ${money(qrAmt)} บาท</div></div>${signs}</div></div>`
     : `<div style="margin-top:4mm">${signs}</div>`;
@@ -2841,7 +2877,7 @@ function refundHtmlV2(b) {
 }
 function printReceipt(src) {
   const F = src || {name: $('name').value, hn: $('hn').value, room: $('room').value, bed: $('bed').value, pay: $('pay').value, rights: $('rights').value.trim(),
-    tr: +$('pT').value || 0, cs: +$('pC').value || 0, agent: $('agent').value, date: $('date').value, doc: $('doc').value,
+    tr: +$('pT').value || 0, cs: +$('pC').value || 0, agent: $('agent').value, cashier: $('cashier').value, date: $('date').value, doc: $('doc').value,
     items: ITEMS.map((_, i) => ({on: $('c' + i).checked, v: +$('a' + i).value})), total: total()};
   if (!F.name) return msg('warning', 'แจ้งเตือน', 'กรุณากรอกชื่อผู้ป่วยก่อนพิมพ์เอกสาร');
   printArea(slipHtmlV2(F), 'A5 portrait');

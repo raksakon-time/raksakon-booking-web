@@ -430,6 +430,7 @@ body{background:var(--lav)!important;color:var(--ink)}
 .diet.saving{opacity:.55;pointer-events:none}.diet-pr{display:none}
 @media print{#rep .tbl .mealbox{width:4.6mm;height:4.6mm;border:.9pt solid #1d1640;border-radius:.8mm}#rep .tbl .diet{display:block;min-width:40mm}#rep .tbl .diet-lb,#rep .tbl .diet-tx{display:none!important}#rep .tbl .diet-pr{display:inline}#rep .tbl .dbox{display:inline-block;width:4mm;height:4mm;border:.9pt solid #1d1640;border-radius:.8mm;text-align:center;line-height:3.6mm;font-size:8pt;font-weight:800}#rep .tbl .mh{font-size:7pt}}
 #btnCD.on{background:#22a06b;border-color:#22a06b;color:#fff}
+.room.ward{border-right:5px solid #14b8a6!important;position:relative}.room.ward::after{content:'รวม';position:absolute;top:10px;right:34px;font-size:.62rem;font-weight:700;color:#fff;background:#14b8a6;border-radius:999px;padding:1px 7px}
 /* ===== แถบลงข้อมูลการจอง ย่อ/กาง ===== */
 #formCol{position:relative}.form-rail{display:none}
 #formCol.min #formBox,#formCol.min .form-fold{display:none}
@@ -548,7 +549,9 @@ tr.qrow.edf>td{background:#F3F0FC!important}tr.qrow.edf>td:first-child{box-shado
             <div class="row g-2 mb-3" id="roomRow"><div class="col-6"><label class="form-label" for="room">ห้อง</label><select class="form-select" id="room" required onfocus="if (RATE === null) loadRates()" onchange="bedOpts(); autoRoomPrice(); if (this.value && this.value !== WAIT && this.value !== RSV) this.parentElement.classList.remove('asg-next')"></select></div>
             <div class="col-6"><label class="form-label" for="bed">เตียง</label><select class="form-select" id="bed" onchange="autoRoomPrice()"></select></div></div>
             <div class="row g-2"><div class="col-6"><label class="form-label" for="doc">แพทย์เจ้าของไข้</label><select class="form-select" id="doc" required></select></div>
-            <div class="col-6"><label class="form-label" for="agent">ผู้รับจอง</label><select class="form-select" id="agent" required></select></div></div></div>
+            <div class="col-6"><label class="form-label" for="agent">ผู้รับจอง</label><select class="form-select" id="agent" required></select></div></div>
+            <div class="row g-2 mt-1"><div class="col-6"><label class="form-label" for="food">อาหาร</label><select class="form-select" id="food" onchange="foodChange()"><option value="">ปกติ</option><option>แพ้อาหาร</option><option>งดอาหาร</option><option>อาหารให้ญาติ</option><option>อาหารโรคไต</option><option value="อื่นๆ">อื่นๆ (เติมเอง)</option></select></div>
+            <div class="col-6" id="foodTxW" hidden><label class="form-label" for="foodTx" id="foodTxL">รายละเอียด</label><input class="form-control" id="foodTx" maxlength="150" autocomplete="off"></div></div></div>
           <div class="sec" id="paySec" style="border:2px solid var(--p)"><h6><i data-ic="card"></i> ข้อมูลการชำระเงิน</h6>
             <div class="row g-2 mb-3"><div class="col-6"><label class="form-label" for="pay">รูปแบบการชำระเงิน</label><select class="form-select" id="pay" onchange="payChange()"></select></div>
             <div class="col-6"><label class="form-label" for="cashier">ผู้รับชำระเงิน</label><select class="form-select" id="cashier"></select></div></div>
@@ -618,6 +621,7 @@ tr.qrow.edf>td{background:#F3F0FC!important}tr.qrow.edf>td:first-child{box-shado
       <button class="btn btn-sm btn-outline-dark" onclick="show('main')"><i data-ic="back"></i> หน้าหลัก</button>
       <div class="d-flex flex-wrap align-items-center gap-2">
         <div id="rBatch" class="d-flex flex-wrap gap-2"></div>
+        <select class="form-select form-select-sm w-auto" id="rGrp" onchange="renderReport()" aria-label="เลือกกลุ่มผู้จ่ายอาหาร" style="display:none"><option value="all">ทั้งหมด</option><option value="nutri">แผนกโภชนาการ (1201–1209, 301–309)</option><option value="out">Out source (201–214)</option></select>
         <input type="date" class="form-control w-auto" id="rDate" onchange="renderReport()" aria-label="วันที่รายงาน">
         <button class="btn btn-sm btn-outline-primary" id="rAll" onclick="$('rDate').value='';renderReport()"><i data-ic="list"></i> ดูทั้งหมด</button>
         <select class="form-select form-select-sm w-auto" id="paper" onchange="paper=this.value;setPage(paper)" aria-label="ขนาดกระดาษ"></select>
@@ -647,8 +651,10 @@ const LOGO = 'https://i.postimg.cc/pXHW7T4D/Squre-profile-pink-bg.jpg';
 const QR = "https://i.postimg.cc/Vkz5S5dX/QR-r-ks'-skl.jpg";
 const ROLES = ['ward', 'finance', 'records', 'admission', 'admin'];
 const SOLO = 'เหมาห้อง/เตียงเดี่ยว', WAIT = 'รอจัดห้อง', RSV = 'รอห้องสำรอง';
-const FLOORS = [['ชั้น 2B', ['201','202','203','204','205','206','207','208','209','210','211','212','213','214']],
+const FLOORS = [['ชั้น 2B', ['201','202','203','204','205','206','207','208','209','210','211','214']],
   ['ชั้น 2', ['VIP 1201','1202','1203','1204','1205','1206','1207','1208','VIP 1209']], ['ชั้น 3', ['VIP 301','302','303','304','305','306','307','308','VIP 309']]];
+const WARD_ROOMS = ['210', '211', '214'];   // ห้องรวม (แสดงชื่อ "ห้องรวม xxx" แบบเดียวกับห้อง VIP)
+const roomLabel = r => WARD_ROOMS.includes(String(r)) ? 'ห้องรวม ' + r : String(r || '');
 const DOCS = ['นายแพทย์ปวีณ ภูจันทึก ว.27944','นายแพทย์สุวัฒน์ คูสกุล ว.13493','แพทย์หญิงอโนชา อินทรพาณิชย์ ว.42480','ญาติ','-'];
 const AGENTS = ['นางสาวสง่า พัฒนโพธิ์','นางสาวชินรัตน์ พองพรหม','นางสาวชวาลณัฎฐ์ เรืองหัสดี','นายณวัตร ชาชุมวงศ์','แผนกเวชระเบียน'];
 const REC_AGENT = 'แผนกเวชระเบียน';
@@ -800,7 +806,7 @@ function roomOpts() {
       if (editing && keep === r) return true;
       const u = used(r, date).map(b => b.bed);
       return !(u.includes(SOLO) || u.filter(x => (x || '').startsWith('เตียง')).length >= maxBeds(r));
-    }).map(r => `<option ${keep === r ? 'selected' : ''}>${r}</option>`).join('');
+    }).map(r => `<option value="${r}" ${keep === r ? 'selected' : ''}>${roomLabel(r)}</option>`).join('');
     if (o) h += `<optgroup label="${fl}">${o}</optgroup>`;
   }
   $('room').innerHTML = h; bedOpts();
@@ -1299,7 +1305,7 @@ function reviewBooking(f, doSave) {
   const items = ITEMS.map((it, i) => $('c' + i).checked ? [it[0], +$('a' + i).value || 0] : null).filter(Boolean);
   const qrAmt = pp.m === 'โอน' ? +f.amount || 0 : pp.m === SPLIT ? pp.t : 0;
   let html = sec('user', 'ข้อมูลผู้ป่วย', row('HN', esc(f.hn) || '-') + row('ชื่อ-นามสกุล', esc(f.patient)) + row('อายุ', `${esc(f.age)} ปี`) + row('สิทธิ์', esc(f.rights) || '-'))
-    + sec('building', 'ข้อมูลการจอง', row('วันที่เข้าพัก', fd(f.date)) + row('ห้อง / เตียง', esc(f.room) + bed) + row('แพทย์เจ้าของไข้', esc(f.surgeon) || '-') + row('ผู้รับจอง', esc(f.agent) || '-'));
+    + sec('building', 'ข้อมูลการจอง', row('วันที่เข้าพัก', fd(f.date)) + row('ห้อง / เตียง', esc(f.room) + bed) + row('แพทย์เจ้าของไข้', esc(f.surgeon) || '-') + row('ผู้รับจอง', esc(f.agent) || '-') + (f.diet ? row('อาหาร', esc(f.diet === '-' ? 'อาหารพิเศษ' : f.diet)) : ''));
   if (!rec) html += sec('card', 'ข้อมูลการชำระเงิน', row('รูปแบบการชำระ', esc(pp.m)) + (f.cashier ? row('ผู้รับชำระเงิน', esc(f.cashier)) : '')
       + (items.length ? items.map(([n, v]) => row(esc(n), `${money(v)} บาท`)).join('') : row('รายการเรียกเก็บ', '-'))
       + (pp.m === SPLIT ? row('แบ่งชำระ', `โอน ${money(pp.t)} + เงินสด ${money(pp.c)}`) : '') + row('ยอดชำระ', `${money(f.amount)} บาท`, true));
@@ -1343,10 +1349,10 @@ async function submitForm(e) {
   }
   const f = {id: editing || 'b' + Date.now(), room, bed: $('bed').value, date: $('date').value, hn: $('hn').value.trim(), patient: $('name').value.trim(),
     age: $('age').value, rights: $('rights').value.trim(), surgeon: $('doc').value, agent: $('agent').value, cashier: role === 'records' ? '' : $('cashier').value, payment: mkPay($('pay').value, tr, cs), amount: total(),
-    items: ITEMS.map((_, i) => $('c' + i).checked ? `${i}=${+$('a' + i).value || 0}` : '').filter(Boolean).join(';')};
+    items: ITEMS.map((_, i) => $('c' + i).checked ? `${i}=${+$('a' + i).value || 0}` : '').filter(Boolean).join(';'), diet: foodVal()};
   if (role === 'records') { const o = editing ? DATA.find(b => b.id === editing) : null; Object.assign(f, {room: o ? o.room : WAIT, bed: o ? o.bed : '-', agent: REC_AGENT, payment: o ? o.payment : '-', amount: o ? (+o.amount || 0) : 0, items: o ? (o.items || '') : ''}); }
   const wasEdit = !!editing; let saved = false;
-  const doSave = async () => { await gas('saveBooking', f); const i = DATA.findIndex(b => b.id === f.id); if (i < 0) DATA.push(f); else { if (DATA[i].diet) f.diet = DATA[i].diet; DATA[i] = f; } };
+  const doSave = async () => { await gas('saveBooking', f); const i = DATA.findIndex(b => b.id === f.id); if (i < 0) DATA.push(f); else DATA[i] = f; };
   busy++; $('save').disabled = true;
   try { saved = await reviewBooking(f, doSave); } finally { busy--; $('save').disabled = false; }
   if (!saved) return;   // ปิดโดยยังไม่บันทึก: ข้อมูลในฟอร์มยังอยู่
@@ -1357,7 +1363,7 @@ function editBooking(id) {
   formOpen();
   if (ASSIGN || EDITF) asgClear();
   editing = id; baseAmt = +b.amount || 0; if ($('rateHint')) $('rateHint').hidden = true;
-  $('hn').value = b.hn || ''; $('name').value = b.patient; $('age').value = b.age || ''; $('rights').value = b.rights || ''; $('date').value = b.date;
+  $('hn').value = b.hn || ''; $('name').value = b.patient; $('age').value = b.age || ''; $('rights').value = b.rights || ''; $('date').value = b.date; foodSet(b.diet);
   typeChange(); $('room').value = b.room; bedOpts(); $('bed').value = b.bed || SOLO;
   $('doc').value = b.surgeon || '-'; $('agent').value = role === 'records' ? REC_AGENT : (b.agent || AGENTS[0]); $('pay').value = parsePay(b).m; $('cashier').value = b.cashier || '';
   const saved = {}; String(b.items || '').split(';').forEach(t => { const [k, v] = t.split('='); if (v !== undefined && ITEMS[+k]) saved[+k] = +v; });   // คืนค่ารายการที่ติ๊กไว้
@@ -1382,6 +1388,21 @@ function formClose() {
   $('formCol').className = 'col-12 col-lg-auto no-print min'; $('dashCol').className = 'col-12 col-lg';
   $('formRail').setAttribute('aria-expanded', 'false');
 }
+// ===== อาหาร (ในฟอร์มจอง) → เก็บในช่อง diet เดียวกับรายงานอาหาร · เช่น "แพ้อาหาร: กุ้ง", "อาหารโรคไต", "อาหารให้ญาติ: 2 คน" =====
+const FOOD_OPT = ['แพ้อาหาร', 'งดอาหาร', 'อาหารให้ญาติ', 'อาหารโรคไต'];
+const FOOD_HINT = {'แพ้อาหาร': ['แพ้อะไร', 'เช่น กุ้ง, อาหารทะเล'], 'งดอาหาร': ['รายละเอียด (ถ้ามี)', 'เช่น งดน้ำงดอาหารหลังเที่ยงคืน'], 'อาหารให้ญาติ': ['จำนวนญาติ (ถ้ามี)', 'เช่น 1 คน'],
+  'อาหารโรคไต': ['รายละเอียด (ถ้ามี)', 'เช่น จำกัดโซเดียม'], 'อื่นๆ': ['ระบุอาหาร', 'เช่น อาหารเบาหวาน, อาหารอ่อน']};
+function foodChange() {
+  const v = $('food').value, h = FOOD_HINT[v] || ['รายละเอียด', ''];
+  $('foodTxW').hidden = !v; $('foodTxL').textContent = h[0]; $('foodTx').placeholder = h[1];
+  $('foodTx').required = v === 'แพ้อาหาร' || v === 'อื่นๆ';
+}
+const foodVal = () => { const v = $('food').value, t = $('foodTx').value.trim(); return !v ? '' : v === 'อื่นๆ' ? (t || '-') : t ? `${v}: ${t}` : v; };
+function foodSet(diet) {
+  const d = diet === '-' ? '' : String(diet || ''), k = FOOD_OPT.find(o => d === o || d.startsWith(o + ':'));
+  $('food').value = k || (diet ? 'อื่นๆ' : ''); $('foodTx').value = k ? d.slice(k.length).replace(/^:\s*/, '') : d; foodChange();
+}
+const relMeals = b => { const m = /^อาหารให้ญาติ(?::\s*\D*(\d+))?/.exec(b.diet || ''); return m ? (+m[1] || 1) : 0; };   // อาหารให้ญาติ = เพิ่มที่อาหาร (ไม่ระบุ = 1 คน)
 function resetForm() {
   const wasAsg = !!(ASSIGN || EDITF); asgClear();
   editing = null; baseAmt = 0; $('f').reset(); $('date').value = today();
@@ -1389,7 +1410,7 @@ function resetForm() {
   $('formBox').classList.remove('edit'); $('formTitle').innerHTML = `${ic('note')} ลงข้อมูลการจองห้องพัก`;
   $('save').innerHTML = `${ic('save')} บันทึกการจอง`; $('cancel').classList.add('d-none');
   if (role === 'records') $('agent').value = REC_AGENT;
-  typeChange(); payChange(); calc();
+  typeChange(); payChange(); calc(); foodChange();
   if (wasAsg) draw();
 }
 
@@ -1463,7 +1484,7 @@ function dashboard() {
       if (L.length > 1) h += '</div>';
     }
     const edc = L.some(b => b.id === EDITF);
-    return `<div class="col"><div class="room ${cls} ${r.includes('VIP') ? 'vip' : ''}${edc ? ' editing' : ''}">${lb}${edc ? '<span class="asg-tag ed room-tag">กำลังแก้ไข</span>' : ''}<div class="rh"><b>${e}</b>${L.length === 1 && !lk ? `<span class="acts btn4">${btnsOf(L[0])}</span>` : ''}</div>${h}</div></div>`;
+    return `<div class="col"><div class="room ${cls} ${r.includes('VIP') ? 'vip' : WARD_ROOMS.includes(r) ? 'ward' : ''}${edc ? ' editing' : ''}">${lb}${edc ? '<span class="asg-tag ed room-tag">กำลังแก้ไข</span>' : ''}<div class="rh"><b>${esc(roomLabel(r))}</b>${L.length === 1 && !lk ? `<span class="acts btn4">${btnsOf(L[0])}</span>` : ''}</div>${h}</div></div>`;
   };
   const qs = wait.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).map((p, i) => { const id = esc(p.id);
     const on = p.id === ASSIGN, ed = p.id === EDITF;
@@ -1645,15 +1666,20 @@ const hnName = b => `${b.hn ? `<b>HN:</b> ${esc(b.hn)}<br>` : ''}${esc(b.patient
 const byRoom = (a, b) => realRoom(a).localeCompare(realRoom(b)) || (a.bed || '').localeCompare(b.bed || '');
 // รายงานอาหาร: เฉพาะห้องที่มีการจอง เรียงตามชั้น/ห้องเหมือนรายงานตาราง · นับเฉพาะผู้ป่วย (ญาติไม่ได้รับอาหาร)
 const ROOM_ORD = Object.fromEntries(FLOORS.flatMap(([fl, rs], i) => rs.map((r, j) => [r, [fl, i * 100 + j]])));
-const foodList = d => active().filter(b => b.date === d).sort((a, b) => ((ROOM_ORD[a.room] || ['', 9e3])[1] - (ROOM_ORD[b.room] || ['', 9e3])[1]) || (a.bed || '').localeCompare(b.bed || ''));
+// เลือกกลุ่มผู้จ่ายอาหาร: แผนกโภชนาการ = ชั้น 2 และ 3 (1201–1209, 301–309) · Out source = ชั้น 2B (201–214)
+const FOOD_GRP = {all: ['ทั้งหมด', 'ผู้จ่ายอาหาร'], nutri: ['แผนกโภชนาการ', 'ผู้จ่ายอาหาร (แผนกโภชนาการ)'], out: ['Out source', 'ผู้จ่ายอาหาร (Out source)']};
+const foodGrp = () => ($('rGrp') && FOOD_GRP[$('rGrp').value]) ? $('rGrp').value : 'all';
+const foodIn = r => { const g = foodGrp(), b2 = FLOORS[0][1].includes(r); return g === 'all' || (g === 'out' ? b2 : !b2); };
+const foodList = d => active().filter(b => b.date === d && foodIn(b.room)).sort((a, b) => ((ROOM_ORD[a.room] || ['', 9e3])[1] - (ROOM_ORD[b.room] || ['', 9e3])[1]) || (a.bed || '').localeCompare(b.bed || ''));
 const MEAL = '<div class="mealc"><span class="mealbox" role="img" aria-label="ช่องติ๊กเมื่อจ่ายแล้ว"></span></div>';
 const nextDay = d => { const x = new Date(d + 'T00:00:00'); x.setDate(x.getDate() + 1); return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`; };
 // แพ้/งดอาหาร เก็บในคอลัมน์ O (Diet): '' = ไม่มี · '-' = ติ๊กแต่ไม่ระบุ · อื่นๆ = รายละเอียด
 const dietTxt = b => b.diet && b.diet !== '-' ? b.diet : '';
-const dietPr = b => b.diet ? `<span class="dbox">✓</span> <b>แพ้/งดอาหาร</b>${dietTxt(b) ? `: ${esc(dietTxt(b))}` : ''}` : '';
+const dietPr = b => { if (!b.diet) return ''; const t = dietTxt(b), k = FOOD_OPT.find(o => t === o || t.startsWith(o + ':')), r = k ? t.slice(k.length).replace(/^:\s*/, '') : t;
+  return `<span class="dbox">✓</span> <b>${k || 'อาหารพิเศษ'}</b>${r ? `: ${esc(r)}` : ''}`; };
 const dietCell = b => `<div class="diet${b.diet ? ' on' : ''}" data-id="${esc(b.id)}">
-  <label class="diet-lb"><input type="checkbox" class="form-check-input diet-ck"${b.diet ? ' checked' : ''} onchange="dietTick(this)" aria-label="แพ้หรืองดอาหาร ${esc(b.patient)}"> แพ้/งด</label>
-  <input type="text" class="form-control form-control-sm diet-tx" maxlength="200" value="${esc(dietTxt(b))}" placeholder="ระบุ เช่น แพ้กุ้ง, งดน้ำงดอาหาร, อาหารเบาหวาน"${b.diet ? '' : ' disabled'} onchange="dietSave(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}" aria-label="รายละเอียดแพ้หรืองดอาหาร">
+  <label class="diet-lb"><input type="checkbox" class="form-check-input diet-ck"${b.diet ? ' checked' : ''} onchange="dietTick(this)" aria-label="อาหารพิเศษ ${esc(b.patient)}"> พิเศษ</label>
+  <input type="text" class="form-control form-control-sm diet-tx" maxlength="200" value="${esc(dietTxt(b))}" placeholder="เช่น แพ้อาหาร: กุ้ง, งดอาหาร, อาหารโรคไต, อาหารให้ญาติ"${b.diet ? '' : ' disabled'} onchange="dietSave(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}" aria-label="รายละเอียดแพ้หรืองดอาหาร">
   <span class="diet-pr">${dietPr(b)}</span></div>`;
 function dietTick(ck) {
   const w = ck.closest('.diet'), tx = w.querySelector('.diet-tx');
@@ -1694,17 +1720,18 @@ const REPORTS = {
     foot: d => `<tr><td colspan="10" class="text-end border-0 fs-6">รวมยอดคืนเงิน: <b class="text-danger">${money(cxList(d).reduce((t, b) => t + (+b.amount || 0), 0))}</b></td></tr>`},
   label: {t:'พิมพ์ป้ายหน้าห้อง', h:['<input type="checkbox" class="form-check-input" id="lblAll" onchange="lblSelAll(this.checked)" title="เลือกทั้งหมด" aria-label="เลือกทั้งหมด">','ห้อง','เตียง','HN / ชื่อ-นามสกุล (อายุ)','สิทธิ์','แพทย์เจ้าของไข้','พิมพ์ป้าย'],
     rows: d => active().filter(b => b.date === d).sort(byRoom).map(b => [`<input type="checkbox" class="form-check-input lbl-ck" value="${esc(b.id)}" onchange="lblSync()" aria-label="เลือก ${esc(b.patient)}">`, `<b class="fs-5 text-primary">${esc(b.room)}</b>`, bedTxt(b), hnName(b), esc(b.rights) || '-', esc(b.surgeon) || '-', `<div class="d-flex flex-nowrap gap-1 no-print lbl-btns"><button class="btn btn-sm btn-outline-dark" onclick="printLabel('${esc(b.id)}')" title="พิมพ์ป้ายหน้าห้อง A5">${ic('sign')} ป้ายห้อง A5</button><button class="btn btn-sm btn-primary" onclick="printChest('${esc(b.id)}')" title="พิมพ์ใบติดหน้าอก 8×5 ซม.">${ic('badge')} หน้าอก 8×5</button></div>`])},
-  food: {t:'รายงานจ่ายอาหารผู้ป่วยประจำวัน', sign:['ผู้จัดทำรายงาน','ผู้จ่ายอาหาร (แม่บ้าน)'],
+  food: {get t() { const g = foodGrp(); return 'รายงานจ่ายอาหารผู้ป่วยประจำวัน' + (g === 'all' ? '' : ' · ' + FOOD_GRP[g][0]); }, get sign() { return ['ผู้จัดทำรายงาน', FOOD_GRP[foodGrp()][1]]; },
     get h() { const d = $('rDate').value, d1 = d ? fd(d) : '', d2 = d ? fd(nextDay(d)) : '';   // มื้อแรก = กลางวันวันที่เข้าพัก · มื้อสุดท้าย = เช้าวันรุ่งขึ้นก่อน D/C
-      return ['ลำดับ','ชั้น','ห้อง','เตียง','HN / ชื่อ-นามสกุล (อายุ)', `① กลางวัน<small class="mh">${d1}</small>`, `② เย็น<small class="mh">${d1}</small>`, `③ เช้า<small class="mh">${d2} ก่อน D/C</small>`, 'แพ้ / งดอาหาร · หมายเหตุ']; },
-    rows: d => foodList(d).map((b, i) => [i+1, `<span class="nw">${(ROOM_ORD[b.room] || ['-'])[0]}</span>`, `<b class="fs-5 text-primary nw">${esc(b.room)}</b>`, `<span class="nw">${bedTxt(b)}</span>`, hnName(b), MEAL, MEAL, MEAL, dietCell(b)]),
-    foot: d => { const L = foodList(d), p = L.length, k = L.filter(b => b.diet).length;
-      return p ? `<tr><td colspan="9" class="text-end border-0">ผู้ป่วย <b>${p}</b> คน &nbsp; แพ้ / งดอาหาร <b class="${k ? 'text-danger' : ''}">${k}</b> ราย &nbsp; <span class="fs-5 text-primary">รวมจ่ายอาหารมื้อละ <b>${p}</b> ที่</span></td></tr>` : ''; }}
+      return ['ลำดับ','ชั้น','ห้อง','เตียง','HN / ชื่อ-นามสกุล (อายุ)', `① กลางวัน<small class="mh">${d1}</small>`, `② เย็น<small class="mh">${d1}</small>`, `③ เช้า<small class="mh">${d2} ก่อน D/C</small>`, 'อาหารพิเศษ · หมายเหตุ']; },
+    rows: d => foodList(d).map((b, i) => [i+1, `<span class="nw">${(ROOM_ORD[b.room] || ['-'])[0]}</span>`, `<b class="fs-5 text-primary nw">${esc(roomLabel(b.room))}</b>`, `<span class="nw">${bedTxt(b)}</span>`, hnName(b), MEAL, MEAL, MEAL, dietCell(b)]),
+    foot: d => { const L = foodList(d), p = L.length, k = L.filter(b => b.diet && !/^อาหารให้ญาติ/.test(b.diet)).length, r = L.reduce((a, b) => a + relMeals(b), 0);
+      return p ? `<tr><td colspan="9" class="text-end border-0">ผู้ป่วย <b>${p}</b> คน${r ? ` &nbsp; อาหารให้ญาติ <b>${r}</b> ที่` : ''} &nbsp; อาหารพิเศษ <b class="${k ? 'text-danger' : ''}">${k}</b> ราย &nbsp; <span class="fs-5 text-primary">รวมจ่ายอาหารมื้อละ <b>${p + r}</b> ที่</span></td></tr>` : ''; }}
 };
 function renderReport() {
   const keepSel = cur === 'label' ? new Set([...document.querySelectorAll('.lbl-ck:checked')].map(c => c.value)) : null;
   const R0 = REPORTS[cur]; if (!R0) return; const d = $('rDate').value, hide = cur === 'cancel' && role === 'records', n = hide ? 7 : 99;
   const R = {...R0, h: R0.h.slice(0, n), rows: x => R0.rows(x).map(r => r.slice(0, n)), foot: hide ? null : R0.foot};   // เวชระเบียน: ซ่อนช่องทาง/ยอดเงิน/ปุ่มใบรับคืนเงิน
+  $('rGrp').style.display = cur === 'food' ? '' : 'none';
   $('rTitle').textContent = R.t; $('rDateTxt').textContent = R.all && !d ? 'ทั้งหมด' : fd(d); $('rAll').style.display = R.all ? '' : 'none'; $('paper').value = paper;
   $('rHead').innerHTML = `<tr>${R.h.map(h => `<th>${h}</th>`).join('')}</tr>`;
   const rows = R.rows(d); $('rBody').innerHTML = rows.length ? rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${R.h.length}" class="text-center text-muted py-4">ไม่มีข้อมูลในวันที่เลือก</td></tr>`;
@@ -2704,7 +2731,7 @@ function payQrHtml(amount, size = '200px') {   // QR มาตรฐานสี
 function printArea(html, size) { $('pa').innerHTML = html; document.body.classList.add('pa'); setPage(size, false); setTimeout(() => window.print(), 100); }
 function roomName(r) {
   const c = String(r || '').replace('VIP', '').trim();
-  return ['1201','1209','301','309'].includes(c) ? 'VIP ' + c : (/^(20[1-9]|120[2-8]|30[2-8])$/.test(c) ? 'พิเศษ ' + c : r || '-');
+  return ['1201','1209','301','309'].includes(c) ? 'VIP ' + c : WARD_ROOMS.includes(c) ? 'รวม ' + c : (/^(20[1-9]|120[2-8]|30[2-8])$/.test(c) ? 'พิเศษ ' + c : r || '-');
 }
 const ROLE_TH = {admin: 'ผู้ดูแลระบบ', ward: 'แผนกผู้ป่วยใน (Ward)', finance: 'แผนกการเงิน', records: 'แผนกเวชระเบียน', admission: 'แผนกจอง'};
 function thDate(s) { const d = new Date(s); return isNaN(d) ? (s || '-') : `${d.getDate()} ${['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'][d.getMonth()]} ${d.getFullYear() + 543}`; }
